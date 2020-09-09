@@ -3,11 +3,11 @@ using System.IO;
 
 namespace SourceReaderLib
 {
-    public interface LocalSourceReader : ISourceReader
+    public class LocalSourceReader : ISourceReader
     {
         public string Read(string url)
         {
-            
+            return File.AppendAllLines();
         }
     }
 }
