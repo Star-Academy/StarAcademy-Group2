@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphLogicLib", "GraphLogic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyWebApi", "MyWebApi\MyWebApi.csproj", "{3D20C25C-0709-4844-B2E2-30E46D2BF239}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SourceReaderLib", "SourceReaderLib\SourceReaderLib.csproj", "{E2F9E7EB-2971-4489-959F-121483329357}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,5 +74,17 @@ Global
 		{3D20C25C-0709-4844-B2E2-30E46D2BF239}.Release|x64.Build.0 = Release|Any CPU
 		{3D20C25C-0709-4844-B2E2-30E46D2BF239}.Release|x86.ActiveCfg = Release|Any CPU
 		{3D20C25C-0709-4844-B2E2-30E46D2BF239}.Release|x86.Build.0 = Release|Any CPU
+		{E2F9E7EB-2971-4489-959F-121483329357}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2F9E7EB-2971-4489-959F-121483329357}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2F9E7EB-2971-4489-959F-121483329357}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E2F9E7EB-2971-4489-959F-121483329357}.Debug|x64.Build.0 = Debug|Any CPU
+		{E2F9E7EB-2971-4489-959F-121483329357}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E2F9E7EB-2971-4489-959F-121483329357}.Debug|x86.Build.0 = Debug|Any CPU
+		{E2F9E7EB-2971-4489-959F-121483329357}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2F9E7EB-2971-4489-959F-121483329357}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2F9E7EB-2971-4489-959F-121483329357}.Release|x64.ActiveCfg = Release|Any CPU
+		{E2F9E7EB-2971-4489-959F-121483329357}.Release|x64.Build.0 = Release|Any CPU
+		{E2F9E7EB-2971-4489-959F-121483329357}.Release|x86.ActiveCfg = Release|Any CPU
+		{E2F9E7EB-2971-4489-959F-121483329357}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -9,7 +9,7 @@ namespace MyWebApi.Models
         public string BranchName;
         public int OwnerId;
         public string BranchAddress;
-        public string BranchTel;
+        public string BranchTelephone;
         public string AccountType;
         public string Sheba;
         public int CardId;
