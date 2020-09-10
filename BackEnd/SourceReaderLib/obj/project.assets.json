@@ -555,24 +555,31 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Mohamad Javad\\.nuget\\packages\\": {}
+    "C:\\Users\\amirm\\.nuget\\packages\\": {},
+    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Mohamad Javad\\Documents\\Programming\\Setare\\FinalProject\\StarAcademy-Group2\\BackEnd\\SourceReaderLib\\SourceReaderLib.csproj",
+      "projectUniqueName": "I:\\Internship\\Project\\StarAcademy-Group2\\BackEnd\\SourceReaderLib\\SourceReaderLib.csproj",
       "projectName": "SourceReaderLib",
-      "projectPath": "C:\\Users\\Mohamad Javad\\Documents\\Programming\\Setare\\FinalProject\\StarAcademy-Group2\\BackEnd\\SourceReaderLib\\SourceReaderLib.csproj",
-      "packagesPath": "C:\\Users\\Mohamad Javad\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Mohamad Javad\\Documents\\Programming\\Setare\\FinalProject\\StarAcademy-Group2\\BackEnd\\SourceReaderLib\\obj\\",
+      "projectPath": "I:\\Internship\\Project\\StarAcademy-Group2\\BackEnd\\SourceReaderLib\\SourceReaderLib.csproj",
+      "packagesPath": "C:\\Users\\amirm\\.nuget\\packages\\",
+      "outputPath": "I:\\Internship\\Project\\StarAcademy-Group2\\BackEnd\\SourceReaderLib\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Microsoft\\Xamarin\\NuGet\\"
+      ],
       "configFilePaths": [
-        "C:\\Users\\Mohamad Javad\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\amirm\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netstandard2.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
