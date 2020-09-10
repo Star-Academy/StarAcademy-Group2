@@ -13,11 +13,24 @@ namespace MyWebApi.Controllers
         public ActionResult<string> NodeSearch([FromBody] string json)
         {
             //TODO
-            var nodeSearchQuery = JsonSerializer.Deserialize<NodeQuerySearch>(json);
+            var nodeQuerySearch = JsonSerializer.Deserialize<NodeQuerySearch>(json);
             
             //dummy code:
 
-            //return elastic.nodesearch(nodeSearchQuery); 
+            //return elastic.nodesearch(nodeQuerySearch); 
+            return null;
+        }
+
+        [HttpPost]
+        [Route("searchEdge")]
+        public ActionResult<string> EdgeSearch([FromBody] string json)
+        {
+            //TODO
+            var edgeSearchQuery = JsonSerializer.Deserialize<EdgeSearchQuery>(json);
+            
+            //dummy code:
+
+            //return elastic.nodesearch(edgeSearchQuery); 
             return null;
         }
     }
