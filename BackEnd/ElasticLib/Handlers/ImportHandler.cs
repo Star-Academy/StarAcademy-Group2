@@ -3,6 +3,7 @@ using ElasticLib.Abstraction;
 using ElasticLib.Providers;
 using ElasticLib.Utils.ExtractorUtils;
 using ElasticLib.Utils.ImporterUtils;
+using ElasticLib.Utils.NamingUtils;
 using ElasticLib.Utils.ValidatorUtils;
 
 namespace ElasticLib.Handlers
@@ -28,7 +29,7 @@ namespace ElasticLib.Handlers
             var typeName = typeof(T).Name.ToLower();
             if (!indexesMap.TryGetValue(typeName, out var indexName))
             {
-                indexName = $"{typeName}-db";
+                indexName = NameExtractorService.ExtractName<T>();
                 if (!IsIndexExist(indexName))
                 {
                     CreateIndex(typeName, indexName);

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ElasticLib.Abstraction;
+using ElasticLib.Handlers;
 using ElasticLib.Providers;
 
 namespace ElasticLib
@@ -13,9 +14,9 @@ namespace ElasticLib
             handlerProvider.ImportHandler.Import<T>(source);
         }
 
-        public IEnumerable<T> Search<T>()
+        public IEnumerable<T> Search<T>(QueryObject queryObject) where T : class
         {
-            throw new System.NotImplementedException();
+            return handlerProvider.SearchHandler.Search<T>(queryObject);
         }
 
         public IEnumerable<string> AutoComplete()

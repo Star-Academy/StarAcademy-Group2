@@ -1,17 +1,49 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using ElasticLib.Providers;
+using ElasticLib.Utils.NamingUtils;
+using ElasticLib.Utils.ValidatorUtils;
+using Nest;
 
 namespace ElasticLib.Handlers
 {
     public class SearchHandler
     {
-        public IEnumerable<T> FindNodeInfo<T>()
+        public IEnumerable<T> Search<T>(QueryObject queryObject) where T : class
         {
-            throw new System.NotImplementedException();
+            var indexName = GetIndexName<T>();
+            var query = GenerateQueryDescriptor(queryObject.Field, queryObject.Value);
+            var response = ElasticClientProvider.GetClient().Search<T>(s => s
+                .Index(indexName)
+                .Query(q => query)
+            );
+            response.Validate();
+            return GetDocuments(response);
         }
 
-        public IEnumerable<T> FindEdgeInfo<T>()
+        private string GetIndexName<T>()
         {
-            throw new System.NotImplementedException();
+            return NameExtractorService.ExtractName<T>();
+        }
+
+        private QueryContainer GenerateQueryDescriptor(string field, string value)
+        {
+            var query = new MatchQuery()
+            {
+                Field = field,
+                Query = value
+            };
+            return query;
+        }
+
+        private IEnumerable<T> GetDocuments<T>(ISearchResponse<T> response) where T : class
+        {
+            if (response.Documents != null && response.Documents.Any())
+            {
+                return response.Documents.ToList();
+            }
+
+            return new List<T>();
         }
     }
 }
