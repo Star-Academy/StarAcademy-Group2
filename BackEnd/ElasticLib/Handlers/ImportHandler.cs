@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ElasticLib.Abstraction;
+using ElasticLib.Providers;
 using ElasticLib.Utils.ExtractorUtils;
 using ElasticLib.Utils.ImporterUtils;
 using ElasticLib.Utils.ValidatorUtils;
@@ -24,11 +25,14 @@ namespace ElasticLib.Handlers
 
         private string GetIndexName<T>()
         {
-            if (!indexesMap.TryGetValue(nameof(T), out var indexName))
+            var typeName = typeof(T).Name.ToLower();
+            if (!indexesMap.TryGetValue(typeName, out var indexName))
             {
-                indexName = $"{nameof(T).ToLower()}-db";
-                
-                CreateIndex(nameof(T), indexName);
+                indexName = $"{typeName}-db";
+                if (!IsIndexExist(indexName))
+                {
+                    CreateIndex(typeName, indexName);
+                }
             }
 
             return indexName;
@@ -39,6 +43,11 @@ namespace ElasticLib.Handlers
             var response = new IndexService().CreateIndex(indexName);
             response.Validate();
             indexesMap.Add(typeName, indexName);
+        }
+
+        private bool IsIndexExist(string indexName)
+        {
+            return ElasticClientProvider.GetClient().Indices.Exists(indexName).Exists;
         }
     }
 }

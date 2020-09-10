@@ -13,7 +13,7 @@ namespace ElasticLib.Utils.ExtractorUtils
             strategies = new Dictionary<SourceType, IExtractStrategy>
             {
                 {SourceType.Csv, new CsvStrategy()},
-                {SourceType.Csv, new JsonStrategy()}
+                {SourceType.Json, new JsonStrategy()}
             };
         }
 
