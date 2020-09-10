@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using ElasticLib;
 using ElasticLib.Abstraction;
 using ElasticLib.Enums;
+using ElasticLib.Filters;
 using ElasticLib.Handlers;
 
 namespace Driver
@@ -20,13 +22,20 @@ namespace Driver
             var service = new ElasticService();
             service.ImportDocument<Account>(source);
 
-            QueryObject queryObject = new QueryObject()
+            // var filter = new MatchQueryFilter()
+            // {
+            //     FieldName = "name",
+            //     Value = "AmirMahdi"
+            // };
+
+            var filter = new NumericRangeQueryFilter()
             {
-                Field = "name",
-                Value = "Star"
+                FieldName = "age",
+                Min = 19,
+                Max = 25
             };
 
-            var results = service.Search<Account>(queryObject);
+            var results = service.Search<Account>(new List<QueryFilter>{filter});
             foreach (var account in results)
             {
                 Console.WriteLine(account);
@@ -40,9 +49,12 @@ namespace Driver
         public string Name { get; set; }
         public string Family { get; set; }
 
+
+        public int Age { get; set; }
+
         public override string ToString()
         {
-            return $"{nameof(AccountId)}: {AccountId}, {nameof(Name)}: {Name}, {nameof(Family)}: {Family}";
+            return $"{nameof(AccountId)}: {AccountId}, {nameof(Name)}: {Name}, {nameof(Family)}: {Family}, {nameof(Age)} : {Age}";
         }
     }
 
