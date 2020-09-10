@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "q3L6XhJ9T08hXH2KGOH5/xHBaFg3Eo8BnTQOjUgq65o5SiaCZrqxFotAiedk66Tch/vYOxHqMUQnytMYpgzkeg==",
+  "dgSpecHash": "3IKETT/FWcNaFz604wuvdnPuMZrrWh3QYFHL42e9yxbBUWS/u+LTXP7Kksb2/qJIg/CATWQk/pqBfFwYD4q71g==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Mohamad Javad\\Documents\\Programming\\Setare\\FinalProject\\StarAcademy-Group2\\BackEnd\\SourceReaderLib\\SourceReaderLib.csproj",
+  "projectFilePath": "c:\\Users\\Mohamad Javad\\Documents\\Programming\\Setare\\FinalProject\\StarAcademy-Group2\\BackEnd\\SourceReaderLib\\SourceReaderLib.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Mohamad Javad\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\1.1.0\\microsoft.bcl.asyncinterfaces.1.1.0.nupkg.sha512",
     "C:\\Users\\Mohamad Javad\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
