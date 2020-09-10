@@ -1,0 +1,15 @@
+<div #ogmaContainer id="ogma-container"></div>
+
+<div class="text-center">
+	Number of nodes: {{countNodes()}}
+	<form class="form">
+		<h3>Action</h3>
+		<button class="btn" (click)="addNode()">Add a node</button>
+		<h3>Layout:</h3>
+		<div *ngFor="let layout of layouts">
+			<input [id]="layout" type="radio" name="layout" [(ngModel)]="currentLayout" [value]="layout"
+				(change)="runLayout()" />
+			<label [attr.for]="layout">{{layout | titlecase}} layout</label>
+		</div>
+	</form>
+</div>
