@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using SourceReaderLib;
 
 namespace MyWebApi.Controllers
 {
@@ -11,7 +12,9 @@ namespace MyWebApi.Controllers
         public ActionResult<string> Import([FromBody] string url)
         {
             //TODO
-           return null;
+
+            //dummy code:
+            return Ok(CsvToJson.Convert(new LocalSourceReader().Read(url)));
         }
     }
 }
