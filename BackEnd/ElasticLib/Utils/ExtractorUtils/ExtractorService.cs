@@ -17,6 +17,11 @@ namespace ElasticLib.Utils.ExtractorUtils
             };
         }
 
+        public static IEnumerable<T> ExtractDocuments<T>(this string s)
+        {
+            return new JsonStrategy().Extract<T>(s);
+        }
+
         public static IEnumerable<T> ExtractDocuments<T>(this ISource source)
         {
             return strategies.TryGetValue(source.Type, out var strategy)

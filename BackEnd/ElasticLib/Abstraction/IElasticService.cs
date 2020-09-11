@@ -5,7 +5,7 @@ namespace ElasticLib.Abstraction
 {
     public interface IElasticService
     {
-        void ImportDocument<T>(ISource source) where T : class;
+        void ImportDocument<T>(string source) where T : class;
         IEnumerable<T> Search<T>(IFilterable filterable) where T : class;
         IEnumerable<string> AutoComplete();
     }
