@@ -555,24 +555,47 @@
     ]
   },
   "packageFolders": {
+<<<<<<< HEAD
     "C:\\Users\\farah\\.nuget\\packages\\": {}
+=======
+    "C:\\Users\\amirm\\.nuget\\packages\\": {},
+    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
+>>>>>>> 37eb9a2f694dea60694392f77dcc9fdfd345f5a4
   },
   "project": {
     "version": "1.0.0",
     "restore": {
+<<<<<<< HEAD
       "projectUniqueName": "C:\\Users\\farah\\Desktop\\vscws\\StarAcademyGroup2\\BackEnd\\SourceReaderLib\\SourceReaderLib.csproj",
       "projectName": "SourceReaderLib",
       "projectPath": "C:\\Users\\farah\\Desktop\\vscws\\StarAcademyGroup2\\BackEnd\\SourceReaderLib\\SourceReaderLib.csproj",
       "packagesPath": "C:\\Users\\farah\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\farah\\Desktop\\vscws\\StarAcademyGroup2\\BackEnd\\SourceReaderLib\\obj\\",
+=======
+      "projectUniqueName": "I:\\Internship\\Project\\StarAcademy-Group2\\BackEnd\\SourceReaderLib\\SourceReaderLib.csproj",
+      "projectName": "SourceReaderLib",
+      "projectPath": "I:\\Internship\\Project\\StarAcademy-Group2\\BackEnd\\SourceReaderLib\\SourceReaderLib.csproj",
+      "packagesPath": "C:\\Users\\amirm\\.nuget\\packages\\",
+      "outputPath": "I:\\Internship\\Project\\StarAcademy-Group2\\BackEnd\\SourceReaderLib\\obj\\",
+>>>>>>> 37eb9a2f694dea60694392f77dcc9fdfd345f5a4
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Microsoft\\Xamarin\\NuGet\\"
+      ],
       "configFilePaths": [
+<<<<<<< HEAD
         "C:\\Users\\farah\\AppData\\Roaming\\NuGet\\NuGet.Config"
+=======
+        "C:\\Users\\amirm\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+>>>>>>> 37eb9a2f694dea60694392f77dcc9fdfd345f5a4
       ],
       "originalTargetFrameworks": [
         "netstandard2.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
