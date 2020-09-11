@@ -2,6 +2,7 @@
 using System.Linq;
 using ElasticLib.Filters;
 using ElasticLib.Providers;
+using ElasticLib.Utils.FilterUtils;
 using ElasticLib.Utils.NamingUtils;
 using ElasticLib.Utils.ValidatorUtils;
 using Nest;
@@ -10,8 +11,9 @@ namespace ElasticLib.Handlers
 {
     public class SearchHandler
     {
-        public IEnumerable<T> Search<T>(IEnumerable<QueryFilter> filters) where T : class
+        public IEnumerable<T> Search<T>(IFilterable filterable) where T : class
         {
+            var filters = filterable.GetFilters();
             var indexName = GetIndexName<T>();
             var query = GenerateQueryDescriptor(filters);
             var response = ElasticClientProvider.GetClient().Search<T>(s => s

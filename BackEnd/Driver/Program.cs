@@ -6,6 +6,8 @@ using ElasticLib.Abstraction;
 using ElasticLib.Enums;
 using ElasticLib.Filters;
 using ElasticLib.Handlers;
+using ElasticLib.Utils.FilterUtils;
+using Nest;
 
 namespace Driver
 {
@@ -13,14 +15,14 @@ namespace Driver
     {
         static void Main(string[] args)
         {
-            var content = File.ReadAllText(@"../../../TestDB.csv");
-            ISource source = new Source()
-            {
-                Content = content,
-                Type = SourceType.Csv
-            };
-            var service = new ElasticService();
-            service.ImportDocument<Account>(source);
+            // var content = File.ReadAllText(@"../../../TestDB.csv");
+            // ISource source = new Source()
+            // {
+            //     Content = content,
+            //     Type = SourceType.Csv
+            // };
+            // var service = new ElasticService();
+            // service.ImportDocument<Account>(source);
 
             // var filter = new MatchQueryFilter()
             // {
@@ -28,21 +30,44 @@ namespace Driver
             //     Value = "AmirMahdi"
             // };
 
-            var filter = new NumericRangeQueryFilter()
+            // var filter = new NumericRangeQueryFilter()
+            // {
+            //     FieldName = "age",
+            //     Min = 19,
+            //     Max = 25
+            // };
+
+            // var results = service.Search<Account>(new List<QueryFilter>{filter});
+            // foreach (var account in results)
+            // {
+            //     Console.WriteLine(account);
+            // }
+            
+            var filter = new FilterModel()
             {
-                FieldName = "age",
-                Min = 19,
-                Max = 25
+                FullName = "star",
+                Date = new DateTime(2020,9,11),
+                Money =  16.23
             };
 
-            var results = service.Search<Account>(new List<QueryFilter>{filter});
-            foreach (var account in results)
-            {
-                Console.WriteLine(account);
-            }
+            var filters = filter.GetFilters();
+
+            Console.WriteLine("hello");
         }
     }
 
+    class FilterModel : IFilterable
+    {
+        [MatchFilter]
+        public string FullName { get; set; }
+        
+        [DateRangeFilter]
+        public DateMath Date { get; set; }
+        
+        [NumericRangeFilter]
+        public double Money { get; set; }
+    }
+    
     class Account
     {
         public string AccountId { get; set; }

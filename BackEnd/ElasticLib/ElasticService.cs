@@ -3,6 +3,7 @@ using ElasticLib.Abstraction;
 using ElasticLib.Filters;
 using ElasticLib.Handlers;
 using ElasticLib.Providers;
+using ElasticLib.Utils.FilterUtils;
 
 namespace ElasticLib
 {
@@ -15,9 +16,9 @@ namespace ElasticLib
             handlerProvider.ImportHandler.Import<T>(source);
         }
 
-        public IEnumerable<T> Search<T>(IEnumerable<QueryFilter> filters) where T : class
+        public IEnumerable<T> Search<T>(IFilterable filterable) where T : class
         {
-            return handlerProvider.SearchHandler.Search<T>(filters);
+            return handlerProvider.SearchHandler.Search<T>(filterable);
         }
 
         public IEnumerable<string> AutoComplete()
