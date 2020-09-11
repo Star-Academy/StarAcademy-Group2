@@ -555,19 +555,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Mohamad Javad\\.nuget\\packages\\": {}
+    "C:\\Users\\farah\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Mohamad Javad\\Documents\\Programming\\Setare\\FinalProject\\StarAcademy-Group2\\BackEnd\\SourceReaderLib\\SourceReaderLib.csproj",
+      "projectUniqueName": "C:\\Users\\farah\\Desktop\\vscws\\StarAcademyGroup2\\BackEnd\\SourceReaderLib\\SourceReaderLib.csproj",
       "projectName": "SourceReaderLib",
-      "projectPath": "C:\\Users\\Mohamad Javad\\Documents\\Programming\\Setare\\FinalProject\\StarAcademy-Group2\\BackEnd\\SourceReaderLib\\SourceReaderLib.csproj",
-      "packagesPath": "C:\\Users\\Mohamad Javad\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Mohamad Javad\\Documents\\Programming\\Setare\\FinalProject\\StarAcademy-Group2\\BackEnd\\SourceReaderLib\\obj\\",
+      "projectPath": "C:\\Users\\farah\\Desktop\\vscws\\StarAcademyGroup2\\BackEnd\\SourceReaderLib\\SourceReaderLib.csproj",
+      "packagesPath": "C:\\Users\\farah\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\farah\\Desktop\\vscws\\StarAcademyGroup2\\BackEnd\\SourceReaderLib\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Mohamad Javad\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\farah\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netstandard2.0"
