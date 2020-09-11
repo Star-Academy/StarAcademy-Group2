@@ -1,6 +1,124 @@
-:host {
-	width: 80rem;
-	height: 60rem;
+@import "../../../styles/config";
 
-	margin: 0 auto;
+:host {
+	display: flex;
+	align-items: flex-start;
+
+	nav {
+		display: grid;
+		grid-template-rows: auto 1fr;
+
+		width: 30rem;
+		height: 100vh;
+
+		border-bottom-left-radius: 6rem;
+
+		.logo {
+			justify-self: center;
+
+			width: 100%;
+
+			margin-bottom: 6rem;
+
+			font-size: 7.2rem;
+			font-weight: 700;
+
+			text-align: center;
+		}
+
+		ul {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+
+			padding-bottom: 4rem;
+
+			li {
+				display: grid;
+				grid-template-columns: auto 1fr;
+				justify-content: flex-start;
+				align-items: center;
+
+				height: 6rem;
+
+				margin-bottom: 4rem;
+				padding-right: 4rem;
+
+				font-size: 3.6rem;
+				font-weight: 300;
+
+				cursor: pointer;
+
+				svg-icon {
+					font-size: 3.6rem;
+				}
+
+				span {
+					margin-right: 1rem;
+				}
+			}
+		}
+	}
+
+	main {
+		position: relative;
+
+		width: 100%;
+		height: 100%;
+
+		.search-button {
+			background-color: white;
+
+			position: fixed;
+			top: 4rem;
+			left: 4rem;
+			z-index: 2;
+
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			width: 6rem;
+			height: 6rem;
+
+			border-radius: 100%;
+
+			cursor: pointer;
+
+			&:hover {
+				background-color: $color_gray_95;
+			}
+
+			svg-icon {
+				margin-top: -1rem;
+
+				font-size: 3rem;
+			}
+		}
+
+		#ogma-container {
+			width: 100%;
+			height: 100%;
+
+			div {
+				background-color: $color_white;
+			}
+		}
+	}
+}
+
+search-nodes-modal {
+	z-index: 9;
+}
+
+app-radial-menu {
+	z-index: 8;
+}
+
+nav {
+	z-index: 1;
+}
+
+main {
+	z-index: 1;
 }

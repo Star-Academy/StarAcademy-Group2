@@ -1,0 +1,25 @@
+<div id="modal" class="modal" [@modalState]="stateName">
+	<form class="modal-content">
+		<h1>search</h1>
+		<span class="close" (click)="close()">&times;</span>
+
+		<label for="query"><b>Search</b></label>
+		<input type="text" placeholder="Type your query" name="query" required>
+
+		<select required>
+			<option value="CardId">شناسه کارت</option>
+			<option value="AccountId">شناسه حساب</option>
+			<option value="Sheba">شماره شبا</option>
+			<option value="OwnerID">شناسه صاحب حساب</option>
+			<option value="OwnerName">نام صاحب حساب</option>
+			<option value="OwnerFamilyName">نام خانوادگی صاحب حساب</option>
+			<option value="BranchName">نام شعبه</option>
+			<option value="BranchAdress">آدرس شعبه</option>
+			<option value="BranchTelephone">شماره تلفن شعبه</option>
+			<option value="AccountType">نوع حساب</option>
+		</select>
+
+		<button type="submit" (click)="search('salam')" class="btn">Search</button>
+		<search-nodes-result *ngFor="let result of results" [node]="result"></search-nodes-result>
+	</form>
+</div>

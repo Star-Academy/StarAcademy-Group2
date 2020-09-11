@@ -1,10 +1,40 @@
-<div #ogmaContainer id="ogma-container"></div>
+<search-nodes-modal #searchNodesModal></search-nodes-modal>
+<radial-node-menu></radial-node-menu>
+
+<nav class="bg-primary text-default-05">
+	<a class="logo text-default-05" href="/">لوگو</a>
+	<ul>
+		<div class="top">
+			<li class="button-primary">
+				<svg-icon key="nodes"></svg-icon>
+				<span>گراف</span>
+			</li>
+			<li class="button-primary">
+				<svg-icon key="settings"></svg-icon>
+				<span>تنظیمات</span>
+			</li>
+		</div>
+		<div class="bottom">
+			<li class="button-primary">
+				<svg-icon key="logout"></svg-icon>
+				<span>خروج</span>
+			</li>
+		</div>
+	</ul>
+</nav>
+
+<main>
+	<span class="search-button" (click)="clickedOnSearchNodesButton($event)">
+		<svg-icon key="search"></svg-icon>
+	</span>
+	<div #ogmaContainer id="ogma-container" (dblclick)="setPosition()" (mousemove)="hoverNode()"></div>
+</main>
 
 <div class="text-center">
 	Number of nodes: {{countNodes()}}
 	<form class="form">
 		<h3>Action</h3>
-		<button class="btn" (click)="addNode()">Add a node</button>
+		<button class="button-primary" (click)="addNode()">Add a node</button>
 		<h3>Layout:</h3>
 		<div *ngFor="let layout of layouts">
 			<input [id]="layout" type="radio" name="layout" [(ngModel)]="currentLayout" [value]="layout"
