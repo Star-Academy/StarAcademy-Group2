@@ -1,5 +1,7 @@
+using System;
 using ElasticLib.Abstraction;
 using Microsoft.AspNetCore.Mvc;
+using MyWebApi.Models;
 using SourceReaderLib;
 
 namespace MyWebApi.Controllers
@@ -17,9 +19,17 @@ namespace MyWebApi.Controllers
 
         [HttpPost]
         [Route("import")]
-        public ActionResult<string> Import([FromBody] string url)
+        public IActionResult Import([FromBody] string url)
         {
-            return Ok(elasticService.ImportDocument<Node>(10));
+            try
+            {
+                elasticService.ImportDocument<Node>(CsvToJson.Convert(new LocalSourceReader().Read(url)));
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
         }
     }
 }
