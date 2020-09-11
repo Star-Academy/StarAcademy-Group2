@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using ElasticLib.Abstraction;
 using ElasticLib.Filters;
-using Nest;
 using ServiceStack;
 
 namespace ElasticLib.Utils.FilterUtils
@@ -54,7 +54,7 @@ namespace ElasticLib.Utils.FilterUtils
             {
                 FieldName = propertyInfo.Name.ToCamelCase(),
                 //TODO
-                Min = new DateTime(1970, 1, 1),
+                Min = new DateTime(1970, 2, 1),
                 Max = new DateTime(2030, 1, 1)
             };
         }

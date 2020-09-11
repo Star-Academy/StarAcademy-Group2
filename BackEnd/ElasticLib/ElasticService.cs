@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
 using ElasticLib.Abstraction;
-using ElasticLib.Filters;
-using ElasticLib.Handlers;
 using ElasticLib.Providers;
-using ElasticLib.Utils.FilterUtils;
 
 namespace ElasticLib
 {

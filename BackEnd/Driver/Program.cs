@@ -45,7 +45,7 @@ namespace Driver
             
             var filter = new FilterModel()
             {
-                FullName = "star",
+                FullName = 155546579,
                 Date = new DateTime(2020,9,11),
                 Money =  16.23
             };
@@ -59,13 +59,16 @@ namespace Driver
     class FilterModel : IFilterable
     {
         [MatchFilter]
-        public string FullName { get; set; }
+        public long FullName { get; set; }
         
         [DateRangeFilter]
         public DateMath Date { get; set; }
         
         [NumericRangeFilter]
-        public double Money { get; set; }
+        public double Money { get; set;
+        }
+        
+        public double MoenyFirst { get; set; }
     }
     
     class Account
