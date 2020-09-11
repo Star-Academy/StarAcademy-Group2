@@ -8,22 +8,22 @@ namespace MyWebApi.Models
         [JsonPropertyName("AccountID")]
         public string AccountId { get; set; }
         [JsonPropertyName("OwnerName")]
-        public string OwnerName;
+        public string OwnerName { get; set; }
         [JsonPropertyName("OwnerFamilyName")]
-        public string OwnerFamilyName;
+        public string OwnerFamilyName { get; set; }
         [JsonPropertyName("BranchName")]
-        public string BranchName;
+        public string BranchName { get; set; }
         [JsonPropertyName("OwnerID")]
-        public string OwnerId;
+        public string OwnerId { get; set; }
         [JsonPropertyName("BranchAdress")]
-        public string BranchAddress;
+        public string BranchAddress { get; set; }
         [JsonPropertyName("BranchTelephone")]
-        public string BranchTelephone;
+        public string BranchTelephone { get; set; }
         [JsonPropertyName("AccountType")]
-        public string AccountType;
+        public string AccountType { get; set; }
         [JsonPropertyName("Sheba")]
-        public string Sheba;
+        public string Sheba { get; set; }
         [JsonPropertyName("CardID")]
-        public string CardId;
+        public string CardId { get; set; }
     }
 }

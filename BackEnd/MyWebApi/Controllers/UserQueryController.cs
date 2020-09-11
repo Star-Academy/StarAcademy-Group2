@@ -11,11 +11,11 @@ namespace MyWebApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class SearchController : ControllerBase
+    public class UserQueryController : ControllerBase
     {
         private IElasticService elasticService;
 
-        public SearchController(IElasticService elasticService)
+        public UserQueryController(IElasticService elasticService)
         {
             this.elasticService = elasticService;
         }
@@ -38,11 +38,11 @@ namespace MyWebApi.Controllers
         }
 
         [HttpPost]
-        [Route("searchEdge")]
-        public ActionResult<string> EdgeSearch([FromBody] string json)
+        [Route("Expand")]
+        public ActionResult<string> Expand([FromBody] string json)
         {
             //TODO
-            var edgeSearchQuery = JsonSerializer.Deserialize<EdgeSearchQuery>(json);
+            var edgeSearchQuery = JsonSerializer.Deserialize<ExpandQuery>(json);
             
             //dummy code:
 

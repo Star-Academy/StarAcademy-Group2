@@ -1,12 +1,20 @@
+using System.Text.Json.Serialization;
+
 namespace MyWebApi.Models
 {
     public class Edge
     {
-        public Node SourceAcount;
-        public Node DestiantionAccount;
-        public long Amount;
-        public string Date;
-        public long TransactionId;
-        public string Type;
+        [JsonPropertyName("SourceAcount")]
+        public string SourceAcount { get; set; }
+        [JsonPropertyName("DestiantionAccount")]
+        public string DestiantionAccount { get; set; }
+        [JsonPropertyName("Amount")]
+        public long Amount { get; set; }
+        [JsonPropertyName("Date")]
+        public string Date { get; set; }
+        [JsonPropertyName("TransactionID")]
+        public long TransactionId { get; set; }
+        [JsonPropertyName("Type")]
+        public string Type { get; set; }
     }
 }
