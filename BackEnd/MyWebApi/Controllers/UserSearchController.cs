@@ -30,7 +30,7 @@ namespace MyWebApi.Controllers
             
             //dummy code:
 
-            //return elastic.nodesearch(edgeSearchQuery); 
+            //return elastic.nodesearch(edgeSearchQuery);
             return null;
         }
     }
