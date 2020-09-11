@@ -26,28 +26,58 @@ namespace MyWebApi.Controllers
         {
             //TODO
             var nodeQuerySearch = JsonSerializer.Deserialize<NodeQuerySearch>(json);
-            try{
+            try
+            {
                 var result = elasticService.Search<Node>(nodeQuerySearch);
                 return Ok(result);
             }
             //TODO
             //dummy code
-            catch (Exception e){
+            catch (Exception e)
+            {
                 return BadRequest(e.Message);
             }
         }
 
         [HttpPost]
-        [Route("Expand")]
-        public ActionResult<string> Expand([FromBody] string json)
+        [Route("expand")]
+        public ActionResult<List<Tuple<HashSet<Node>, HashSet<Edge>>>> Expand([FromBody] string json)
         {
-            //TODO
-            var edgeSearchQuery = JsonSerializer.Deserialize<ExpandQuery>(json);
+            var expandQuery = JsonSerializer.Deserialize<ExpandQuery>(json);
+            var output = new List<Tuple<HashSet<Node>, HashSet<Edge>>>();
             
-            //dummy code:
+            foreach (var acc in expandQuery.Accounts)
+            {
+                var nodes = new HashSet<Node>();
+                var edges = new HashSet<Edge>();
+                var incomingEdgeSearchQuery = new EdgeSearchQuery()
+                {
+                    DestinationAccount = acc
+                };
+                var outcomingEdgeSearchQuery = new EdgeSearchQuery()
+                {
+                    SourceAccount = acc
+                };
+                incomingEdgeSearchQuery.SetFiltersFrom(expandQuery);
+                outcomingEdgeSearchQuery.SetFiltersFrom(expandQuery);
 
-            //return elastic.nodesearch(edgeSearchQuery);
-            return null;
+                // foreach(var edge in elasticService.Search<Edge>(incomingEdgeSearchQuery)){
+                //     var ns = new NodeSearchQuery(){
+                //         SourceAccount = edge.DestiantionAccount
+                //     };
+                //     nodes.Add(elasticService.Search<Node>());
+                //     edges.Add();
+                // }
+                // foreach(var edge in elasticService.Search<Edge>(outcomingEdgeSearchQuery)){
+                //     nodes.Add();
+                //     edges.Add();
+                // }
+
+
+                output.Add(new Tuple<HashSet<Node>, HashSet<Edge>>(nodes, edges));
+            }
+            
+            return output;
         }
     }
 }

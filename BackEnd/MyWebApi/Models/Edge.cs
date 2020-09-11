@@ -13,7 +13,7 @@ namespace MyWebApi.Models
         [JsonPropertyName("Date")]
         public string Date { get; set; }
         [JsonPropertyName("TransactionID")]
-        public long TransactionId { get; set; }
+        public string TransactionId { get; set; }
         [JsonPropertyName("Type")]
         public string Type { get; set; }
     }
