@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SourceReaderLib\SourceReaderLib.csproj" />
+    <ProjectReference Include="..\ElasticLib\ElasticLib.csproj" />
   </ItemGroup>
 
 

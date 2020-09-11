@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using MyWebApi.Models.QueryModel;
+using ElasticLib.QueryModel;
 
 namespace MyWebApi.Controllers
 {
@@ -30,7 +30,7 @@ namespace MyWebApi.Controllers
             
             //dummy code:
 
-            //return elastic.nodesearch(edgeSearchQuery); 
+            //return elastic.nodesearch(edgeSearchQuery);
             return null;
         }
     }
