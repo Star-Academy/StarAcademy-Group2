@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using MyWebApi.Models.QueryModel;
+using ElasticLib.QueryModel;
 
 namespace MyWebApi.Controllers
 {
