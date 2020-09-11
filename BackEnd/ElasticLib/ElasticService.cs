@@ -8,7 +8,7 @@ namespace ElasticLib
     {
         private HandlerProvider handlerProvider = new HandlerProvider();
 
-        public void ImportDocument<T>(ISource source) where T : class
+        public void ImportDocument<T>(string source) where T : class
         {
             handlerProvider.ImportHandler.Import<T>(source);
         }

@@ -17,7 +17,7 @@ namespace ElasticLib.Handlers
             indexesMap = new Dictionary<string, string>();
         }
 
-        public void Import<T>(ISource source) where T: class
+        public void Import<T>(string source) where T: class
         {
             var documents = source.ExtractDocuments<T>();
             var response = new BulkService<T>().SendBulk(documents, GetIndexName<T>());
