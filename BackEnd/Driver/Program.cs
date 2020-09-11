@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using ElasticLib;
 using ElasticLib.Abstraction;
 using ElasticLib.Enums;
@@ -8,6 +11,7 @@ using ElasticLib.Filters;
 using ElasticLib.Handlers;
 using ElasticLib.Utils.FilterUtils;
 using Nest;
+using SourceReaderLib;
 
 namespace Driver
 {
@@ -15,14 +19,16 @@ namespace Driver
     {
         static void Main(string[] args)
         {
-            // var content = File.ReadAllText(@"../../../TestDB.csv");
-            // ISource source = new Source()
-            // {
-            //     Content = content,
-            //     Type = SourceType.Csv
-            // };
+            var content = File.ReadAllLines(@"../../../../../Assets/TestAccounts.csv");
+            // var content = File.ReadAllLines(@"../../../TestDB.csv");
+            var s = CsvToJson.Convert(content);
+
+            var documents = JsonSerializer.Deserialize<List<Node>>(s);
+
+            Console.WriteLine("hello");
+
             // var service = new ElasticService();
-            // service.ImportDocument<Account>(source);
+            // service.ImportDocument<Node>(s);
 
             // var filter = new MatchQueryFilter()
             // {
@@ -42,20 +48,38 @@ namespace Driver
             // {
             //     Console.WriteLine(account);
             // }
-            
-            var filter = new FilterModel()
-            {
-                FullName = 155546579,
-                Date = new DateTime(2020,9,11),
-                Money =  16.23
-            };
 
-            var filters = filter.GetFilters();
-
-            Console.WriteLine("hello");
+            // var filter = new FilterModel()
+            // {
+            //     FullName = 155546579,
+            //     Date = new DateTime(2020,9,11),
+            //     Money =  16.23
+            // };
+            //
+            // var filters = filter.GetFilters();
+            //
+            // Console.WriteLine("hello");
         }
     }
 
+    public class Node
+    {
+        public string OwnerName { get; set; }
+        public string OwnerFamilyName { get; set; }
+        public string BranchName { get; set; }
+        [JsonPropertyName("OwnerID")]
+        public string OwnerId { get; set; }
+        [JsonPropertyName("BranchAdress")]
+        public string BranchAddress { get; set; }
+        public string BranchTelephone { get; set; }
+        public string AccountType { get; set; }
+        public string Sheba { get; set; }
+        [JsonPropertyName("CardID")]
+        public string CardId { get; set; }
+        [JsonPropertyName("AccountID")]
+        public string AccountId { get; set; }
+    }
+    
     class FilterModel : IFilterable
     {
         [MatchFilter]
@@ -76,9 +100,7 @@ namespace Driver
         public string AccountId { get; set; }
         public string Name { get; set; }
         public string Family { get; set; }
-
-
-        public int Age { get; set; }
+        public string Age { get; set; }
 
         public override string ToString()
         {

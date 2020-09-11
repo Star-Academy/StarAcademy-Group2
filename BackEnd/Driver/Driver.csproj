@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ElasticLib\ElasticLib.csproj" />
+    <ProjectReference Include="..\SourceReaderLib\SourceReaderLib.csproj" />
   </ItemGroup>
 
 </Project>
