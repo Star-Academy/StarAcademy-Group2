@@ -2,6 +2,7 @@ using System;
 using System.Text.Json.Serialization;
 using ElasticLib.Abstraction;
 using ElasticLib.Utils.FilterUtils;
+using ServiceStack;
 
 namespace ElasticLib.QueryModel
 {
@@ -16,14 +17,34 @@ namespace ElasticLib.QueryModel
         public string DestinationAccount { get; set; }
         [JsonIgnore]
         [NumericRangeFilter]
-        public string Amount => $"{AmountFloor},{AmountCeiling}";
+        public string Amount {
+            get
+            {
+                if (!AmountCeiling.IsNullOrEmpty() && !AmountFloor.IsNullOrEmpty())
+                {
+                    return $"{AmountFloor},{AmountCeiling}";
+                }
+
+                return null;
+            }
+        }
         [JsonPropertyName("amountCeiling")]
-        public long AmountCeiling {get; set;}
+        public string AmountCeiling {get; set;}
         [JsonPropertyName("amountFloor")]
-        public long AmountFloor {get; set;}
+        public string AmountFloor {get; set;}
         [JsonIgnore]
         [DateRangeFilter]
-        public string Date => $"{DateFloor},{DateCeiling}";
+        public string Date {
+            get
+            {
+                if (!DateCeiling.IsNullOrEmpty() & !DateFloor.IsNullOrEmpty())
+                {
+                    return $"{DateFloor},{DateCeiling}";
+                }
+
+                return null;
+            }
+        }
         //YYYY-MM-dd[T]hh:mm:ss
         //2030-01-01T00:00:00
         [JsonPropertyName("dateFloor")]

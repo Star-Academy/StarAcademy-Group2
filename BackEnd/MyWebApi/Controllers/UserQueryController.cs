@@ -36,6 +36,36 @@ namespace MyWebApi.Controllers
                 return BadRequest(e.Message);
             }
         }
+        
+        /*
+         *  testing ---------------------------------
+         */
+        
+        [HttpPost]
+        [Route("searchEdge")]
+        public ActionResult<IEnumerable<Edge>> NodeSearch()
+        {
+            try
+            {
+                var result = elasticService.Search<Edge>(new EdgeSearchQuery()
+                {
+                    SourceAccount = "6039548046",
+                    AmountCeiling = "200000000",
+                    AmountFloor = "1"
+                });
+                return Ok(result);
+            }
+            //TODO
+            //dummy code
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+        
+        /*
+         *  end of testinggggg ----------------------
+         */
 
         [HttpPost]
         [Route("expand")]
