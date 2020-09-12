@@ -28,6 +28,7 @@ namespace MyWebApi.Controllers
             }
             catch (Exception e)
             {
+                Console.WriteLine(e);
                 return BadRequest();
             }
         }
