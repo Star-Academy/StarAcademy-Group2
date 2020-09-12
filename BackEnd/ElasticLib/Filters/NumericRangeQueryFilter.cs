@@ -5,8 +5,8 @@ namespace ElasticLib.Filters
 {
     public class NumericRangeQueryFilter : QueryFilter
     {
-        public float Min { get; set; }
-        public float Max { get; set; }
+        public long Min { get; set; }
+        public long Max { get; set; }
 
         public override BoolQuery Activate(BoolQuery query)
         {

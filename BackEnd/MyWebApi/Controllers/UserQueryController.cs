@@ -50,7 +50,7 @@ namespace MyWebApi.Controllers
                 var result = elasticService.Search<Edge>(new EdgeSearchQuery()
                 {
                     SourceAccount = "6039548046",
-                    AmountCeiling = "200000000",
+                    AmountCeiling = "199999999",
                     AmountFloor = "1"
                 });
                 return Ok(result);

@@ -79,8 +79,8 @@ namespace ElasticLib.Utils.FilterUtils
             return new NumericRangeQueryFilter()
             {
                 FieldName = propertyInfo.Name.ToCamelCase(),
-                Min = float.Parse(borders[0]),
-                Max = float.Parse(borders[1])
+                Min = long.Parse(borders[0]),
+                Max = long.Parse(borders[1])
             };
         }
     }
