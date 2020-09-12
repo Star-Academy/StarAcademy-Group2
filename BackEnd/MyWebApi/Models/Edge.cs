@@ -1,4 +1,6 @@
+using System;
 using System.Text.Json.Serialization;
+using Nest;
 
 namespace MyWebApi.Models
 {
@@ -8,8 +10,13 @@ namespace MyWebApi.Models
         public string SourceAccount { get; set; }
         [JsonPropertyName("DestiantionAccount")]
         public string DestiantionAccount { get; set; }
+
+        [Ignore]
         [JsonPropertyName("Amount")]
-        public long Amount { get; set; }
+        public string StringAmount { get; set; }
+        [JsonIgnore]
+        public long Amount => long.Parse(StringAmount.Replace(",", ""));
+
         [JsonPropertyName("Date")]
         public string Date { get; set; }
         [JsonPropertyName("TransactionID")]
