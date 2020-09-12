@@ -8,8 +8,8 @@ namespace MyWebApi.Models
     {
         [JsonPropertyName("SourceAccount")]
         public string SourceAccount { get; set; }
-        [JsonPropertyName("DestiantionAccount")]
-        public string DestiantionAccount { get; set; }
+        [JsonPropertyName("DestinationAccount")]
+        public string DestinationAccount { get; set; }
 
         [Ignore]
         [JsonPropertyName("Amount")]

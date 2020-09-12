@@ -71,7 +71,7 @@ namespace MyWebApi.Controllers
                 {
                     var ns = new NodeSearchQuery()
                     {
-                        AccountId = edge.DestiantionAccount
+                        AccountId = edge.DestinationAccount
                     };
                     nodes.UnionWith(elasticService.Search<Node>(ns));
                     edges.Add(edge);
