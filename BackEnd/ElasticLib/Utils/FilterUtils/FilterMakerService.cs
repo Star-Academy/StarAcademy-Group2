@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using ElasticLib.Abstraction;
 using ElasticLib.Filters;
+using Nest;
 using ServiceStack;
 
 namespace ElasticLib.Utils.FilterUtils
@@ -33,10 +34,23 @@ namespace ElasticLib.Utils.FilterUtils
             IEnumerable<PropertyInfo> numericProperties)
         {
             var result = new List<QueryFilter>();
-            result = result.Union(matchProperties.Select(p => MakeMatchFilter(obj, p))).ToList();
-            result = result.Union(dateProperties.Select(p => MakeDateFilter(obj, p))).ToList();
-            result = result.Union(numericProperties.Select(p => MakeNumericFilter(obj, p))).ToList();
+            result = result.Union(ExtractFilters(matchProperties, obj, MakeMatchFilter)).ToList();
+            result = result.Union(ExtractFilters(dateProperties, obj, MakeDateFilter)).ToList();
+            result = result.Union(ExtractFilters(numericProperties, obj, MakeNumericFilter)).ToList();
             return result;
+        }
+
+        private static IEnumerable<QueryFilter> ExtractFilters(IEnumerable<PropertyInfo> properties, IFilterable obj,
+            Func<IFilterable, PropertyInfo, QueryFilter> maker)
+        {
+            return properties
+                .Where(p => p.HasValue(obj))
+                .Select(p => maker(obj, p));
+        }
+        
+        private static bool HasValue(this PropertyInfo property, IFilterable filterable)
+        {
+            return property.GetValue(filterable) != null;
         }
 
         private static QueryFilter MakeMatchFilter(IFilterable filterable, PropertyInfo property)
@@ -50,23 +64,23 @@ namespace ElasticLib.Utils.FilterUtils
 
         private static QueryFilter MakeDateFilter(IFilterable filterable, PropertyInfo propertyInfo)
         {
+            var borders = propertyInfo.GetValue(filterable).ToString().Split(',');
             return new DateRangeQueryFilter()
             {
                 FieldName = propertyInfo.Name.ToCamelCase(),
-                //TODO
-                Min = new DateTime(1970, 2, 1),
-                Max = new DateTime(2030, 1, 1)
+                Min = DateMath.FromString(borders[0]),
+                Max = DateMath.FromString(borders[1])
             };
         }
 
         private static QueryFilter MakeNumericFilter(IFilterable filterable, PropertyInfo propertyInfo)
         {
+            var borders = propertyInfo.GetValue(filterable).ToString().Split(',');
             return new NumericRangeQueryFilter()
             {
                 FieldName = propertyInfo.Name.ToCamelCase(),
-                //TODO
-                Min = float.MinValue,
-                Max = float.MaxValue
+                Min = float.Parse(borders[0]),
+                Max = float.Parse(borders[1])
             };
         }
     }

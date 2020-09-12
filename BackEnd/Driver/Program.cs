@@ -19,13 +19,13 @@ namespace Driver
     {
         static void Main(string[] args)
         {
-            var content = File.ReadAllLines(@"../../../../../Assets/TestAccounts.csv");
+            // var content = File.ReadAllLines(@"../../../../../Assets/TestAccounts.csv");
             // var content = File.ReadAllLines(@"../../../TestDB.csv");
-            var s = CsvToJson.Convert(content);
-
-            var documents = JsonSerializer.Deserialize<List<Node>>(s);
-
-            Console.WriteLine("hello");
+            // var s = CsvToJson.Convert(content);
+            //
+            // var documents = JsonSerializer.Deserialize<List<Node>>(s);
+            //
+            // Console.WriteLine("hello");
 
             // var service = new ElasticService();
             // service.ImportDocument<Node>(s);
@@ -48,17 +48,18 @@ namespace Driver
             // {
             //     Console.WriteLine(account);
             // }
-
-            // var filter = new FilterModel()
-            // {
-            //     FullName = 155546579,
-            //     Date = new DateTime(2020,9,11),
-            //     Money =  16.23
-            // };
-            //
-            // var filters = filter.GetFilters();
-            //
-            // Console.WriteLine("hello");
+            //2030-01-01T00:00:00
+            var filter = new FilterModel()
+            {
+                FullName = "hello",
+                Date = "2015-02-06T00:15:16,2030-05-10T02:02:02",
+                Money = "16.45,1645",
+                NullValue = null
+            };
+            
+            var filters = filter.GetFilters();
+            
+            Console.WriteLine("hello");
         }
     }
 
@@ -83,14 +84,17 @@ namespace Driver
     class FilterModel : IFilterable
     {
         [MatchFilter]
-        public long FullName { get; set; }
+        public string FullName { get; set; }
         
         [DateRangeFilter]
-        public DateMath Date { get; set; }
+        public string Date { get; set; }
         
         [NumericRangeFilter]
-        public double Money { get; set;
+        public string Money { get; set;
         }
+        
+        [MatchFilter]
+        public string NullValue { get; set; }
         
         public double MoenyFirst { get; set; }
     }
