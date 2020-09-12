@@ -45,8 +45,9 @@ namespace ElasticLib.QueryModel
                 return null;
             }
         }
-        //YYYY-MM-dd[T]hh:mm:ss
-        //2030-01-01T00:00:00
+        //YYYY/MM/dd [hh:mm:ss]
+        //2030/01/01 00:00:00
+        //2030/01/01
         [JsonPropertyName("dateFloor")]
         public string DateFloor {get; set;}
         [JsonPropertyName("dateCeiling")]

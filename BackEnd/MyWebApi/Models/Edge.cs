@@ -24,24 +24,7 @@ namespace MyWebApi.Models
         
         [JsonIgnore]
         public long Amount { get; set; }
-
-        // [JsonPropertyName("Amount")]
-        // [Ignore]
-        // public string Amount
-        // {
-        //     get => _amount.Replace(",", "");
-        //     set => _amount = value;
-        // }
-        //
-        // [Ignore]
-        // public string _amount { get; set; }
-        //
-        // [Number(Name = "amount")]
-        // public long LongAmount => long.Parse(Amount);
-
-        // [JsonIgnore]
-        // public long Amount => long.Parse(StringAmount.Replace(",", ""));
-
+        
         [JsonPropertyName("Date")] public string Date { get; set; }
 
         [JsonPropertyName("TransactionID")] public string TransactionId { get; set; }
