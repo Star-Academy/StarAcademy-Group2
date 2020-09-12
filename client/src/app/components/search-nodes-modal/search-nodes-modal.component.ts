@@ -125,7 +125,7 @@ export class SearchNodesModalComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.results = this.searchService.search('a', 'b');
-		this.show = 0;
+		this.show = 3;
 		this.title = 'جستجو';
 	}
 

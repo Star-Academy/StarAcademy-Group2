@@ -1,0 +1,61 @@
+:host {
+	.details-container {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		column-gap: 2rem;
+
+		.item {
+			grid-column: 1 / 3;
+
+			margin-bottom: 1.5rem;
+
+			&.right {
+				grid-column: 1 / 2;
+			}
+
+			&.left {
+				grid-column: 2 / 3;
+			}
+
+			.label,
+			.value {
+				font-size: 1.8rem;
+				font-weight: 300;
+			}
+
+			.label {
+				font-size: 1.6rem;
+				font-weight: 300;
+			}
+
+			.value {
+				display: flex;
+				justify-content: flex-start;
+				align-items: center;
+
+				height: 6rem;
+
+				margin-top: 0.5rem;
+				padding: 1rem 2rem;
+
+				border-radius: 3rem;
+			}
+		}
+	}
+
+	.btn {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		width: 30rem;
+		height: 6rem;
+
+		margin: 2rem auto 0;
+
+		border-radius: 3rem;
+
+		font-size: 2.4rem;
+		font-weight: 700;
+	}
+}
