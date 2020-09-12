@@ -32,43 +32,43 @@
 	transition: 0.7s;
 }
 
-a {
+svg-icon {
 	display: inline-block;
 	position: absolute;
 	font-size: 15px;
 	color: #BBBBBB;
 }
 
-a:nth-child(1) {
+svg-icon:nth-child(1) {
 	top: 6px;
 	left: 45px;
 }
 
-a:nth-child(2) {
+svg-icon:nth-child(2) {
 	top: 24px;
 	left: 77px;
 }
 
-a:nth-child(3) {
+svg-icon:nth-child(3) {
 	top: 58px;
 	left: 76px;
 }
 
-a:nth-child(4) {
+svg-icon:nth-child(4) {
 	top: 78px;
 	left: 42px;
 }
 
-a:nth-child(5) {
+svg-icon:nth-child(5) {
 	top: 58px;
 	left: 10px;
 }
 
-a:nth-child(6) {
+svg-icon:nth-child(6) {
 	top: 23px;
 	left: 12px;
 }
 
-a:hover {
+svg-icon:hover {
 	color: #c87f8a;
 }

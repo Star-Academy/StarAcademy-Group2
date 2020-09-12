@@ -1,11 +1,4 @@
-import {
-	OnInit,
-	AfterContentInit,
-	Component,
-	Input,
-	ViewChild,
-	ViewChildren
-} from '@angular/core';
+import { OnInit, Component, Input, ViewChild } from '@angular/core';
 
 import { NodeId, HoverEvent } from '../../../dependencies/ogma.min.js';
 
@@ -24,6 +17,7 @@ export class GraphComponent implements OnInit {
 	private container;
 
 	@ViewChild('searchNodesModal') searchNodesModal: SearchNodesModalComponent;
+	@ViewChild('radialComponent') radialComponent: RadialNodeMenuComponent;
 
 	@Input() currentLayout: string = 'force';
 	layouts: string[] = [ 'force', 'hierarchical' ];
@@ -31,7 +25,6 @@ export class GraphComponent implements OnInit {
 	hoveredContent: { id: NodeId; type: string };
 	hoveredPosition: { x: number; y: number };
 
-	public radialComponent: RadialNodeMenuComponent = new RadialNodeMenuComponent();
 	public height;
 	public width;
 	public zoom;
@@ -87,8 +80,6 @@ export class GraphComponent implements OnInit {
 	}
 
 	clickedOnSearchNodesButton(e) {
-		console.log(this.searchNodesModal);
-
 		this.searchNodesModal.open();
 	}
 
@@ -127,10 +118,12 @@ export class GraphComponent implements OnInit {
 		ogma.events.onClick((e) => {
 			let target = e.target;
 			if (e.button === 'right' && target && target.isNode) {
-				this.ogmaService.expandNode(target.getId());
-				// this.radialComponent.close();
-				// this.radialComponent.expand(target, this.findGlobalCoorinate(target.getAttribute('x'), this.width, ogma.view.getZoom()),
-				// this.findGlobalCoorinate(target.getAttribute('y'), this.width, ogma.view.getZoom()));
+				this.radialComponent.close();
+				this.radialComponent.expandMenu(
+					target,
+					target.getAttribute('x'),
+					target.getAttribute('y')
+				);
 			} else {
 				this.radialComponent.close();
 			}

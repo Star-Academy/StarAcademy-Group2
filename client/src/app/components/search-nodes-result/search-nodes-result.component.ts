@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { AccountNode } from '../../models/AccountNode';
 import { OgmaService } from 'src/app/services/ogma.service';
 
@@ -8,7 +8,9 @@ import { OgmaService } from 'src/app/services/ogma.service';
 	styleUrls: [ './search-nodes-result.component.scss' ]
 })
 export class SearchNodesResultComponent implements OnInit {
-	@Input() node: AccountNode;
+	@Input() results: Array<AccountNode>;
+
+	@Output() callback: EventEmitter<AccountNode> = new EventEmitter();
 
 	constructor(private ogmaService: OgmaService) {}
 
@@ -21,5 +23,9 @@ export class SearchNodesResultComponent implements OnInit {
 				event.source.getFreeDragPosition().y
 			);
 		}
+	}
+
+	showDetails(node: AccountNode) {
+		this.callback.emit(node);
 	}
 }

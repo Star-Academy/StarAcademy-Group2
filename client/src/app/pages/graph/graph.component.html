@@ -1,5 +1,5 @@
 <search-nodes-modal #searchNodesModal></search-nodes-modal>
-<radial-node-menu></radial-node-menu>
+<radial-node-menu #radialComponent></radial-node-menu>
 
 <nav class="bg-primary text-default-05">
 	<a class="logo text-default-05" href="/">لوگو</a>
@@ -24,9 +24,8 @@
 </nav>
 
 <main>
-	<span class="search-button" (click)="clickedOnSearchNodesButton($event)">
-		<svg-icon key="search"></svg-icon>
-	</span>
+	<round-button btnClass="btn-secondary" icon="search" iconSize="6" (callback)="clickedOnSearchNodesButton($event)">
+	</round-button>
 	<div #ogmaContainer id="ogma-container" (dblclick)="setPosition()" (mousemove)="hoverNode()"></div>
 </main>
 

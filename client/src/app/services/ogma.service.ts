@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import Ogma, { RawNode, RawEdge } from '../../dependencies/ogma.min.js';
+import { GraphService } from './graph.service';
 
 function createNode(id: number): RawNode {
 	return {
@@ -25,8 +26,10 @@ function createEdge(node: RawNode, ids: RawNode['id'][]): RawEdge {
 })
 export class OgmaService {
 	public ogma: Ogma;
+	private sourceNode = null;
+	private targetNode = null;
 
-	constructor() {}
+	constructor(private graphService: GraphService) {}
 
 	public initConfig(configuration = {}) {
 		this.ogma = new Ogma(configuration);
@@ -40,57 +43,67 @@ export class OgmaService {
 		else this.ogma.addNode({ id: idsInGraph.length });
 	}
 
+	public deleteNode(nodeId) {
+		this.ogma.removeNode(nodeId);
+	}
+
 	public runLayout(layout: string = 'force'): Promise<void> {
 		return this.ogma.layouts[layout]({ locate: true });
 	}
 
 	public expandNode(nodeId) {
-		//read json file from back
-		let nodes = [
-			{
-				id: '5',
-				isIncomming: true,
-				attributes: { x: 0, y: 0, color: 'green' }
-			},
-			{
-				id: '6',
-				isIncomming: true,
-				attributes: { x: 60, y: 20, color: 'magenta' }
-			},
-			{
-				id: '7',
-				isIncomming: false,
-				attributes: { x: 30, y: -30, color: 'orange' }
-			}
-		];
+		let jsonResponse = this.graphService.expandRequest('[nodeId]');
+		let nodes = [];
 		let edges = [];
-		nodes.forEach((node) => {
-			edges.push(this.CreateEdge(nodeId, node));
+		jsonResponse.forEach((single) => {
+			single.item1.forEach((node) => nodes.push(this.modifyNode(node)));
+			single.item2.forEach((edge) => edges.push(this.modifyEdge(edge)));
 		});
 
-		this.addNodes(nodes);
-		this.addEdges(edges);
-	}
-
-	private addEdges(edges) {
+		this.ogma.addNodes(nodes);
 		this.ogma.addEdges(edges);
+		this.runLayout();
 	}
 
-	private CreateEdge(nodeId, node) {
-		let edge = { id: undefined, source: undefined, target: undefined };
-		if (node.isIncomming === true) {
-			edge.source = node.id;
-			edge.target = nodeId;
-		} else {
-			edge.source = nodeId;
-			edge.target = node.id;
-		}
-		edge.id = edge.source + '-' + edge.target + new Date().getMilliseconds;
+	private modifyNode(node) {
+		node['id'] = node.AccountID;
+		return node;
+	}
 
+	private modifyEdge(edge) {
+		edge['id'] = edge.TransactionID;
+		edge['source'] = edge.SourceAcount;
+		edge['target'] = edge.DestiantionAccount;
 		return edge;
 	}
 
-	private addNodes(nodes) {
-		this.ogma.addNodes(nodes);
+	lockNodes(nodesList) {
+		nodesList.setAttributes({
+			draggable: false,
+			image: { url: '../../assets/svg/clean_clothes.svg' }
+		});
+	}
+
+	unlockNodes(nodesList) {
+		nodesList.setAttributes({
+			draggable: true,
+			image: { url: null }
+		});
+	}
+
+	setSource(node) {
+		this.sourceNode = node;
+	}
+
+	setTarget(node) {
+		this.targetNode = node;
+	}
+
+	removeSource() {
+		this.sourceNode = null;
+	}
+
+	removeTarget() {
+		this.targetNode = null;
 	}
 }

@@ -1,19 +1,8 @@
 <div class="menu" id="menu">
-	<a href="#">
-		قفل کردن
-	</a>
-	<a href="#">
-		اکسپند
-	</a>
-	<a href="#">
-		حذف
-	</a>
-	<a href="#">
-		انتخاب
-	</a>
-	<a href="#">
-		انتخاب
-	</a>
-	<a href="#">
-	</a>
+	<svg-icon title="expand" key="logout" (click)="expandNode()"></svg-icon>
+	<svg-icon title="delete" key="nodes" (click)="deleteNode()"></svg-icon>
+	<svg-icon title="lock" key="cross" (click)="lockNode()"></svg-icon>
+	<svg-icon title="unlock" key="plus" (click)="unlockNode()"></svg-icon>
+	<svg-icon id="source-select" title="select as source" key="copy" (click)="selectAsSource()"></svg-icon>
+	<svg-icon id="target-select" title="select as target" key="information" (click)="selectAsTarget()"></svg-icon>
 </div>

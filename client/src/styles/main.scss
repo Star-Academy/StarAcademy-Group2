@@ -32,7 +32,7 @@ $font-default;
 
 @font-face {
 	font-family: "Sahel";
-	font-style: bolder;
+	font-style: bold;
 	font-weight: 700;
 	src: url(../assets/fonts/Sahel-Black.ttf);
 }
@@ -85,8 +85,15 @@ a {
 #app.default {
 	color: $color_gray_10;
 
-	input {
-		color: $color_gray_10;
+	.input {
+		&-default {
+			background-color: $color_gray_95;
+			color: $color_gray_25;
+
+			&::placeholder {
+				color: $color_gray_75;
+			}
+		}
 	}
 
 	#snackbar {
@@ -95,6 +102,50 @@ a {
 	}
 
 	.bg {
+		&-default {
+			background-color: $color_white;
+
+			&-95 {
+				background-color: $color_gray_95;
+			}
+
+			&-90 {
+				background-color: $color_gray_90;
+			}
+
+			&-75 {
+				background-color: $color_gray_75;
+			}
+
+			&-60 {
+				background-color: $color_gray_60;
+			}
+
+			&-50 {
+				background-color: $color_gray_50;
+			}
+
+			&-40 {
+				background-color: $color_gray_40;
+			}
+
+			&-25 {
+				background-color: $color_gray_25;
+			}
+
+			&-10 {
+				background-color: $color_gray_10
+			}
+
+			&-05 {
+				background-color: $color_gray_05;
+			}
+
+			&-complement {
+				background-color: $color_black;
+			}
+		}
+
 		&-primary {
 			background-color: $color_blue_cornflower;
 		}
@@ -152,7 +203,11 @@ a {
 		}
 	}
 
-	.button {
+	.btn {
+		border: none;
+
+		cursor: pointer;
+
 		&-primary {
 			background-color: $color_blue_cornflower;
 			color: $color_gray_95;
@@ -162,13 +217,37 @@ a {
 			}
 		}
 
-		&-fade {
-			background-color: $color_gray_90;
+		&-secondary {
+			background-color: $color_gray_95;
 			color: $color_gray_75;
 
 			&:hover {
 				background-color: $color_gray_75;
 				color: $color_gray_95;
+			}
+
+			&-success {
+				&:hover {
+					background-color: transparentize($color_green_emerald, 0.9);
+					color: $color_green_emerald;
+				}
+			}
+
+			&-info {
+				&:hover {
+					background-color: transparentize($color_blue_green, 0.9);
+					color: $color_blue_green;
+				}
+			}
+		}
+
+		&-fade {
+			background-color: $color_gray_25;
+			color: $color_gray_40;
+
+			&:hover {
+				background-color: $color_gray_40;
+				color: $color_gray_60;
 			}
 		}
 	}

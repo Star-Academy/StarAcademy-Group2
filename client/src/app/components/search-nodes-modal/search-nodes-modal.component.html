@@ -1,25 +1,21 @@
-<div id="modal" class="modal" [@modalState]="stateName">
-	<form class="modal-content">
-		<h1>search</h1>
-		<span class="close" (click)="close()">&times;</span>
+<div [class]="'container ' + (show === 0 ? 'closed' : '')">
+	<div class="overlay" [@overlayState]="overlayStateStatus">
+		<round-button btnClass="btn-fade" icon="cross" iconSize="6" (callback)="close()"></round-button>
+	</div>
 
-		<label for="query"><b>Search</b></label>
-		<input type="text" placeholder="Type your query" name="query" required>
-
-		<select required>
-			<option value="CardId">شناسه کارت</option>
-			<option value="AccountId">شناسه حساب</option>
-			<option value="Sheba">شماره شبا</option>
-			<option value="OwnerID">شناسه صاحب حساب</option>
-			<option value="OwnerName">نام صاحب حساب</option>
-			<option value="OwnerFamilyName">نام خانوادگی صاحب حساب</option>
-			<option value="BranchName">نام شعبه</option>
-			<option value="BranchAdress">آدرس شعبه</option>
-			<option value="BranchTelephone">شماره تلفن شعبه</option>
-			<option value="AccountType">نوع حساب</option>
-		</select>
-
-		<button type="submit" (click)="search('salam')" class="btn">Search</button>
-		<search-nodes-result *ngFor="let result of results" [node]="result"></search-nodes-result>
-	</form>
+	<div class='modal bg-default' [@modalState]="modalStateStatus">
+		<div class="head bg-primary text-default-complement">
+			<span (click)="back()">
+				<svg-icon *ngIf="show > 1" key="arrowBack"></svg-icon>
+			</span>
+			<div>{{title}}</div>
+		</div>
+		<div class="body">
+			<search-nodes-form *ngIf="show === 1" (callback)="clickedOnSearchButton($event)">
+			</search-nodes-form>
+			<search-nodes-result *ngIf="show === 2" [results]="results" (callback)="clickedOnDetailsButton($event)">
+			</search-nodes-result>
+			<search-nodes-details *ngIf="show === 3" [node]="results[0]"></search-nodes-details>
+		</div>
+	</div>
 </div>
