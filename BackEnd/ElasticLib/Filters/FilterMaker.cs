@@ -6,16 +6,16 @@ namespace ElasticLib.Filters
 {
     public static class FilterMaker
     {
-        public static IEnumerable<QueryFilter> MakeFilterFromNodeSearchQuery(NodeQuerySearch query)
+        public static IEnumerable<QueryFilter> MakeFilterFromNodeSearchQuery(NodeSearchQuery query)
         {
             if (query != null)
             {
                 var queryFilters = new List<QueryFilter>();
                 queryFilters
-                    .StringPropertyMatchFilter(nameof(NodeQuerySearch.AccountType).ToCamelCase(), query.AccountType)
-                    .StringPropertyMatchFilter(nameof(NodeQuerySearch.BranchAddress).ToCamelCase(), query.BranchAddress)
-                    .StringPropertyMatchFilter(nameof(NodeQuerySearch.BranchName).ToCamelCase(), query.BranchName)
-                    .StringPropertyMatchFilter(nameof(NodeQuerySearch.BranchTelephone).ToCamelCase(),
+                    .StringPropertyMatchFilter(nameof(NodeSearchQuery.AccountType).ToCamelCase(), query.AccountType)
+                    .StringPropertyMatchFilter(nameof(NodeSearchQuery.BranchAddress).ToCamelCase(), query.BranchAddress)
+                    .StringPropertyMatchFilter(nameof(NodeSearchQuery.BranchName).ToCamelCase(), query.BranchName)
+                    .StringPropertyMatchFilter(nameof(NodeSearchQuery.BranchTelephone).ToCamelCase(),
                         query.BranchTelephone);
             }
 

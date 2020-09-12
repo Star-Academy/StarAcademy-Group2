@@ -4,7 +4,7 @@ using ElasticLib.Utils.FilterUtils;
 
 namespace ElasticLib.QueryModel
 {
-    public class NodeQuerySearch : IFilterable
+    public class NodeSearchQuery : IFilterable
     {
         [JsonPropertyName("ownerName")]
         [MatchFilter]
@@ -17,7 +17,7 @@ namespace ElasticLib.QueryModel
         public string BranchName {get; set;}
         [JsonPropertyName("ownerId")]
         [MatchFilter]
-        public long OwnerId {get; set;}
+        public string OwnerId {get; set;}
         [JsonPropertyName("branchAddress")]
         [MatchFilter]
         public string BranchAddress {get; set;}
@@ -32,9 +32,9 @@ namespace ElasticLib.QueryModel
         public string Sheba {get; set;}
         [JsonPropertyName("cardId")]
         [MatchFilter]
-        public long CardId {get; set;}
+        public string CardId {get; set;}
         [MatchFilter]
         [JsonPropertyName("accountId")]
-        public long AccountId {get; set;}
+        public string AccountId {get; set;}
     }
 }

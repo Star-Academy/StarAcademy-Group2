@@ -32,7 +32,7 @@ namespace ElasticLib.QueryModel
         public string DateCeiling {get; set;}
         [JsonPropertyName("transactionId")]
         [MatchFilter]
-        public long TransactionId {get; set;}
+        public string TransactionId {get; set;}
         [MatchFilter]
         [JsonPropertyName("type")]
         public string Type {get; set;}
