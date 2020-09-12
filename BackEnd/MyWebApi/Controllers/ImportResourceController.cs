@@ -18,8 +18,8 @@ namespace MyWebApi.Controllers
         }
 
         [HttpPost]
-        [Route("import")]
-        public IActionResult Import([FromBody] string url)
+        [Route("importAccounts")]
+        public IActionResult ImportAccounts([FromBody] string url)
         {
             try
             {
@@ -28,6 +28,23 @@ namespace MyWebApi.Controllers
             }
             catch (Exception e)
             {
+                Console.WriteLine(e);
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        [Route("importTransactions")]
+        public IActionResult ImportTransactions([FromBody] string url)
+        {
+            try
+            {
+                elasticService.ImportDocument<Edge>(CsvToJson.Convert(new LocalSourceReader().Read(url)));
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
                 return BadRequest();
             }
         }

@@ -15,7 +15,7 @@ namespace MyWebApi.Models
         public string BranchName { get; set; }
         [JsonPropertyName("OwnerID")]
         public string OwnerId { get; set; }
-        [JsonPropertyName("BranchAdress")]
+        [JsonPropertyName("BranchAddress")]
         public string BranchAddress { get; set; }
         [JsonPropertyName("BranchTelephone")]
         public string BranchTelephone { get; set; }
