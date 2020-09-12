@@ -4,7 +4,7 @@ namespace MyWebApi.Models
 {
     public class Edge
     {
-        [JsonPropertyName("SourceAcount")]
+        [JsonPropertyName("SourceAccount")]
         public string SourceAccount { get; set; }
         [JsonPropertyName("DestiantionAccount")]
         public string DestiantionAccount { get; set; }

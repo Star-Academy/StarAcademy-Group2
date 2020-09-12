@@ -69,7 +69,7 @@ namespace Driver
         public string BranchName { get; set; }
         [JsonPropertyName("OwnerID")]
         public string OwnerId { get; set; }
-        [JsonPropertyName("BranchAdress")]
+        [JsonPropertyName("BranchAddress")]
         public string BranchAddress { get; set; }
         public string BranchTelephone { get; set; }
         public string AccountType { get; set; }
