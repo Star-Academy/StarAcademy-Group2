@@ -12,6 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SourceReaderLib\SourceReaderLib.csproj" />
     <ProjectReference Include="..\ElasticLib\ElasticLib.csproj" />
+    <ProjectReference Include="..\GraphLogicLib\GraphLogicLib.csproj" />
   </ItemGroup>
 
 
