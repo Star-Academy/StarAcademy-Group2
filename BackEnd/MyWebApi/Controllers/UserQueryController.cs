@@ -5,6 +5,7 @@ using ElasticLib.Abstraction;
 using MyWebApi.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MyWebApi.Controllers
 {
@@ -113,5 +114,31 @@ namespace MyWebApi.Controllers
             }
             return output;
         }
+
+
+        // To improve expand
+
+
+        
+        // [HttpPost]
+        // [Route("testnewexpand")]
+        // public ActionResult<List<Tuple<HashSet<Node>, HashSet<Edge>>>> Sth(/*[FromBody] string json*/)
+        // {
+        //     // var expandQuery = JsonSerializer.Deserialize<ExpandQuery>(json);
+        //     var output = new List<Tuple<HashSet<Node>, HashSet<Edge>>>();
+        //     var a = String.Join(' ',new List<string>(){
+        //         "6039548046",
+        //         "9862369812"
+        //     });
+        //     var outcomingEdgeSearchQuery = new EdgeSearchQuery()
+        //         {
+        //             SourceAccount = a
+        //         };
+        //     var b = elasticService.Search<Edge>(outcomingEdgeSearchQuery);
+        //     var g = from p in b
+        //             group p by p.SourceAccount into something
+        //             select new {Source = something.Key , Edges = something.ToList() };
+        //     return output;
+        // }
     }
 }
