@@ -36,6 +36,39 @@ namespace MyWebApi.Controllers
                 return BadRequest(e.Message);
             }
         }
+        
+        /*
+         *  testing ---------------------------------
+         */
+        
+        // [HttpPost]
+        // [Route("searchEdge")]
+        // public ActionResult<IEnumerable<Edge>> EdgeSearch()
+        // {
+        //     try
+        //     {
+        //         var result = elasticService.Search<Edge>(new EdgeSearchQuery()
+        //         {
+        //             SourceAccount = "6039548046",
+        //             DestinationAccount = "5718373092"
+        //             // AmountCeiling = "200000000",
+        //             // AmountFloor = "1",
+        //             // DateFloor = "1399/04/22 00:00:00",
+        //             // DateCeiling = "1399/04/27 00:00:00"
+        //         });
+        //         return Ok(result);
+        //     }
+        //     //TODO
+        //     //dummy code
+        //     catch (Exception e)
+        //     {
+        //         return BadRequest(e.Message);
+        //     }
+        // }
+        
+        /*
+         *  end of testinggggg ----------------------
+         */
 
         [HttpPost]
         [Route("expand")]
