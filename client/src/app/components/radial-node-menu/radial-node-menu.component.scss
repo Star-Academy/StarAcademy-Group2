@@ -57,15 +57,15 @@
 		.menu-item {
 			@extend %ball;
 
-			&:hover {
-				background: $color_white;
-				color: $color_orange_supernova;
-			}
-
 			@for $i from 1 through $menu-items {
 				&:nth-child(#{$i}) {
 					transition-duration: 180ms;
 				}
+			}
+
+			&:hover {
+				background: $color_white;
+				color: $color_orange_supernova;
 			}
 		}
 
@@ -83,6 +83,13 @@
 
 						transition-duration: 1000ms+(100ms*$i);
 					}
+				}
+
+				svg-icon {
+					position: absolute;
+
+					top: -1.7rem;
+					left: 1.2rem;
 				}
 			}
 		}

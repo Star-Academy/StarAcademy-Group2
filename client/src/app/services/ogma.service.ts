@@ -3,25 +3,6 @@ import Ogma, { RawNode, RawEdge } from '../../dependencies/ogma.min.js';
 import { GraphService } from './graph.service';
 import { AccountNode } from '../models/AccountNode.js';
 
-function createNode(id: number): RawNode {
-	return {
-		id,
-		attributes: {
-			color: id % 2 ? 'purple' : 'orange'
-		}
-	};
-}
-
-function createEdge(node: RawNode, ids: RawNode['id'][]): RawEdge {
-	const randomIndex = Math.floor(Math.random() * ids.length);
-	const otherNode = ids[randomIndex];
-	return {
-		id: `${otherNode}-${node.id}`,
-		source: otherNode,
-		target: node.id
-	};
-}
-
 @Injectable({
 	providedIn: 'root'
 })
