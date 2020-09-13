@@ -2,7 +2,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ElasticLib\ElasticLib.csproj" />
-    <ProjectReference Include="..\Driver\Driver.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

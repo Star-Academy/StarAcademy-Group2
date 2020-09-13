@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using ElasticLib.QueryModel;
 using ElasticLib.Abstraction;
-using MyWebApi.Models;
+using ElasticLib.Models;
 using System;
 using System.Collections.Generic;
 

@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using Nest;
 
-namespace MyWebApi.Models
+namespace ElasticLib.Models
 {
     public class Edge
     {

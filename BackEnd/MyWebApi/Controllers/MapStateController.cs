@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using MyWebApi.Models;
+using ElasticLib.Models;
 using System.Collections.Generic;
 using ElasticLib.Abstraction;
 using ElasticLib;

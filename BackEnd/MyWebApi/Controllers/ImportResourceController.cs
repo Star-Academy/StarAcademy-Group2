@@ -1,7 +1,7 @@
 using System;
 using ElasticLib.Abstraction;
 using Microsoft.AspNetCore.Mvc;
-using MyWebApi.Models;
+using ElasticLib.Models;
 using SourceReaderLib;
 
 namespace MyWebApi.Controllers

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace MyWebApi.Models
+namespace ElasticLib.Models
 {
     public class Node
     {
