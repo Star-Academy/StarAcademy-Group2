@@ -4,9 +4,19 @@
 	display: flex;
 	align-items: flex-start;
 
+	search-nodes-modal {
+		z-index: 9;
+	}
+
+	radial-node-menu {
+		z-index: 8;
+	}
+
 	nav {
 		display: grid;
 		grid-template-rows: auto 1fr;
+
+		z-index: 2;
 
 		width: 30rem;
 		height: 100vh;
@@ -62,9 +72,10 @@
 
 	main {
 		position: relative;
+		z-index: 1;
 
 		width: 100%;
-		height: 100%;
+		height: 100vh;
 
 		round-button {
 			position: fixed;
@@ -74,6 +85,11 @@
 		}
 
 		#ogma-container {
+			position: fixed;
+			top: 0;
+			left: 0;
+			z-index: 1;
+
 			width: 100%;
 			height: 100%;
 
@@ -83,25 +99,67 @@
 		}
 	}
 
-	.text-center {
+	.dev-tools {
 		position: fixed;
 		left: 0;
 		bottom: 0;
+		z-index: 3;
+		direction: ltr;
+
+		padding: 2rem;
+
+		border-radius: 0 2rem 0 0;
+
+		font-size: 1.8rem;
+
+		.title {
+			font-size: 2.4rem;
+			font-weight: 700;
+		}
+
+		&>div {
+			margin-top: 2rem;
+		}
+
+		.label {
+			font-weight: 300;
+		}
+
+		.value {}
+
+		.nodes-count {}
+
+		.add-node {
+			button {
+				background-color: #f2f2f2;
+
+				width: 100%;
+
+				padding: 1rem 2rem;
+
+				border-radius: 2rem;
+
+				font-weight: 700;
+
+				&:hover {
+					background-color: white;
+				}
+			}
+		}
+
+		.layouts {
+			.value {
+				margin-left: 1rem;
+
+				input {
+					border: none;
+					outline: none;
+				}
+
+				label {
+					margin-left: 0.5rem;
+				}
+			}
+		}
 	}
-}
-
-search-nodes-modal {
-	z-index: 9;
-}
-
-app-radial-menu {
-	z-index: 8;
-}
-
-nav {
-	z-index: 1;
-}
-
-main {
-	z-index: 1;
 }

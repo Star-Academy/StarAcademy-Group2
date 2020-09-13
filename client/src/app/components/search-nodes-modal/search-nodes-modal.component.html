@@ -1,6 +1,6 @@
 <div [class]="'container ' + (show === 0 ? 'closed' : '')">
-	<div class="overlay" [@overlayState]="overlayStateStatus">
-		<round-button btnClass="btn-fade" icon="cross" iconSize="6" (callback)="close()"></round-button>
+	<div class="overlay" [@overlayState]="overlayStateStatus" (click)="close()">
+		<round-button btnClass="btn-fade" icon="cross" iconSize="6"></round-button>
 	</div>
 
 	<div class='modal bg-default' [@modalState]="modalStateStatus">
@@ -13,9 +13,11 @@
 		<div class="body">
 			<search-nodes-form *ngIf="show === 1" (callback)="clickedOnSearchButton($event)">
 			</search-nodes-form>
-			<search-nodes-result *ngIf="show === 2" [results]="results" (callback)="clickedOnDetailsButton($event)">
+			<search-nodes-result *ngIf="show === 2" [results]="results"
+				(addNodeCallback)="clickedOnAddNodeButton($event)" (detailsCallback)="clickedOnDetailsButton($event)">
 			</search-nodes-result>
-			<search-nodes-details *ngIf="show === 3" [node]="results[0]"></search-nodes-details>
+			<search-nodes-details *ngIf="show === 3" [node]="activeNode" (callback)="clickedOnAddNodeButton($event)">
+			</search-nodes-details>
 		</div>
 	</div>
 </div>

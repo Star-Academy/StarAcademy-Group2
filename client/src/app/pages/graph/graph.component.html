@@ -1,4 +1,4 @@
-<search-nodes-modal #searchNodesModal></search-nodes-modal>
+<search-nodes-modal #searchNodesModal (callback)="clickedOnAddNodeButton($event)"></search-nodes-modal>
 <radial-node-menu #radialComponent></radial-node-menu>
 
 <nav class="bg-primary text-default-05">
@@ -26,19 +26,26 @@
 <main>
 	<round-button btnClass="btn-secondary" icon="search" iconSize="6" (callback)="clickedOnSearchNodesButton($event)">
 	</round-button>
-	<div #ogmaContainer id="ogma-container" (dblclick)="setPosition()" (mousemove)="hoverNode()"></div>
+	<div #ogmaContainer id="ogma-container"></div>
 </main>
 
-<div class="text-center">
-	Number of nodes: {{countNodes()}}
-	<form class="form">
-		<h3>Action</h3>
-		<button class="button-primary" (click)="addNode()">Add a node</button>
-		<h3>Layout:</h3>
-		<div *ngFor="let layout of layouts">
-			<input [id]="layout" type="radio" name="layout" [(ngModel)]="currentLayout" [value]="layout"
-				(change)="runLayout()" />
-			<label [attr.for]="layout">{{layout | titlecase}} layout</label>
+<div *ngIf="devTools" class="dev-tools bg-primary text-default-complement">
+	<span class="title">DevTools</span>
+	<div class="nodes-count">
+		<span class="label text-default-10">Nodes Count: </span>
+		<span class="value">{{countNodes()}}</span>
+	</div>
+	<div class="add-node">
+		<button class="btn text-primary" (click)="addNode()">Add a node</button>
+	</div>
+	<div class="layouts">
+		<span class="label text-default-10">Layouts</span>
+		<div class="value">
+			<div *ngFor="let layout of layouts">
+				<input [id]="layout" type="radio" name="layout" [(ngModel)]="currentLayout" [value]="layout"
+					(change)="runLayout()" />
+				<label [attr.for]="layout">{{layout | titlecase}}</label>
+			</div>
 		</div>
-	</form>
+	</div>
 </div>

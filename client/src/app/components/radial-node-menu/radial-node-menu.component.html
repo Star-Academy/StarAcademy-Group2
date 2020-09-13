@@ -1,8 +1,43 @@
-<div class="menu" id="menu">
-	<svg-icon title="expand" key="logout" (click)="expandNode()"></svg-icon>
-	<svg-icon title="delete" key="nodes" (click)="deleteNode()"></svg-icon>
-	<svg-icon title="lock" key="cross" (click)="lockNode()"></svg-icon>
-	<svg-icon title="unlock" key="plus" (click)="unlockNode()"></svg-icon>
-	<svg-icon id="source-select" title="select as source" key="copy" (click)="selectAsSource()"></svg-icon>
-	<svg-icon id="target-select" title="select as target" key="information" (click)="selectAsTarget()"></svg-icon>
+<div #menu class="open" id="menu" [@menuState]="menuStateStatus">
+	<!-- <input type="checkbox" id="menu-toggle" /> -->
+
+	<span class="menu-item" (click)="expandNode()">
+		<svg-icon title="Expand" key="logout"></svg-icon>
+	</span>
+	<span class="menu-item" (click)="deleteNode()">
+		<svg-icon title="Delete" key="nodes"></svg-icon>
+	</span>
+	<span class="menu-item" (click)="lockNode()">
+		<svg-icon title="Lock" key="cross"></svg-icon>
+	</span>
+	<span class="menu-item" (click)="unlockNode()">
+		<svg-icon title="Unlock" key="plus"></svg-icon>
+	</span>
+	<span class="menu-item" (click)="selectAsSource()">
+		<svg-icon id="source-select" title="Select as Source" key="copy"></svg-icon>
+	</span>
+	<span class="menu-item" (click)="selectAsTarget()">
+		<svg-icon id="target-select" title="Select as Destination" key="information"></svg-icon>
+	</span>
 </div>
+
+<!-- filters -->
+<svg class="filters" xmlns="http://www.w3.org/2000/svg" version="1.1">
+	<defs>
+		<filter id="shadowed-goo">
+			<feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10" />
+			<feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
+			<feGaussianBlur in="goo" stdDeviation="3" result="shadow" />
+			<feColorMatrix in="shadow" mode="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 -0.2"
+				result="shadow" />
+			<feOffset in="shadow" dx="1" dy="1" result="shadow" />
+			<feComposite in2="shadow" in="goo" result="goo" />
+			<feComposite in2="goo" in="SourceGraphic" result="mix" />
+		</filter>
+		<filter id="goo">
+			<feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10" />
+			<feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
+			<feComposite in2="goo" in="SourceGraphic" result="mix" />
+		</filter>
+	</defs>
+</svg>

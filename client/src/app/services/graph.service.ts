@@ -7,6 +7,12 @@ import { HttpClient } from '@angular/common/http';
 export class GraphService {
 	constructor(private httpClient: HttpClient) {}
 
+	// public expandRequest(nodeIds, response) {
+	//     this.httpClient.post<any>('https://localhost:5001/search/', nodeIds).subscribe((result) => {
+	//       response = result;
+	//     });
+	// }
+
 	public expandRequest(nodeIds) {
 		let temp = [
 			{
@@ -104,13 +110,4 @@ export class GraphService {
 		];
 		return temp;
 	}
-
-	// this is correct function
-	// public async expandRequest(nodeIds: string): Promise<JSON> {
-	//   return new Promise<JSON>((resolve) => {
-	//     this.httpClient.post('https://localhost:5001/search/', nodeIds).subscribe((result: JSON) => {
-	//       resolve(result);
-	//     });
-	//   });
-	// }
 }

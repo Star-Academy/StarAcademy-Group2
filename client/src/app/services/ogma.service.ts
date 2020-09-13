@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import Ogma, { RawNode, RawEdge } from '../../dependencies/ogma.min.js';
 import { GraphService } from './graph.service';
+import { AccountNode } from '../models/AccountNode.js';
 
 function createNode(id: number): RawNode {
 	return {
@@ -33,14 +34,62 @@ export class OgmaService {
 
 	public initConfig(configuration = {}) {
 		this.ogma = new Ogma(configuration);
+		this.ogma.setOptions({ zoom: { enabled: false } });
+
+		this.ogma.styles.setSelectedNodeAttributes({
+			color: false,
+			outline: false,
+			outerStroke: {
+				color: 'blue'
+			}
+		});
+
+		this.ogma.styles.setHoveredNodeAttributes({
+			color: false,
+			outline: false,
+			outerStroke: {
+				color: 'green'
+			}
+		});
+
+		this.addRule();
 	}
 
-	public addNode(x?: number, y?: number): void {
-		const idsInGraph = this.ogma.getNodes().getId();
+	public addRule() {
+		this.ogma.styles.addRule({
+			nodeAttributes: {
+				text: (node) => {
+					return node.getId();
+				}
+			},
+			edgeAttributes: {
+				text: (node) => {
+					return node.getData('Amount');
+				},
+				shape: { head: 'arrow' }
+			}
+		});
+	}
 
-		if (x && y)
-			this.ogma.addNode({ id: idsInGraph.length, attribute: { x, y } });
-		else this.ogma.addNode({ id: idsInGraph.length });
+	public addNode(data?: AccountNode, attributes?): void {
+		let id;
+
+		if (data) id = data.accountId;
+		else id = this.ogma.getNodes().getId().length;
+
+		attributes = {
+			shape: 'square',
+			color: 'transparent',
+			outerStroke: 'transparent',
+			innerStroke: 'transparent',
+			image: {
+				fit: true,
+				url: '../../../assets/svg/washing_machine.svg'
+			},
+			...attributes
+		};
+
+		this.ogma.addNode({ data, attributes, id });
 	}
 
 	public deleteNode(nodeId) {
@@ -52,7 +101,11 @@ export class OgmaService {
 	}
 
 	public expandNode(nodeId) {
+		// let jsonResponse;
+		// this.graphService.expandRequest('[nodeId]', jsonResponse);
+
 		let jsonResponse = this.graphService.expandRequest('[nodeId]');
+
 		let nodes = [];
 		let edges = [];
 		jsonResponse.forEach((single) => {
@@ -66,28 +119,30 @@ export class OgmaService {
 	}
 
 	private modifyNode(node) {
-		node['id'] = node.AccountID;
-		return node;
+		let temp = {};
+		temp['id'] = node.AccountID;
+		temp['data'] = node;
+		return temp;
 	}
 
 	private modifyEdge(edge) {
-		edge['id'] = edge.TransactionID;
-		edge['source'] = edge.SourceAcount;
-		edge['target'] = edge.DestiantionAccount;
-		return edge;
+		let temp = {};
+		temp['id'] = edge.TransactionID;
+		temp['source'] = edge.SourceAcount;
+		temp['target'] = edge.DestiantionAccount;
+		temp['data'] = edge;
+		return temp;
 	}
 
 	lockNodes(nodesList) {
 		nodesList.setAttributes({
-			draggable: false,
-			image: { url: '../../assets/svg/clean_clothes.svg' }
+			draggable: false
 		});
 	}
 
 	unlockNodes(nodesList) {
 		nodesList.setAttributes({
-			draggable: true,
-			image: { url: null }
+			draggable: true
 		});
 	}
 

@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { AccountNode } from '../../models/AccountNode';
 import { OgmaService } from 'src/app/services/ogma.service';
+import { GraphService } from 'src/app/services/graph.service';
 
 @Component({
 	selector: 'search-nodes-result',
@@ -10,22 +11,28 @@ import { OgmaService } from 'src/app/services/ogma.service';
 export class SearchNodesResultComponent implements OnInit {
 	@Input() results: Array<AccountNode>;
 
-	@Output() callback: EventEmitter<AccountNode> = new EventEmitter();
+	@Output() addNodeCallback = new EventEmitter();
+	@Output() detailsCallback = new EventEmitter();
 
 	constructor(private ogmaService: OgmaService) {}
 
 	ngOnInit(): void {}
 
-	addNodeToGraph(event) {
-		if (event.source.getFreeDragPosition().y < -250) {
-			this.ogmaService.addNode(
-				event.source.getFreeDragPosition().x,
-				event.source.getFreeDragPosition().y
-			);
-		}
+	addNodeToGraph(e, node: AccountNode) {
+		this.addNodeCallback.emit({
+			node,
+			attributes: {
+				x: e.source.getFreeDragPosition().x,
+				y: e.source.getFreeDragPosition().y
+			}
+		});
 	}
 
-	showDetails(node: AccountNode) {
-		this.callback.emit(node);
+	clickedOnAddNodeButton(node: AccountNode) {
+		this.addNodeCallback.emit({ node });
+	}
+
+	clickedOnDetailsButton(node: AccountNode) {
+		this.detailsCallback.emit({ node });
 	}
 }

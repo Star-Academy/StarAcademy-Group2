@@ -1,9 +1,10 @@
 <div class="result bg-default-95" *ngFor="let node of results" cdkDrag (cdkDragEnded)="addNodeToGraph($event)">
 	<span class="title text-default-40">{{node.ownerName + " " + node.ownerFamilyName}}</span>
 	<div class="icons">
-		<round-button btnClass="btn-secondary btn-secondary-success" icon="plus" iconSize="3"></round-button>
+		<round-button btnClass="btn-secondary btn-secondary-success" icon="plus" iconSize="3"
+			(callback)="clickedOnAddNodeButton(node)"></round-button>
 		<round-button btnClass="btn-secondary btn-secondary-info" icon="information" iconSize="3"
-			(callback)="showDetails(node)">
+			(callback)="clickedOnDetailsButton(node)">
 		</round-button>
 	</div>
 </div>

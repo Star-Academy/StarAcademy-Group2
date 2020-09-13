@@ -1,74 +1,94 @@
-.toggle {
-	background-color: #c87f8a;
-	text-align: center;
-	height: 20px;
-	width: 20px;
-	border-radius: 50%;
-	position: absolute;
-	margin: auto;
-	top: 0px;
-	bottom: 0px;
-	left: 0px;
-	right: 0px;
-}
+@import "../../../styles/config";
+@import "../../../styles/math";
 
+:host {
+	background-color: gray;
 
+	$pi: 3.14;
 
-.menu {
-	background-color: transparent;
-	height: 100px;
-	width: 100px;
-	transform: scale(0);
-	border-radius: 50%;
-	border-style: double;
-	border-color: #c87f8a;
-	position: absolute;
-	margin: auto;
-	top: 0px;
-	bottom: 0px;
-	left: 0px;
-	right: 0px;
-	z-index: 100;
-	transition: 0.7s;
-}
+	$menu-items: 6+1;
+	$open-distance: 6rem;
+	$opening-angle: $pi*2;
 
-svg-icon {
-	display: inline-block;
-	position: absolute;
-	font-size: 15px;
-	color: #BBBBBB;
-}
+	%goo {
+		filter: url('#goo');
+	}
 
-svg-icon:nth-child(1) {
-	top: 6px;
-	left: 45px;
-}
+	%ball {
+		background: $color_orange_supernova;
+		color: $color_white;
 
-svg-icon:nth-child(2) {
-	top: 24px;
-	left: 77px;
-}
+		position: absolute;
+		top: 2rem;
 
-svg-icon:nth-child(3) {
-	top: 58px;
-	left: 76px;
-}
+		transform: translate3d(0, 0, 0);
 
-svg-icon:nth-child(4) {
-	top: 78px;
-	left: 42px;
-}
+		width: 4rem;
+		height: 4rem;
 
-svg-icon:nth-child(5) {
-	top: 58px;
-	left: 10px;
-}
+		border-radius: 100%;
 
-svg-icon:nth-child(6) {
-	top: 23px;
-	left: 12px;
-}
+		text-align: center;
+		line-height: 8rem;
 
-svg-icon:hover {
-	color: #c87f8a;
+		transition: transform ease-out 200ms;
+	}
+
+	#menu {
+		@extend %goo;
+		$width: 38rem;
+		$height: 25rem;
+
+		position: absolute;
+
+		display: none;
+
+		width: $width;
+		height: $height;
+
+		margin-left: -$width/2;
+		padding-top: 2rem;
+		padding-left: $width/2;
+
+		font-size: 2rem;
+
+		text-align: left;
+
+		.menu-item {
+			@extend %ball;
+
+			&:hover {
+				background: $color_white;
+				color: $color_orange_supernova;
+			}
+
+			@for $i from 1 through $menu-items {
+				&:nth-child(#{$i}) {
+					transition-duration: 180ms;
+				}
+			}
+		}
+
+		&.open {
+			display: block;
+
+			.menu-item {
+				transition-timing-function: cubic-bezier(0.935, 0.000, 0.340, 1.330);
+
+				@for $i from 1 through $menu-items {
+					$angle: (($pi - $opening-angle)/2)+(($opening-angle/($menu-items - 1))*($i - 1));
+
+					&:nth-child(#{$i}) {
+						transform: translate3d(cos($angle)*$open-distance, sin($angle)*$open-distance, 0);
+
+						transition-duration: 1000ms+(100ms*$i);
+					}
+				}
+			}
+		}
+	}
+
+	.filters {
+		display: none;
+	}
 }

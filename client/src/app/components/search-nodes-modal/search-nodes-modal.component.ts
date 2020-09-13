@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import {
 	trigger,
 	style,
@@ -117,15 +117,17 @@ import { AccountNode } from '../../models/AccountNode';
 export class SearchNodesModalComponent implements OnInit {
 	@Input() show: number;
 
+	@Output() callback = new EventEmitter();
+
 	title: string;
 	results: Array<AccountNode> = [];
-	requestedDetailNode: AccountNode;
+	activeNode: AccountNode;
 
 	constructor(private searchService: SearchNodesService) {}
 
 	ngOnInit(): void {
 		this.results = this.searchService.search('a', 'b');
-		this.show = 3;
+		this.show = 0;
 		this.title = 'جستجو';
 	}
 
@@ -168,10 +170,15 @@ export class SearchNodesModalComponent implements OnInit {
 		this.results = this.searchService.search(e.field, e.query);
 	}
 
+	clickedOnAddNodeButton(e) {
+		this.close();
+		this.callback.emit(e);
+	}
+
 	clickedOnDetailsButton(e) {
 		this.show = 3;
 		this.title = 'جزئیات';
 
-		this.requestedDetailNode = e.node;
+		this.activeNode = e.node;
 	}
 }

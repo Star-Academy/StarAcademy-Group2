@@ -19,46 +19,52 @@ export class GraphComponent implements OnInit {
 	@ViewChild('searchNodesModal') searchNodesModal: SearchNodesModalComponent;
 	@ViewChild('radialComponent') radialComponent: RadialNodeMenuComponent;
 
+	// TODO: Remove
 	@Input() currentLayout: string = 'force';
+
+	// TODO: Remove
 	layouts: string[] = [ 'force', 'hierarchical' ];
 
-	hoveredContent: { id: NodeId; type: string };
-	hoveredPosition: { x: number; y: number };
-
-	public height;
-	public width;
-	public zoom;
+	devTools: boolean = true;
+	isMenuOn = false;
 
 	constructor(private ogmaService: OgmaService) {}
 
 	ngOnInit() {
 		this.ogmaService.initConfig({
 			options: {
-				backgroundColor: 'gray',
+				backgroundColor: '#f2f2f2',
 				directedEdges: true,
 				minimumWidth: '800',
 				minimumHeight: '600'
 			}
 		});
 
-		this.ogmaService.ogma.events.onHover(({ x, y, target }: HoverEvent) => {
-			if (target.isNode) {
-				this.hoveredContent = {
-					id: target.getId(),
-					type: target.getAttribute('color')
-				};
-				this.hoveredPosition = { x, y: y + 20 };
+		this.ogmaService.ogma.events.onClick((e) => {
+			this.isMenuOn = this.radialComponent.close();
+
+			let target = e.target;
+			if (e.button === 'right' && target && target.isNode)
+				this.isMenuOn = this.radialComponent.expandMenu(target);
+		});
+
+		this.ogmaService.ogma.events.onZoomProgress((e) => {
+			if (this.isMenuOn) {
+				this.radialComponent.changeOnZooming();
 			}
 		});
 
-		this.ogmaService.ogma.events.onUnhover((_: HoverEvent) => {
-			this.hoveredContent = null;
+		this.ogmaService.ogma.events.onHover(({ target }: HoverEvent) => {
+			if (target.isNode) {
+				target.setAttributes({ outerStroke: { color: 'green' } });
+			}
 		});
 
-		this.width = Number(this.ogmaService.ogma.view.get().width);
-		this.height = Number(this.ogmaService.ogma.view.get().height);
-
-		this.setOnClickListener(this.ogmaService.ogma);
+		this.ogmaService.ogma.events.onUnhover(({ target }: HoverEvent) => {
+			if (target.isNode) {
+				target.setAttributes({ outerStroke: null });
+			}
+		});
 	}
 
 	ngAfterContentInit() {
@@ -66,13 +72,17 @@ export class GraphComponent implements OnInit {
 		return this.runLayout();
 	}
 
-	addNode(): Promise<void> {
+	// TODO: Remove
+	addNode() {
 		this.ogmaService.addNode();
-		return this.runLayout();
+
+		this.isMenuOn = this.radialComponent.close();
+
+		this.runLayout();
 	}
 
-	runLayout(): Promise<void> {
-		return this.ogmaService.runLayout(this.currentLayout);
+	runLayout() {
+		this.ogmaService.runLayout(this.currentLayout);
 	}
 
 	countNodes(): number {
@@ -83,67 +93,16 @@ export class GraphComponent implements OnInit {
 		this.searchNodesModal.open();
 	}
 
-	setPosition() {
-		this.lockNodes(this.ogmaService.ogma.getSelectedNodes());
-		this.unlockNodes(this.ogmaService.ogma.getNonSelectedNodes());
+	clickedOnAddNodeButton(e) {
+		if (e.attributes) this.ogmaService.addNode(e.node, e.attributes);
+		else this.ogmaService.addNode(e.node);
 	}
 
-	lockNodes(nodesList) {
-		nodesList.setAttributes({
-			draggable: false,
-			image: { url: '../assets/lock.png' }
-		});
+	lockNodes(nodes) {
+		this.ogmaService.lockNodes(nodes);
 	}
 
-	unlockNodes(nodesList) {
-		nodesList.setAttributes({
-			draggable: true,
-			image: { url: null }
-		});
-	}
-
-	hoverNode() {
-		const element = this.ogmaService.ogma.getHoveredElement();
-		this.ogmaService.ogma.getNodes().setAttributes({
-			color: 'gray',
-			radius: 5
-		});
-		this.ogmaService.ogma.getEdges().setAttribute('color', 'gray');
-		if (element && element.isNode) {
-			element.setAttribute('radius', 7);
-		}
-	}
-
-	public setOnClickListener(ogma) {
-		ogma.events.onClick((e) => {
-			let target = e.target;
-			if (e.button === 'right' && target && target.isNode) {
-				this.radialComponent.close();
-				this.radialComponent.expandMenu(
-					target,
-					target.getAttribute('x'),
-					target.getAttribute('y')
-				);
-			} else {
-				this.radialComponent.close();
-			}
-		});
-	}
-
-	private findGlobalCoordinate(x, length, zoom) {
-		return (Number(x) - length / 2) / +zoom;
-	}
-
-	public addEdge(ogma) {
-		var e = {
-			id: 'e0',
-			source: 'n0',
-			target: 'n1',
-			attributes: {
-				shape: 'arrow'
-			}
-		};
-
-		ogma.addEdge(e);
+	unlockNodes(nodes) {
+		this.ogmaService.unlockNodes(nodes);
 	}
 }
