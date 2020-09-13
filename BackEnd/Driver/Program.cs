@@ -13,8 +13,6 @@ using ElasticLib.Utils.FilterUtils;
 using Nest;
 using SourceReaderLib;
 
-using MyWebApi;
-
 namespace Driver
 {
     class Program
