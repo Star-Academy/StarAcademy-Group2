@@ -1,0 +1,298 @@
+@import "./config";
+
+/************ REMOTE FONTS ************/
+
+// Roboto
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+/**************** FONTS ***************/
+
+$font_sahel: "Sahel";
+$font-roboto: "Roboto";
+$font-default: sans-serif;
+$font-all: $font_sahel,
+$font-roboto,
+$font-default;
+
+/************* FONT FACES *************/
+
+@font-face {
+	font-family: "Sahel";
+	font-style: normal;
+	font-weight: 300;
+	src: url(../assets/fonts/Sahel.ttf);
+}
+
+@font-face {
+	font-family: "Sahel";
+	font-style: bold;
+	font-weight: 500;
+	src: url(../assets/fonts/Sahel-Bold.ttf);
+}
+
+@font-face {
+	font-family: "Sahel";
+	font-style: bold;
+	font-weight: 700;
+	src: url(../assets/fonts/Sahel-Black.ttf);
+}
+
+/**************** RESET ***************/
+
+* {
+	box-sizing: border-box;
+
+	margin: 0;
+	padding: 0;
+
+	&:focus {
+		outline: none;
+	}
+}
+
+html {
+	font-family: $font_all;
+	font-size: 62.5%;
+	font-weight: 300;
+}
+
+body {
+	direction: rtl;
+}
+
+a {
+	text-decoration: none;
+}
+
+*::-webkit-scrollbar {
+	width: 1rem;
+	height: 1rem;
+}
+
+*::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+	background: $color_gray_75;
+
+	border: none;
+	border-radius: 1rem;
+}
+
+/********** THEMES **********/
+#app.default {
+	color: $color_gray_10;
+
+	.input {
+		&-default {
+			background-color: $color_gray_95;
+			color: $color_gray_25;
+
+			&::placeholder {
+				color: $color_gray_75;
+			}
+		}
+	}
+
+	#snackbar {
+		background-color: $color_blue_cornflower;
+		color: $color_white;
+
+		&.error {
+			background-color: $color_red_flamingo;
+		}
+	}
+
+	.bg {
+		&-default {
+			background-color: $color_white;
+
+			&-95 {
+				background-color: $color_gray_95;
+			}
+
+			&-90 {
+				background-color: $color_gray_90;
+			}
+
+			&-75 {
+				background-color: $color_gray_75;
+			}
+
+			&-60 {
+				background-color: $color_gray_60;
+			}
+
+			&-50 {
+				background-color: $color_gray_50;
+			}
+
+			&-40 {
+				background-color: $color_gray_40;
+			}
+
+			&-25 {
+				background-color: $color_gray_25;
+			}
+
+			&-10 {
+				background-color: $color_gray_10
+			}
+
+			&-05 {
+				background-color: $color_gray_05;
+			}
+
+			&-complement {
+				background-color: $color_black;
+			}
+		}
+
+		&-primary {
+			background-color: $color_blue_cornflower;
+		}
+	}
+
+	.text {
+		&-default {
+			color: $color_black;
+
+			&-95 {
+				color: $color_gray_05;
+			}
+
+			&-90 {
+				color: $color_gray_10;
+			}
+
+			&-75 {
+				color: $color_gray_25;
+			}
+
+			&-60 {
+				color: $color_gray_40;
+			}
+
+			&-50 {
+				color: $color_gray_50;
+			}
+
+			&-40 {
+				color: $color_gray_60;
+			}
+
+			&-25 {
+				color: $color_gray_75;
+			}
+
+			&-10 {
+				color: $color_gray_90;
+			}
+
+			&-05 {
+				color: $color_gray_95;
+			}
+
+			&-complement {
+				color: $color_white;
+			}
+		}
+
+		&-primary {
+			color: $color_blue_cornflower;
+		}
+	}
+
+	.btn {
+		border: none;
+
+		cursor: pointer;
+
+		&-primary {
+			background-color: $color_blue_cornflower;
+			color: $color_gray_95;
+
+			&:hover {
+				background-color: darken($color: $color_blue_cornflower, $amount: 10);
+			}
+
+			&-reverse {
+				background-color: $color_gray_95;
+				color: $color_blue_cornflower;
+
+				&:hover {
+					background-color: $color_white;
+				}
+			}
+		}
+
+		&-secondary {
+			background-color: $color_gray_95;
+			color: $color_gray_75;
+
+			&:hover {
+				background-color: $color_gray_75;
+				color: $color_gray_95;
+			}
+
+			&-success {
+				&:hover {
+					background-color: transparentize($color_green_emerald, 0.9);
+					color: $color_green_emerald;
+				}
+			}
+
+			&-info {
+				&:hover {
+					background-color: transparentize($color_blue_green, 0.9);
+					color: $color_blue_green;
+				}
+			}
+		}
+
+		&-fade {
+			background-color: $color_gray_25;
+			color: $color_gray_40;
+
+			&:hover {
+				background-color: $color_gray_40;
+				color: $color_gray_60;
+			}
+		}
+	}
+
+	.border {
+		&-thin {
+			border: 0.1rem solid $shade_dark_gray_90;
+		}
+	}
+
+	.shadow {
+		&-gentle {
+			box-shadow: 0 0 5rem 0.1rem $shade_dark_gray_90;
+		}
+
+		&-narrow {
+			box-shadow: 0 0.3rem 1rem 0.1rem $shade_dark_gray_90;
+
+			&-reverse {
+				box-shadow: 0 -0.3rem 1rem 0.1rem $shade_dark_gray_90;
+			}
+		}
+
+		&-border {
+			box-shadow: 0 0 1rem 0.1rem $shade_dark_gray_70;
+		}
+	}
+
+	.hover {
+		&-text-fade:hover {
+			color: $color_gray_10;
+		}
+
+		&-shadow:hover {
+			box-shadow: 0 0 1rem $color_gray_10;
+		}
+	}
+}

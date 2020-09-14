@@ -1,0 +1,43 @@
+<div class="details-container">
+	<div class="item">
+		<span class="label text-default-25">نام شعبه</span>
+		<div class="value bg-default-95 text-default-50">{{node.branchName}}</div>
+	</div>
+
+	<div class="item right">
+		<span class="label text-default-25">شماره تلفن شعبه</span>
+		<div class="value bg-default-95 text-default-50">{{node.branchTelephone}}</div>
+	</div>
+
+	<div class="item left">
+		<span class="label text-default-25">شناسه صاحب حساب</span>
+		<div class="value bg-default-95 text-default-50">{{node.ownerId}}</div>
+	</div>
+
+	<div class="item">
+		<span class="label text-default-25">نام صاحب حساب</span>
+		<div class="value bg-default-95 text-default-50">{{node.ownerName}} {{node.ownerFamilyName}}</div>
+	</div>
+
+	<div class="item right">
+		<span class="label text-default-25">نوع حساب</span>
+		<div class="value bg-default-95 text-default-50">{{node.accountType}}</div>
+	</div>
+
+	<div class="item left">
+		<span class="label text-default-25">شماره کارت</span>
+		<div class="value bg-default-95 text-default-50">{{node.cardId}}</div>
+	</div>
+
+	<div class="item">
+		<span class="label text-default-25">شماره شبا</span>
+		<div class="value bg-default-95 text-default-50">{{node.sheba}}</div>
+	</div>
+
+	<div class="item">
+		<span class="label text-default-25">آدرس شعبه</span>
+		<div class="value bg-default-95 text-default-50">{{node.branchAddress}}</div>
+	</div>
+</div>
+
+<div *ngIf="searching" class="btn btn-primary" (click)="clickedOnAddNodeButton(node)">اضافه‌کردن به گراف</div>

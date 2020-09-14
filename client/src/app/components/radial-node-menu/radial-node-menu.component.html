@@ -1,0 +1,41 @@
+<div #menu class="open" id="menu" [@menuState]="menuStateStatus">
+	<span class="menu-item" title="Expand" (click)="expandNode()">
+		<svg-icon key="expand"></svg-icon>
+	</span>
+	<span class="menu-item" title="Delete" (click)="deleteNode()">
+		<svg-icon key="garbageBin"></svg-icon>
+	</span>
+	<span class="menu-item" title="Lock" (click)="lockNode()">
+		<svg-icon key="lock"></svg-icon>
+	</span>
+	<span class="menu-item" title="Unlock" (click)="unlockNode()">
+		<svg-icon key="unlock"></svg-icon>
+	</span>
+	<span id="source-select" class="menu-item" title="Select as Source" (click)="selectAsSource()">
+		<svg-icon key="dollar"></svg-icon>
+	</span>
+	<span id="target-select" class="menu-item" title="Select as Destination" (click)="selectAsTarget()">
+		<svg-icon key="shirt"></svg-icon>
+	</span>
+</div>
+
+<!-- filters -->
+<svg class="filters" xmlns="http://www.w3.org/2000/svg" version="1.1">
+	<defs>
+		<filter id="shadowed-goo">
+			<feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10" />
+			<feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
+			<feGaussianBlur in="goo" stdDeviation="3" result="shadow" />
+			<feColorMatrix in="shadow" mode="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 -0.2"
+				result="shadow" />
+			<feOffset in="shadow" dx="1" dy="1" result="shadow" />
+			<feComposite in2="shadow" in="goo" result="goo" />
+			<feComposite in2="goo" in="SourceGraphic" result="mix" />
+		</filter>
+		<filter id="goo">
+			<feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10" />
+			<feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
+			<feComposite in2="goo" in="SourceGraphic" result="mix" />
+		</filter>
+	</defs>
+</svg>

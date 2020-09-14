@@ -1,0 +1,62 @@
+<search-nodes-modal #searchNodesModal (callback)="clickedOnAddNodeButton($event)"></search-nodes-modal>
+<radial-node-menu #radialComponent></radial-node-menu>
+<node-tooltip *ngIf="hoveredContent" [content]="hoveredContent" [position]="hoveredPosition"></node-tooltip>
+<div #findPathMenu class="find-path btn btn-primary closed" (click)="toggleFindPathMenu($event)">
+	<span class="title">محاسبه مسیر</span>
+	<div class="form">
+		<span class="label">حداکثر طول:</span>
+		<input type="number" min="1" max="7" value="1">
+	</div>
+	<div class="btn btn-primary-reverse" (click)="clickedOnFindPathButton($event)">پردازش</div>
+</div>
+
+<!-- *ngIf="ogmaService.sourceNode && ogmaService.targetNode" -->
+
+<nav class="bg-primary text-default-05">
+	<a class="logo text-default-05" href="/">لوگو</a>
+	<ul>
+		<div class="top">
+			<li class="button-primary">
+				<svg-icon key="nodes"></svg-icon>
+				<span>گراف</span>
+			</li>
+			<li class="button-primary">
+				<svg-icon key="settings"></svg-icon>
+				<span>تنظیمات</span>
+			</li>
+		</div>
+		<div class="bottom">
+			<li class="button-primary">
+				<svg-icon key="logout"></svg-icon>
+				<span>خروج</span>
+			</li>
+		</div>
+	</ul>
+</nav>
+
+<main>
+	<round-button btnClass="btn-secondary" icon="search" iconSize="6" (callback)="clickedOnSearchNodesButton($event)">
+	</round-button>
+	<div #ogmaContainer id="ogma-container"></div>
+</main>
+
+<div *ngIf="devTools" class="dev-tools bg-primary text-default-complement">
+	<span class="title">DevTools</span>
+	<div class="nodes-count">
+		<span class="label text-default-10">Nodes Count: </span>
+		<span class="value">{{countNodes()}}</span>
+	</div>
+	<div class="add-node">
+		<button class="btn text-primary" (click)="addNode()">Add a node</button>
+	</div>
+	<div class="layouts">
+		<span class="label text-default-10">Layouts</span>
+		<div class="value">
+			<div *ngFor="let layout of layouts">
+				<input [id]="layout" type="radio" name="layout" [(ngModel)]="currentLayout" [value]="layout"
+					(change)="runLayout()" />
+				<label [attr.for]="layout">{{layout | titlecase}}</label>
+			</div>
+		</div>
+	</div>
+</div>
