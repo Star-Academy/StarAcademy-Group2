@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using ElasticLib.Models;
@@ -12,21 +13,26 @@ namespace MyWebApi.Controllers
     [Route("[controller]")]
     public class MapStateController : ControllerBase
     {
-        
-        private HashSet<string> map = new HashSet<string>();
+
+        private HashSet<string> map;
         private IElasticService elasticService;
-        public MapStateController(IElasticService elasticService)
+        public MapStateController(IElasticService elasticService, HashSet<string> map)
         {
             this.elasticService = elasticService;
+            this.map = map;
         }
 
         [HttpPost]
         [Route("addNode")]
         public ActionResult<List<Edge>> AddNode([FromBody] string idNode)
-        { 
+        {
+            //TODO -> refactor
             var edges = new List<Edge>();
             foreach(var node in map){
                 var sq = new EdgeSearchQuery() {SourceAccount = idNode , DestinationAccount = node};
+                edges.AddRange(elasticService.Search<Edge>(sq));
+                sq.SourceAccount = node;
+                sq.DestinationAccount = idNode;
                 edges.AddRange(elasticService.Search<Edge>(sq));
             }
             map.Add(idNode);

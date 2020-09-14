@@ -30,6 +30,7 @@ namespace MyWebApi
             services.AddCors();
             services.AddControllers();
             services.AddSingleton<IElasticService, ElasticService>();
+            services.AddSingleton<HashSet<string>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
