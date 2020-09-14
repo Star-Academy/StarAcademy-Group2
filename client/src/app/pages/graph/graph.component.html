@@ -1,7 +1,8 @@
 <search-nodes-modal #searchNodesModal (callback)="clickedOnAddNodeButton($event)"></search-nodes-modal>
 <radial-node-menu #radialComponent></radial-node-menu>
 <node-tooltip *ngIf="hoveredContent" [content]="hoveredContent" [position]="hoveredPosition"></node-tooltip>
-<div #findPathMenu class="find-path btn btn-primary closed" (click)="toggleFindPathMenu($event)">
+<div #findPathMenu *ngIf="ogmaService.sourceNode && ogmaService.targetNode" class="find-path btn btn-primary closed"
+	(click)="toggleFindPathMenu($event)">
 	<span class="title">محاسبه مسیر</span>
 	<div class="form">
 		<span class="label">حداکثر طول:</span>
@@ -10,28 +11,27 @@
 	<div class="btn btn-primary-reverse" (click)="clickedOnFindPathButton($event)">پردازش</div>
 </div>
 
-<!-- *ngIf="ogmaService.sourceNode && ogmaService.targetNode" -->
-
 <nav class="bg-primary text-default-05">
 	<a class="logo text-default-05" href="/">لوگو</a>
 	<ul>
 		<div class="top">
-			<li class="button-primary">
+			<li class="btn active">
 				<svg-icon key="nodes"></svg-icon>
 				<span>گراف</span>
 			</li>
-			<li class="button-primary">
+			<li class="btn">
 				<svg-icon key="settings"></svg-icon>
 				<span>تنظیمات</span>
 			</li>
 		</div>
 		<div class="bottom">
-			<li class="button-primary">
+			<li class="btn">
 				<svg-icon key="logout"></svg-icon>
 				<span>خروج</span>
 			</li>
 		</div>
 	</ul>
+	<img class="highlighter" src="../../../assets/svg/nav-highligher.svg" />
 </nav>
 
 <main>

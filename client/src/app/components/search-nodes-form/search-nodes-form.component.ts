@@ -19,8 +19,6 @@ export class SearchNodesFormComponent implements OnInit {
 	patterns = {
 		branchTelephone: { pattern: this.numberPattern, length: 8 },
 		ownerId: { pattern: this.numberPattern, length: 10 },
-		ownerName: { pattern: this.nonNumericalPattern, length: 20 },
-		ownerFamilyName: { pattern: this.nonNumericalPattern, length: 40 },
 		accountType: { pattern: this.nonNumericalPattern, length: 20 },
 		accountId: { pattern: this.numberPattern, length: 10 },
 		cardId: { pattern: this.numberPattern, length: 16 },

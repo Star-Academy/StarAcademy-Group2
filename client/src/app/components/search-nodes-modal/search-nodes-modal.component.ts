@@ -138,7 +138,6 @@ export class SearchNodesModalComponent implements OnInit {
 	constructor(private searchService: SearchNodesService) {}
 
 	ngOnInit(): void {
-		this.results = this.searchService.search('a', 'b');
 		this.show = 0;
 		this.title = 'جستجو';
 	}
@@ -182,13 +181,13 @@ export class SearchNodesModalComponent implements OnInit {
 		this.show = 0;
 	}
 
-	clickedOnSearchButton(e) {
+	async clickedOnSearchButton(e) {
 		this.show = 2;
 		this.title = 'نتایج جستجو';
 
 		console.log(e.field, e.query);
 
-		this.results = this.searchService.search(e.field, e.query);
+		this.results = await this.searchService.search(e.field, e.query);
 
 		if (this.results.length === 0) this.snackbar.show('نتیجه‌ای یافت نشد');
 	}

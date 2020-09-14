@@ -142,6 +142,10 @@ export class RadialNodeMenuComponent implements AfterViewInit {
 			this.ogmaService.removeSource();
 			this.close();
 		} else {
+			if (this.targetFlag) {
+				this.ogmaService.removeTarget();
+			}
+
 			this.ogmaService.setSource(this.node);
 			this.close();
 		}
@@ -152,6 +156,10 @@ export class RadialNodeMenuComponent implements AfterViewInit {
 			this.ogmaService.removeTarget();
 			this.close();
 		} else {
+			if (this.sourceFlag) {
+				this.ogmaService.removeSource();
+			}
+
 			this.ogmaService.setTarget(this.node);
 			this.close();
 		}

@@ -98,15 +98,25 @@
 	}
 
 	nav {
+		position: relative;
+
 		display: grid;
 		grid-template-rows: auto 1fr;
 
 		z-index: 2;
 
+		min-width: 30rem;
 		width: 30rem;
 		height: 100vh;
 
 		border-bottom-left-radius: 6rem;
+
+		.highlighter {
+			position: absolute;
+			top: 14rem;
+			left: 0;
+			z-index: 1;
+		}
 
 		.logo {
 			justify-self: center;
@@ -122,6 +132,8 @@
 		}
 
 		ul {
+			z-index: 2;
+
 			display: flex;
 			flex-direction: column;
 			justify-content: space-between;
@@ -137,12 +149,20 @@
 				height: 6rem;
 
 				margin-bottom: 4rem;
-				padding-right: 4rem;
+				padding-right: 6rem;
 
 				font-size: 3.6rem;
 				font-weight: 300;
 
 				cursor: pointer;
+
+				&.active {
+
+					svg-icon,
+					span {
+						color: cornflowerblue;
+					}
+				}
 
 				svg-icon {
 					font-size: 3.6rem;

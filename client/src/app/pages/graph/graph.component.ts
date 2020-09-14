@@ -6,7 +6,6 @@ import { OgmaService } from '../../services/ogma.service';
 
 import { SearchNodesModalComponent } from '../../components/search-nodes-modal/search-nodes-modal.component.js';
 import { RadialNodeMenuComponent } from '../../components/radial-node-menu/radial-node-menu.component.js';
-import { SearchNodesService } from '../../services/search-nodes.service.js';
 
 @Component({
 	selector: 'app-graph',
@@ -33,10 +32,7 @@ export class GraphComponent implements OnInit {
 	devTools: boolean = true;
 	isMenuOn = false;
 
-	constructor(
-		private ogmaService: OgmaService,
-		private searchNodesService: SearchNodesService
-	) {}
+	constructor(private ogmaService: OgmaService) {}
 
 	ngOnInit() {
 		this.ogmaService.initConfig({
@@ -48,8 +44,6 @@ export class GraphComponent implements OnInit {
 			}
 		});
 
-		this.ogmaService.addNode(this.searchNodesService.search('', '')[0]);
-
 		this.ogmaService.ogma.events.onClick(({ target, button, domEvent }) => {
 			this.isMenuOn = this.radialComponent.close();
 
@@ -57,10 +51,12 @@ export class GraphComponent implements OnInit {
 				this.hoveredContent = null;
 
 				if (button === 'right')
-					this.isMenuOn = this.radialComponent.expandMenu(target);
+					if (domEvent.shiftKey)
+						this.ogmaService.toggleNodeLockStatus(target);
+					else
+						this.isMenuOn = this.radialComponent.expandMenu(target);
 				else if (button === 'left' && domEvent.shiftKey)
 					this.searchNodesModal.open(target.getData());
-				else this.isMenuOn = this.radialComponent.close();
 			}
 		});
 
@@ -69,9 +65,8 @@ export class GraphComponent implements OnInit {
 		});
 
 		this.ogmaService.ogma.events.onDoubleClick(({ target }) => {
-			if (target && target.isNode) {
+			if (target && target.isNode)
 				this.ogmaService.toggleNodeLockStatus(target);
-			}
 		});
 
 		this.ogmaService.ogma.events.onZoomProgress(() => {
@@ -116,11 +111,8 @@ export class GraphComponent implements OnInit {
 
 	// TODO: Remove
 	addNode() {
-		this.ogmaService.addNode(this.searchNodesService.search('', '')[0]);
-
-		this.isMenuOn = this.radialComponent.close();
-
-		this.runLayout();
+		// this.ogmaService.addNode();
+		// this.runLayout();
 	}
 
 	runLayout() {

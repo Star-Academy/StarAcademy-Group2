@@ -6,6 +6,7 @@ import { GraphService } from './graph.service';
 
 import { AccountNode } from '../models/AccountNode.js';
 import { TransactionEdge } from '../models/TransactionEdge.js';
+import { JsonPipe } from '@angular/common';
 
 @Injectable({
 	providedIn: 'root'
@@ -60,9 +61,24 @@ export class OgmaService {
 		});
 	}
 
-	public addNode(data?: AccountNode, attributes?): void {
-		let id = this.ogma.getNodes().getId().length;
-		if (data) id = data.accountId;
+	public addNode(data: AccountNode, attributes?): void {
+		let id = data.accountId;
+
+		this.graphService.addNode(data).subscribe((res: TransactionEdge[]) => {
+			for (let edge of res) {
+				if (
+					this.ogma.getNode(edge.SourceAccount) &&
+					this.ogma.getNode(edge.DestinationAccount)
+				) {
+					console.log(edge);
+					this.addEdge(
+						edge.SourceAccount,
+						edge.DestinationAccount,
+						edge
+					);
+				}
+			}
+		});
 
 		attributes = {
 			shape: 'square',
@@ -77,6 +93,8 @@ export class OgmaService {
 		};
 
 		this.ogma.addNode({ data, attributes, id });
+
+		this.runLayout();
 	}
 
 	public addEdge(
@@ -86,9 +104,15 @@ export class OgmaService {
 		attributes?
 	) {
 		let id = this.ogma.getEdges().getId().length;
-		if (data) id = data.transactionId;
+		if (data) id = data.TransactionId;
+
+		console.log('source', source);
+		console.log('target', data);
+		console.log('data', target);
 
 		this.ogma.addEdge({ source, target, data, attributes, id });
+
+		this.runLayout();
 	}
 
 	public removeNode(nodeId) {
@@ -98,36 +122,43 @@ export class OgmaService {
 	}
 
 	public expandNode(nodeId) {
-		// let jsonResponse;
-		// this.graphService.expandRequest('[nodeId]', jsonResponse);
-		// let jsonResponse = this.graphService.expandRequest('[nodeId]');
-		// let nodes = [];
-		// let edges = [];
-		// jsonResponse.forEach((single) => {
-		// 	single.item1.forEach((node:AccountNode ) => this.addNode (node ) );
-		// 	single.item2.forEach((edge) => edges.push(this.modifyEdge(edge)));
-		// });
-		// this.ogma.addNodes(nodes);
-		// this.ogma.addEdges(edges);
-		// this.runLayout();
+		let jsonResponse = this.graphService.expandRequest([ nodeId ]);
+		jsonResponse.subscribe((res) => {
+			let jsonString = JSON.parse(JSON.stringify(res));
+			jsonString.forEach((single) => {
+				single.item1.forEach((node: AccountNode) => this.addNode(node));
+			});
+			jsonString.forEach((single) => {
+				single.item2.forEach((edge: TransactionEdge) => {
+					this.addEdge(
+						edge.SourceAccount,
+						edge.DestinationAccount,
+						edge
+					);
+				});
+			});
+			this.runLayout();
+		});
 	}
 
 	lockNodes(nodes) {
 		nodes.setAttributes({
+			color: 'gray',
 			draggable: false
 		});
 	}
 
 	unlockNodes(nodes) {
 		nodes.setAttributes({
+			color: 'transparent',
 			draggable: true
 		});
 	}
 
 	toggleNodeLockStatus(node) {
 		node.getAttribute('draggable')
-			? node.setAttribute('draggable', false)
-			: node.setAttribute('draggable', true);
+			? this.lockNodes(node)
+			: this.unlockNodes(node);
 	}
 
 	getSourceNode() {
