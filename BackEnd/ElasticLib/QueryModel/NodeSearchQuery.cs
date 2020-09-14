@@ -9,7 +9,7 @@ namespace ElasticLib.QueryModel
         [JsonPropertyName("ownerName")]
         [MatchFilter]
         public string OwnerName {get; set;}
-        [JsonPropertyName("OwnerFamilyName")]
+        [JsonPropertyName("ownerFamilyName")]
         [MatchFilter]
         public string OwnerFamilyName {get; set;}
         [JsonPropertyName("branchName")]
@@ -36,5 +36,20 @@ namespace ElasticLib.QueryModel
         [MatchFilter]
         [JsonPropertyName("accountId")]
         public string AccountId {get; set;}
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return AccountId;
+        }
     }
 }

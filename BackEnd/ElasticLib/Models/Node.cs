@@ -5,25 +5,25 @@ namespace ElasticLib.Models
 {
     public class Node
     {
-        [JsonPropertyName("AccountID")]
+        [JsonPropertyName("accountId")]
         public string AccountId { get; set; }
-        [JsonPropertyName("OwnerName")]
+        [JsonPropertyName("ownerName")]
         public string OwnerName { get; set; }
-        [JsonPropertyName("OwnerFamilyName")]
+        [JsonPropertyName("ownerFamilyName")]
         public string OwnerFamilyName { get; set; }
-        [JsonPropertyName("BranchName")]
+        [JsonPropertyName("branchName")]
         public string BranchName { get; set; }
-        [JsonPropertyName("OwnerID")]
+        [JsonPropertyName("ownerId")]
         public string OwnerId { get; set; }
-        [JsonPropertyName("BranchAddress")]
+        [JsonPropertyName("branchAddress")]
         public string BranchAddress { get; set; }
-        [JsonPropertyName("BranchTelephone")]
+        [JsonPropertyName("branchTelephone")]
         public string BranchTelephone { get; set; }
-        [JsonPropertyName("AccountType")]
+        [JsonPropertyName("accountType")]
         public string AccountType { get; set; }
-        [JsonPropertyName("Sheba")]
+        [JsonPropertyName("sheba")]
         public string Sheba { get; set; }
-        [JsonPropertyName("CardID")]
+        [JsonPropertyName("cardId")]
         public string CardId { get; set; }
     }
 }

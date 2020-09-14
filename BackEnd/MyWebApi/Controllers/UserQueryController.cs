@@ -22,9 +22,10 @@ namespace MyWebApi.Controllers
 
         [HttpPost]
         [Route("searchNode")]
-        public ActionResult<IEnumerable<Node>> NodeSearch([FromBody] string json)
+        public ActionResult<IEnumerable<Node>> NodeSearch([FromBody] NodeSearchQuery nodeSearchQuery)
         {
-            var nodeSearchQuery = JsonSerializer.Deserialize<NodeSearchQuery>(json);
+            // Console.WriteLine(nodeSearchQuery);
+            // var nodeSearchQuery = JsonSerializer.Deserialize<NodeSearchQuery>(json);
             try
             {
                 var result = elasticService.Search<Node>(nodeSearchQuery);
@@ -73,9 +74,9 @@ namespace MyWebApi.Controllers
 
         [HttpPost]
         [Route("expand")]
-        public ActionResult<List<Tuple<HashSet<Node>, HashSet<Edge>>>> Expand([FromBody] string json)
+        public ActionResult<List<Tuple<HashSet<Node>, HashSet<Edge>>>> Expand([FromBody] ExpandQuery expandQuery)
         {
-            var expandQuery = JsonSerializer.Deserialize<ExpandQuery>(json);
+            // var expandQuery = JsonSerializer.Deserialize<ExpandQuery>(json);
             var output = new List<Tuple<HashSet<Node>, HashSet<Edge>>>();
 
             foreach (var acc in expandQuery.Accounts)
