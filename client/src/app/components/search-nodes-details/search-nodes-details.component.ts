@@ -9,6 +9,7 @@ import { AccountNode } from 'src/app/models/AccountNode';
 })
 export class SearchNodesDetailsComponent implements OnInit {
 	@Input() node: AccountNode;
+	@Input() searching: boolean;
 
 	@Output() callback = new EventEmitter();
 

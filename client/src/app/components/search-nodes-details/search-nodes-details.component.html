@@ -40,4 +40,4 @@
 	</div>
 </div>
 
-<div class="btn btn-primary" (click)="clickedOnAddNodeButton(node)">اضافه‌کردن به گراف</div>
+<div *ngIf="searching" class="btn btn-primary" (click)="clickedOnAddNodeButton(node)">اضافه‌کردن به گراف</div>

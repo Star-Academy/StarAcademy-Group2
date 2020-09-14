@@ -1,15 +1,19 @@
 import { Injectable } from '@angular/core';
-import Ogma, { RawNode, RawEdge } from '../../dependencies/ogma.min.js';
+
+import Ogma, { NodeId, RawNode, RawEdge } from '../../dependencies/ogma.min.js';
+
 import { GraphService } from './graph.service';
+
 import { AccountNode } from '../models/AccountNode.js';
+import { TransactionEdge } from '../models/TransactionEdge.js';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class OgmaService {
-	public ogma: Ogma;
-	private sourceNode = null;
-	private targetNode = null;
+	ogma: Ogma;
+	sourceNode = null;
+	targetNode = null;
 
 	constructor(private graphService: GraphService) {}
 
@@ -36,6 +40,10 @@ export class OgmaService {
 		this.addRule();
 	}
 
+	public runLayout(layout: string = 'force'): Promise<void> {
+		return this.ogma.layouts[layout]({ locate: true });
+	}
+
 	public addRule() {
 		this.ogma.styles.addRule({
 			nodeAttributes: {
@@ -53,10 +61,8 @@ export class OgmaService {
 	}
 
 	public addNode(data?: AccountNode, attributes?): void {
-		let id;
-
+		let id = this.ogma.getNodes().getId().length;
 		if (data) id = data.accountId;
-		else id = this.ogma.getNodes().getId().length;
 
 		attributes = {
 			shape: 'square',
@@ -73,73 +79,108 @@ export class OgmaService {
 		this.ogma.addNode({ data, attributes, id });
 	}
 
-	public deleteNode(nodeId) {
-		this.ogma.removeNode(nodeId);
+	public addEdge(
+		source: NodeId,
+		target: NodeId,
+		data?: TransactionEdge,
+		attributes?
+	) {
+		let id = this.ogma.getEdges().getId().length;
+		if (data) id = data.transactionId;
+
+		this.ogma.addEdge({ source, target, data, attributes, id });
 	}
 
-	public runLayout(layout: string = 'force'): Promise<void> {
-		return this.ogma.layouts[layout]({ locate: true });
+	public removeNode(nodeId) {
+		this.ogma.removeNode(nodeId);
+
+		this.runLayout();
 	}
 
 	public expandNode(nodeId) {
 		// let jsonResponse;
 		// this.graphService.expandRequest('[nodeId]', jsonResponse);
-
-		let jsonResponse = this.graphService.expandRequest('[nodeId]');
-
-		let nodes = [];
-		let edges = [];
-		jsonResponse.forEach((single) => {
-			single.item1.forEach((node) => nodes.push(this.modifyNode(node)));
-			single.item2.forEach((edge) => edges.push(this.modifyEdge(edge)));
-		});
-
-		this.ogma.addNodes(nodes);
-		this.ogma.addEdges(edges);
-		this.runLayout();
+		// let jsonResponse = this.graphService.expandRequest('[nodeId]');
+		// let nodes = [];
+		// let edges = [];
+		// jsonResponse.forEach((single) => {
+		// 	single.item1.forEach((node:AccountNode ) => this.addNode (node ) );
+		// 	single.item2.forEach((edge) => edges.push(this.modifyEdge(edge)));
+		// });
+		// this.ogma.addNodes(nodes);
+		// this.ogma.addEdges(edges);
+		// this.runLayout();
 	}
 
-	private modifyNode(node) {
-		let temp = {};
-		temp['id'] = node.AccountID;
-		temp['data'] = node;
-		return temp;
-	}
-
-	private modifyEdge(edge) {
-		let temp = {};
-		temp['id'] = edge.TransactionID;
-		temp['source'] = edge.SourceAcount;
-		temp['target'] = edge.DestiantionAccount;
-		temp['data'] = edge;
-		return temp;
-	}
-
-	lockNodes(nodesList) {
-		nodesList.setAttributes({
+	lockNodes(nodes) {
+		nodes.setAttributes({
 			draggable: false
 		});
 	}
 
-	unlockNodes(nodesList) {
-		nodesList.setAttributes({
+	unlockNodes(nodes) {
+		nodes.setAttributes({
 			draggable: true
 		});
 	}
 
+	toggleNodeLockStatus(node) {
+		node.getAttribute('draggable')
+			? node.setAttribute('draggable', false)
+			: node.setAttribute('draggable', true);
+	}
+
+	getSourceNode() {
+		return this.sourceNode;
+	}
+
+	getTargetNode() {
+		return this.targetNode;
+	}
+
 	setSource(node) {
+		if (this.sourceNode) this.removeSource();
 		this.sourceNode = node;
+
+		this.sourceNode.setAttributes({
+			image: {
+				fit: true,
+				url: '../../../assets/svg/money_source.svg'
+			}
+		});
 	}
 
 	setTarget(node) {
+		if (this.targetNode) this.removeTarget();
 		this.targetNode = node;
+
+		this.targetNode.setAttributes({
+			image: {
+				fit: true,
+				url: '../../../assets/svg/clean_clothes.svg'
+			}
+		});
 	}
 
 	removeSource() {
+		this.sourceNode.setAttributes({
+			image: {
+				fit: true,
+				url: '../../../assets/svg/washing_machine.svg'
+			}
+		});
+
 		this.sourceNode = null;
 	}
 
 	removeTarget() {
+		this.targetNode.setAttributes({
+			image: {
+				fit: true,
+				url: '../../../assets/svg/washing_machine.svg'
+			}
+		});
+
 		this.targetNode = null;
 	}
 }

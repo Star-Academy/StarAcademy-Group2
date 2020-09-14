@@ -1,3 +1,5 @@
+<app-snackbar #snackbar class="error"></app-snackbar>
+
 <div [class]="'container ' + (show === 0 ? 'closed' : '')">
 	<div class="overlay" [@overlayState]="overlayStateStatus" (click)="close()">
 		<round-button btnClass="btn-fade" icon="cross" iconSize="6"></round-button>
@@ -6,17 +8,18 @@
 	<div class='modal bg-default' [@modalState]="modalStateStatus">
 		<div class="head bg-primary text-default-complement">
 			<span (click)="back()">
-				<svg-icon *ngIf="show > 1" key="arrowBack"></svg-icon>
+				<svg-icon *ngIf="show > 1 && searching" key="arrowBack"></svg-icon>
 			</span>
 			<div>{{title}}</div>
 		</div>
 		<div class="body">
-			<search-nodes-form *ngIf="show === 1" (callback)="clickedOnSearchButton($event)">
+			<search-nodes-form *ngIf="show === 1" [snackbar]="snackbar" (callback)="clickedOnSearchButton($event)">
 			</search-nodes-form>
 			<search-nodes-result *ngIf="show === 2" [results]="results"
 				(addNodeCallback)="clickedOnAddNodeButton($event)" (detailsCallback)="clickedOnDetailsButton($event)">
 			</search-nodes-result>
-			<search-nodes-details *ngIf="show === 3" [node]="activeNode" (callback)="clickedOnAddNodeButton($event)">
+			<search-nodes-details *ngIf="show === 3" [node]="activeNode" [searching]="searching"
+				(callback)="clickedOnAddNodeButton($event)">
 			</search-nodes-details>
 		</div>
 	</div>

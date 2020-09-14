@@ -1,6 +1,4 @@
 <div #menu class="open" id="menu" [@menuState]="menuStateStatus">
-	<!-- <input type="checkbox" id="menu-toggle" /> -->
-
 	<span class="menu-item" title="Expand" (click)="expandNode()">
 		<svg-icon key="expand"></svg-icon>
 	</span>
@@ -13,10 +11,10 @@
 	<span class="menu-item" title="Unlock" (click)="unlockNode()">
 		<svg-icon key="unlock"></svg-icon>
 	</span>
-	<span class="menu-item" title="Select as Source" (click)="selectAsSource()">
+	<span id="source-select" class="menu-item" title="Select as Source" (click)="selectAsSource()">
 		<svg-icon key="dollar"></svg-icon>
 	</span>
-	<span class="menu-item" title="Select as Destination" (click)="selectAsTarget()">
+	<span id="target-select" class="menu-item" title="Select as Destination" (click)="selectAsTarget()">
 		<svg-icon key="shirt"></svg-icon>
 	</span>
 </div>

@@ -1,77 +1,81 @@
 @import "../../../styles/config";
 
-.container {
-	position: fixed;
-	left: 0;
-	top: 0;
+:host {
 
-	display: flex;
-	justify-content: center;
-	align-items: center;
 
-	width: 100vw;
-	height: 100vh;
-
-	&.closed {
-		display: none;
-	}
-
-	.overlay {
-		background-color: $shade_dark_gray_10;
-
-		position: absolute;
+	.container {
+		position: fixed;
 		left: 0;
 		top: 0;
-		z-index: -1;
 
-		width: 100%;
-		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 
-		round-button {
-			position: fixed;
-			top: 4rem;
-			left: 4rem;
-			z-index: 2;
+		width: 100vw;
+		height: 100vh;
+
+		&.closed {
+			display: none;
 		}
-	}
 
-	.modal {
-		z-index: 0;
+		.overlay {
+			background-color: $shade_dark_gray_10;
 
-		width: 52rem;
+			position: absolute;
+			left: 0;
+			top: 0;
+			z-index: -1;
 
-		border-radius: 2rem;
+			width: 100%;
+			height: 100%;
 
-		.head {
-			position: relative;
+			round-button {
+				position: fixed;
+				top: 4rem;
+				left: 4rem;
+				z-index: 2;
+			}
+		}
 
-			display: flex;
-			justify-content: center;
-			align-items: center;
+		.modal {
+			z-index: 0;
 
-			height: 8rem;
+			width: 52rem;
 
-			border-radius: 2rem 2rem 0 0;
+			border-radius: 2rem;
 
-			span {
-				position: absolute;
-				right: 2rem;
+			.head {
+				position: relative;
 
-				cursor: pointer;
+				display: flex;
+				justify-content: center;
+				align-items: center;
 
-				svg-icon {
-					font-size: 3rem;
+				height: 8rem;
+
+				border-radius: 2rem 2rem 0 0;
+
+				span {
+					position: absolute;
+					right: 2rem;
+
+					cursor: pointer;
+
+					svg-icon {
+						font-size: 3rem;
+					}
+				}
+
+				div {
+					font-size: 3.6rem;
+					font-weight: 500;
 				}
 			}
 
-			div {
-				font-size: 3.6rem;
-				font-weight: 500;
+			.body {
+				padding: 2rem;
 			}
-		}
-
-		.body {
-			padding: 2rem;
 		}
 	}
 }

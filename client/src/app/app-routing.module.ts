@@ -4,7 +4,7 @@ import { AppComponent } from './app.component';
 import { GraphComponent } from './pages/graph/graph.component';
 
 const routes: Routes = [
-	{ path: '', component: AppComponent },
+	{ path: '', redirectTo: 'graph', pathMatch: 'full' },
 	{ path: 'graph', component: GraphComponent }
 ];
 

@@ -12,6 +12,91 @@
 		z-index: 8;
 	}
 
+	node-tooltip {
+		z-index: 7;
+
+		pointer-events: none;
+	}
+
+	.find-path {
+		position: fixed;
+		left: 0;
+		right: 0;
+		top: 0;
+		z-index: 6;
+
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+
+		margin: auto;
+		padding: 1rem 2rem 2rem;
+
+		min-width: 20rem;
+		width: fit-content;
+
+		border-radius: 0 0 2rem 2rem;
+
+		&.closed {
+			padding: 0 2rem 1rem;
+
+			*:not(.title) {
+				display: none;
+			}
+		}
+
+		.title {
+			font-size: 2.4rem;
+			font-weight: 700;
+		}
+
+		.form {
+			display: flex;
+			justify-content: space-between;
+
+			width: 100%;
+
+			margin-top: 2rem;
+
+			font-size: 1.8rem;
+
+			.label {}
+
+			input {
+				margin-right: 1rem;
+
+				border: none;
+				border-radius: 2rem;
+
+				font-size: 1.6rem;
+				text-align: center;
+
+				-moz-appearance: textfield;
+
+				&::-webkit-outer-spin-button,
+				&::-webkit-inner-spin-button {
+					-webkit-appearance: none;
+					margin: 0;
+				}
+			}
+		}
+
+		.btn {
+			width: 100%;
+
+			margin-top: 2rem;
+			padding: 0.5rem 1rem;
+
+			border-radius: 3rem;
+
+			font-size: 1.6rem;
+			font-weight: 500;
+
+			text-align: center;
+		}
+	}
+
 	nav {
 		display: grid;
 		grid-template-rows: auto 1fr;

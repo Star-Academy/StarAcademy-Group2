@@ -59,8 +59,8 @@ export class RadialNodeMenuComponent implements AfterViewInit {
 	menuOffset = { x: 0, y: 0 };
 
 	node;
-	sourceFlag = true;
-	targetFlag = true;
+	sourceFlag = false;
+	targetFlag = false;
 
 	constructor(private ogmaService: OgmaService) {}
 
@@ -87,9 +87,15 @@ export class RadialNodeMenuComponent implements AfterViewInit {
 
 		this.status = 1;
 		this.menu.classList.add('open');
-		this.menu.style.left = `${pos.x + this.menuOffset.x}px`;
-		this.menu.style.top = `${pos.y + this.menuOffset.y}px`;
+		this.menu.style.left = `${pos.x + this.menuOffset.x + 40}px`;
+		this.menu.style.top = `${pos.y + this.menuOffset.y + 40}px`;
 		this.menu.style.transform = 'scale(2)';
+		this.menu.addEventListener('click', (e) => {
+			this.close();
+		});
+
+		this.setSourceState();
+		this.setTargetState();
 
 		return true;
 	}
@@ -127,45 +133,127 @@ export class RadialNodeMenuComponent implements AfterViewInit {
 	}
 
 	deleteNode() {
-		this.ogmaService.deleteNode(this.node.getId());
+		this.ogmaService.removeNode(this.node.getId());
 		this.close();
 	}
 
 	selectAsSource() {
 		if (this.sourceFlag) {
-			this.changeButtonToDeselect('source-select');
-			this.ogmaService.setSource(this.node);
-			this.sourceFlag = false;
-		} else {
-			this.changeButtonToOriginal('source-select', 'select as source');
 			this.ogmaService.removeSource();
-			this.sourceFlag = true;
+			this.close();
+		} else {
+			this.ogmaService.setSource(this.node);
+			this.close();
 		}
-		this.close();
 	}
 
 	selectAsTarget() {
 		if (this.targetFlag) {
-			this.changeButtonToDeselect('target-select');
-			this.ogmaService.setTarget(this.node);
-			this.targetFlag = false;
-		} else {
-			this.changeButtonToOriginal('target-select', 'target as source');
 			this.ogmaService.removeTarget();
-			this.targetFlag = true;
+			this.close();
+		} else {
+			this.ogmaService.setTarget(this.node);
+			this.close();
 		}
-		this.close();
 	}
 
-	changeButtonToDeselect(id) {
-		let button = document.getElementById(id);
+	setSourceFlag() {
+		if (
+			this.ogmaService.getSourceNode() &&
+			this.ogmaService.getSourceNode().getId() === this.node.getId()
+		) {
+			this.sourceFlag = true;
+		} else {
+			this.sourceFlag = false;
+		}
+	}
+
+	setTargetFlag() {
+		if (
+			this.ogmaService.getTargetNode() &&
+			this.ogmaService.getTargetNode().getId() === this.node.getId()
+		) {
+			this.targetFlag = true;
+		} else {
+			this.targetFlag = false;
+		}
+	}
+
+	setSourceState() {
+		this.setSourceFlag();
+		if (this.sourceFlag) {
+			this.deselectSource();
+		} else {
+			this.sourceButton();
+		}
+	}
+
+	setTargetState() {
+		this.setTargetFlag();
+		if (this.targetFlag) {
+			this.deselectTarget();
+		} else {
+			this.targetButton();
+		}
+	}
+
+	sourceButton() {
+		let button = document.getElementById('source-select');
+		button.title = 'select as source';
+		button.style.background = '#ffb726';
+		button.addEventListener('mouseover', (e) => {
+			button.style.color = '#ffb726';
+			button.style.background = 'white';
+		});
+
+		button.addEventListener('mouseleave', (e) => {
+			button.style.background = '#ffb726';
+			button.style.color = 'white';
+		});
+	}
+
+	targetButton() {
+		let button = document.getElementById('target-select');
+		button.title = 'select as target';
+		button.style.background = '#ffb726';
+		button.addEventListener('mouseover', (e) => {
+			button.style.color = '#ffb726';
+			button.style.background = 'white';
+		});
+
+		button.addEventListener('mouseleave', (e) => {
+			button.style.background = '#ffb726';
+			button.style.color = 'white';
+		});
+	}
+
+	deselectSource() {
+		let button = document.getElementById('source-select');
 		button.title = 'deselct';
-		//button.setAttribute(key) svg-icon shpud be changed
+		button.style.background = 'cornflowerblue';
+		button.addEventListener('mouseover', (e) => {
+			button.style.color = 'cornflowerblue';
+			button.style.background = 'white';
+		});
+
+		button.addEventListener('mouseleave', (e) => {
+			button.style.background = 'cornflowerblue';
+			button.style.color = 'white';
+		});
 	}
 
-	changeButtonToOriginal(id, title) {
-		let button = document.getElementById(id);
-		button.title = title;
-		//button.setAttribute(key) svg-icon shpud be changed
+	deselectTarget() {
+		let button = document.getElementById('target-select');
+		button.title = 'deselct';
+		button.style.background = 'cornflowerblue';
+		button.addEventListener('mouseover', (e) => {
+			button.style.color = 'cornflowerblue';
+			button.style.background = 'white';
+		});
+
+		button.addEventListener('mouseleave', (e) => {
+			button.style.background = 'cornflowerblue';
+			button.style.color = 'white';
+		});
 	}
 }

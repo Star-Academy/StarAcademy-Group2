@@ -22,6 +22,9 @@ import { RadialNodeMenuComponent } from './components/radial-node-menu/radial-no
 import { SearchNodesFormComponent } from './components/search-nodes-form/search-nodes-form.component';
 import { SearchNodesDetailsComponent } from './components/search-nodes-details/search-nodes-details.component';
 import { RoundButtonComponent } from './components/round-button/round-button.component';
+import { NodeTooltipComponent } from './components/node-tooltip/node-tooltip.component';
+import { EdgeTooltipComponent } from './components/edge-tooltip/edge-tooltip.component';
+import { SnackbarComponent } from './components/snackbar/snackbar.component';
 
 @NgModule({
 	declarations: [
@@ -35,7 +38,10 @@ import { RoundButtonComponent } from './components/round-button/round-button.com
 		RadialNodeMenuComponent,
 		SearchNodesFormComponent,
 		SearchNodesDetailsComponent,
-		RoundButtonComponent
+		RoundButtonComponent,
+		NodeTooltipComponent,
+		EdgeTooltipComponent,
+		SnackbarComponent
 	],
 	imports: [
 		BrowserModule,

@@ -1,5 +1,16 @@
 <search-nodes-modal #searchNodesModal (callback)="clickedOnAddNodeButton($event)"></search-nodes-modal>
 <radial-node-menu #radialComponent></radial-node-menu>
+<node-tooltip *ngIf="hoveredContent" [content]="hoveredContent" [position]="hoveredPosition"></node-tooltip>
+<div #findPathMenu class="find-path btn btn-primary closed" (click)="toggleFindPathMenu($event)">
+	<span class="title">محاسبه مسیر</span>
+	<div class="form">
+		<span class="label">حداکثر طول:</span>
+		<input type="number" min="1" max="7" value="1">
+	</div>
+	<div class="btn btn-primary-reverse" (click)="clickedOnFindPathButton($event)">پردازش</div>
+</div>
+
+<!-- *ngIf="ogmaService.sourceNode && ogmaService.targetNode" -->
 
 <nav class="bg-primary text-default-05">
 	<a class="logo text-default-05" href="/">لوگو</a>

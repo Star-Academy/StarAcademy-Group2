@@ -1,21 +1,22 @@
-<form>
+<form #searchForm="ngForm" (ngSubmit)="clickedOnSearchButton(searchForm.value)">
 	<label class="text-default-25" for="search-field-input">جستجو در</label>
-	<select class="input-default" [(ngModel)]="fieldValue" name="field" id="search-field-input" required>
-		<option value="BranchName" selected>نام شعبه</option>
-		<option value="BranchTelephone">شماره تلفن شعبه</option>
-		<option value="OwnerID">شناسه صاحب حساب</option>
-		<option value="OwnerName">نام صاحب حساب</option>
-		<option value="OwnerFamilyName">نام خانوادگی صاحب حساب</option>
-		<option value="AccountType">نوع حساب</option>
-		<option value="AccountId">شماره حساب</option>
-		<option value="CardId">شماره کارت</option>
-		<option value="Sheba">شماره شبا</option>
-		<option value="BranchAdress">آدرس شعبه</option>
+	<select class="input-default" #field ngModel name="field" id="search-field-input"
+		(change)="onFieldChanged(field.value)" required>
+		<option value="branchName" selected>نام شعبه</option>
+		<option value="branchTelephone">شماره تلفن شعبه</option>
+		<option value="ownerID">شناسه صاحب حساب</option>
+		<option value="ownerName">نام صاحب حساب</option>
+		<option value="ownerFamilyName">نام خانوادگی صاحب حساب</option>
+		<option value="accountType">نوع حساب</option>
+		<option value="accountId">شماره حساب</option>
+		<option value="cardId">شماره کارت</option>
+		<option value="sheba">شماره شبا</option>
+		<option value="branchAddress">آدرس شعبه</option>
 	</select>
 
 	<label class="text-default-25" for="search-query-input">عبارت مورد نظر</label>
-	<input class="input-default" [(ngModel)]="queryValue" name="query" id="search-query-input" type="text"
+	<input class="input-default" ngModel [maxLength]="maxLength" name="query" id="search-query-input" type="text"
 		placeholder="لطفاً عبارت مورد جستجو را وارد کنید ..." required>
 
-	<button class="btn btn-primary" type="button" (click)="clickedOnSearchButton($event)">نمایش اطلاعات</button>
+	<button class="btn btn-primary" type="submit">نمایش اطلاعات</button>
 </form>

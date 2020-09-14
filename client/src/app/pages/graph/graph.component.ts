@@ -1,11 +1,12 @@
-import { OnInit, Component, Input, ViewChild } from '@angular/core';
+import { OnInit, Component, Input, ViewChild, ElementRef } from '@angular/core';
 
 import { NodeId, HoverEvent } from '../../../dependencies/ogma.min.js';
 
 import { OgmaService } from '../../services/ogma.service';
 
-import { SearchNodesModalComponent } from 'src/app/components/search-nodes-modal/search-nodes-modal.component.js';
-import { RadialNodeMenuComponent } from 'src/app/components/radial-node-menu/radial-node-menu.component.js';
+import { SearchNodesModalComponent } from '../../components/search-nodes-modal/search-nodes-modal.component.js';
+import { RadialNodeMenuComponent } from '../../components/radial-node-menu/radial-node-menu.component.js';
+import { SearchNodesService } from '../../services/search-nodes.service.js';
 
 @Component({
 	selector: 'app-graph',
@@ -18,6 +19,7 @@ export class GraphComponent implements OnInit {
 
 	@ViewChild('searchNodesModal') searchNodesModal: SearchNodesModalComponent;
 	@ViewChild('radialComponent') radialComponent: RadialNodeMenuComponent;
+	@ViewChild('findPathMenu') findPathMenu: ElementRef;
 
 	// TODO: Remove
 	@Input() currentLayout: string = 'force';
@@ -25,10 +27,16 @@ export class GraphComponent implements OnInit {
 	// TODO: Remove
 	layouts: string[] = [ 'force', 'hierarchical' ];
 
+	hoveredContent: { branchName: string; ownerId: string; ownerName: string };
+	hoveredPosition: { x: number; y: number };
+
 	devTools: boolean = true;
 	isMenuOn = false;
 
-	constructor(private ogmaService: OgmaService) {}
+	constructor(
+		private ogmaService: OgmaService,
+		private searchNodesService: SearchNodesService
+	) {}
 
 	ngOnInit() {
 		this.ogmaService.initConfig({
@@ -40,29 +48,63 @@ export class GraphComponent implements OnInit {
 			}
 		});
 
-		this.ogmaService.ogma.events.onClick((e) => {
+		this.ogmaService.addNode(this.searchNodesService.search('', '')[0]);
+
+		this.ogmaService.ogma.events.onClick(({ target, button, domEvent }) => {
 			this.isMenuOn = this.radialComponent.close();
 
-			let target = e.target;
-			if (e.button === 'right' && target && target.isNode)
-				this.isMenuOn = this.radialComponent.expandMenu(target);
-		});
+			if (target && target.isNode) {
+				this.hoveredContent = null;
 
-		this.ogmaService.ogma.events.onZoomProgress((e) => {
-			if (this.isMenuOn) {
-				this.radialComponent.changeOnZooming();
+				if (button === 'right')
+					this.isMenuOn = this.radialComponent.expandMenu(target);
+				else if (button === 'left' && domEvent.shiftKey)
+					this.searchNodesModal.open(target.getData());
+				else this.isMenuOn = this.radialComponent.close();
 			}
 		});
 
-		this.ogmaService.ogma.events.onHover(({ target }: HoverEvent) => {
+		this.ogmaService.ogma.events.onMouseButtonDown((e) => {
+			if (this.isMenuOn) this.isMenuOn = this.radialComponent.close();
+		});
+
+		this.ogmaService.ogma.events.onDoubleClick(({ target }) => {
+			if (target && target.isNode) {
+				this.ogmaService.toggleNodeLockStatus(target);
+			}
+		});
+
+		this.ogmaService.ogma.events.onZoomProgress(() => {
+			if (this.isMenuOn) {
+				this.isMenuOn = this.radialComponent.close();
+			}
+		});
+
+		this.ogmaService.ogma.events.onHover(({ x, y, target }: HoverEvent) => {
 			if (target.isNode) {
 				target.setAttributes({ outerStroke: { color: 'green' } });
+
+				this.hoveredPosition = {
+					x,
+					y: y + 20
+				};
+
+				this.hoveredContent = {
+					branchName: target.getData('branchName'),
+					ownerId: target.getData('ownerId'),
+					ownerName:
+						target.getData('ownerName') +
+						' ' +
+						target.getData('ownerFamilyName')
+				};
 			}
 		});
 
 		this.ogmaService.ogma.events.onUnhover(({ target }: HoverEvent) => {
 			if (target.isNode) {
 				target.setAttributes({ outerStroke: null });
+
+				this.hoveredContent = null;
 			}
 		});
 	}
@@ -74,7 +116,7 @@ export class GraphComponent implements OnInit {
 
 	// TODO: Remove
 	addNode() {
-		this.ogmaService.addNode();
+		this.ogmaService.addNode(this.searchNodesService.search('', '')[0]);
 
 		this.isMenuOn = this.radialComponent.close();
 
@@ -96,6 +138,16 @@ export class GraphComponent implements OnInit {
 	clickedOnAddNodeButton(e) {
 		if (e.attributes) this.ogmaService.addNode(e.node, e.attributes);
 		else this.ogmaService.addNode(e.node);
+	}
+
+	clickedOnFindPathButton(e) {
+		e.stopPropagation();
+
+		// TODO: Request for path
+	}
+
+	toggleFindPathMenu(e: Event) {
+		this.findPathMenu.nativeElement.classList.toggle('closed');
 	}
 
 	lockNodes(nodes) {

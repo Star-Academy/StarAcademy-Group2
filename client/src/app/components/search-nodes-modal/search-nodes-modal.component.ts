@@ -1,4 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {
+	Component,
+	OnInit,
+	Input,
+	Output,
+	EventEmitter,
+	ViewChild
+} from '@angular/core';
 import {
 	trigger,
 	style,
@@ -11,6 +18,8 @@ import {
 import { SearchNodesService } from '../../services/search-nodes.service';
 
 import { AccountNode } from '../../models/AccountNode';
+
+import { SnackbarComponent } from '../snackbar/snackbar.component';
 
 @Component({
 	selector: 'search-nodes-modal',
@@ -115,6 +124,8 @@ import { AccountNode } from '../../models/AccountNode';
 	]
 })
 export class SearchNodesModalComponent implements OnInit {
+	@ViewChild('snackbar') snackbar: SnackbarComponent;
+
 	@Input() show: number;
 
 	@Output() callback = new EventEmitter();
@@ -122,6 +133,7 @@ export class SearchNodesModalComponent implements OnInit {
 	title: string;
 	results: Array<AccountNode> = [];
 	activeNode: AccountNode;
+	searching: boolean = true;
 
 	constructor(private searchService: SearchNodesService) {}
 
@@ -148,9 +160,18 @@ export class SearchNodesModalComponent implements OnInit {
 		return this.show === 0 ? 'closed' : 'open';
 	}
 
-	open() {
-		this.show = 1;
-		this.title = 'جستجو';
+	open(node?: AccountNode) {
+		if (node) {
+			console.log(node);
+
+			this.show = 3;
+			this.title = 'جزئیات';
+			this.activeNode = node;
+			this.searching = false;
+		} else {
+			this.show = 1;
+			this.title = 'جستجو';
+		}
 	}
 
 	back() {
@@ -162,12 +183,14 @@ export class SearchNodesModalComponent implements OnInit {
 	}
 
 	clickedOnSearchButton(e) {
-		if (!e.field || !e.query) return;
-
 		this.show = 2;
 		this.title = 'نتایج جستجو';
 
+		console.log(e.field, e.query);
+
 		this.results = this.searchService.search(e.field, e.query);
+
+		if (this.results.length === 0) this.snackbar.show('نتیجه‌ای یافت نشد');
 	}
 
 	clickedOnAddNodeButton(e) {
