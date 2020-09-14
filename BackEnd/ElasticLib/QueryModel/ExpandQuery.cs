@@ -9,7 +9,7 @@ namespace ElasticLib.QueryModel
     public class ExpandQuery : IFilterable
     {
         //all accounts that the edge needs to be envolved with as either destination or source:
-        [JsonPropertyName("accunts")]
+        [JsonPropertyName("accounts")]
         [MatchFilter]
         public List<string> Accounts {get; set;}
         [JsonIgnore]
