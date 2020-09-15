@@ -32,7 +32,7 @@ export class GraphComponent implements OnInit {
 	devTools: boolean = true;
 	isMenuOn = false;
 
-	constructor(private ogmaService: OgmaService) {}
+	constructor(public ogmaService: OgmaService) {}
 
 	ngOnInit() {
 		this.ogmaService.initConfig({
