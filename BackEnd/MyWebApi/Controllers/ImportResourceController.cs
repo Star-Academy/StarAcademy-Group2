@@ -3,6 +3,7 @@ using ElasticLib.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 using ElasticLib.Models;
 using SourceReaderLib;
+using GraphLogicLib;
 
 namespace MyWebApi.Controllers
 {
@@ -48,5 +49,23 @@ namespace MyWebApi.Controllers
                 return BadRequest();
             }
         }
+
+        
+        // [HttpPost]
+        // [Route("testingAllPath")]
+        // public IActionResult Sth([FromBody] string source, string destination)
+        // {
+        //     try
+        //     {
+        //         var nb = new NetworkBuilder(source, destination, 5, true);
+        //         nb.Build();
+        //         return Ok(nb.Nodes);
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         Console.WriteLine(e);
+        //         return BadRequest();
+        //     }
+        // }
     }
 }

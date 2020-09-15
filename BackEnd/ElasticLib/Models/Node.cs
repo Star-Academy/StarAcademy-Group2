@@ -5,7 +5,7 @@ namespace ElasticLib.Models
 {
     public class Node
     {
-        [JsonPropertyName("AccountId")]
+        [JsonPropertyName("AccountID")]
         public string AccountId { get; set; }
         [JsonPropertyName("OwnerName")]
         public string OwnerName { get; set; }
@@ -13,7 +13,7 @@ namespace ElasticLib.Models
         public string OwnerFamilyName { get; set; }
         [JsonPropertyName("BranchName")]
         public string BranchName { get; set; }
-        [JsonPropertyName("OwnerId")]
+        [JsonPropertyName("OwnerID")]
         public string OwnerId { get; set; }
         [JsonPropertyName("BranchAddress")]
         public string BranchAddress { get; set; }
@@ -23,7 +23,7 @@ namespace ElasticLib.Models
         public string AccountType { get; set; }
         [JsonPropertyName("Sheba")]
         public string Sheba { get; set; }
-        [JsonPropertyName("CardId")]
+        [JsonPropertyName("CardID")]
         public string CardId { get; set; }
     }
 }
