@@ -4,6 +4,7 @@ using ElasticLib.Abstraction;
 using ElasticLib.Models;
 using ElasticLib.QueryModel;
 using System.Linq;
+using GraphLogicLib.Models;
 
 namespace GraphLogicLib{
     public class NetworkBuilder{
@@ -13,6 +14,7 @@ namespace GraphLogicLib{
         private string Destination;
         private int PathMaximumLength;
         private bool CopyMaker;
+        public HashSet<SimpleNode> SimpleGraph;
         private Dictionary<string, int> Levels;
         public HashSet<Node> Nodes {get; set;}
         public HashSet<Edge> Edges {get; set;}
