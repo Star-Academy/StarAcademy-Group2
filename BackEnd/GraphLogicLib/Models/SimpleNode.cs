@@ -7,5 +7,20 @@ namespace GraphLogicLib.Models
     {
         public string Account {get; set;}
         public HashSet<SimpleEdge> Edges {get; set;}
+
+        public override bool Equals(object obj)
+        {
+            return obj is SimpleNode node &&
+                   Account == node.Account &&
+                   EqualityComparer<HashSet<SimpleEdge>>.Default.Equals(Edges, node.Edges);
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = -2010329767;
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Account);
+            // hashCode = hashCode * -1521134295 + EqualityComparer<HashSet<SimpleEdge>>.Default.GetHashCode(Edges);
+            return hashCode;
+        }
     }
 }
