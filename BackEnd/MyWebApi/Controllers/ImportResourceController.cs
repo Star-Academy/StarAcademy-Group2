@@ -52,21 +52,21 @@ namespace MyWebApi.Controllers
         }
 
         
-        [HttpPost]
-        [Route("testingAllPath")]
-        public ActionResult<HashSet<Node>> Sth()
-        {
-            try
-            {
-                var nb = new NetworkBuilder("6534454617", "4000000028", 5, true);
-                nb.Build();
-                return Ok(nb.Nodes);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return BadRequest();
-            }
-        }
+        // [HttpPost]
+        // [Route("testingAllPath")]
+        // public IActionResult Sth()
+        // {
+        //     try
+        //     {
+        //         var nb = new NetworkBuilder("4727992815", "7434776097", 5, true);
+        //         nb.Build();
+        //         return Ok(nb.SimpleGraph);
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         Console.WriteLine(e);
+        //         return BadRequest();
+        //     }
+        // }
     }
 }
