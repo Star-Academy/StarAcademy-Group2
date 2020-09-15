@@ -4,10 +4,10 @@ namespace GraphLogicLib.Models
 {
     public class SimpleEdge
     {
-        public SimpleNode src{get; set;}
-        public SimpleNode dst{get; set;}
-        public int Flow {get; set;}
-        public int Capacity {get; set;}
-        public int RemainingCapacity => Capacity - Flow;
+        public string SourceAccount{get; set;}
+        public string DestinationAccount{get; set;}
+        public long Flow {get; set;}
+        public long Capacity {get; set;}
+        public long RemainingCapacity => Capacity - Flow;
     }
 }

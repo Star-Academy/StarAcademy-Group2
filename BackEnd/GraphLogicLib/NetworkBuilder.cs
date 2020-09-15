@@ -14,8 +14,8 @@ namespace GraphLogicLib{
         private string Destination;
         private int PathMaximumLength;
         private bool CopyMaker;
-        public HashSet<SimpleNode> SimpleGraph;
         private Dictionary<string, int> Levels;
+        public HashSet<SimpleNode> SimpleGraph {get; set;}
         public HashSet<Node> Nodes {get; set;}
         public HashSet<Edge> Edges {get; set;}
         private NetworkBuilder(IElasticService elasticService) //??????????????
@@ -27,6 +27,7 @@ namespace GraphLogicLib{
             this.Destination = destination;
             this.PathMaximumLength = pathMaximumLength;
             this.CopyMaker = copyMaker;
+            this.SimpleGraph = new HashSet<SimpleNode>();
         }
         public HashSet<Node> GetNeighbours(string nodes){
             var output = new HashSet<Node>();
@@ -90,6 +91,54 @@ namespace GraphLogicLib{
             Levels = levels;
         }
 
+        public HashSet<SimpleEdge> SimplifyingEdges(HashSet<Edge> incomingEdges, HashSet<Edge> outcomingEdges){
+            var output = new HashSet<SimpleEdge>();
+            var neighbourEdges = new Dictionary<string, HashSet<SimpleEdge>>();
+            foreach(var edge in incomingEdges){
+                if(!neighbourEdges.ContainsKey(edge.SourceAccount)){
+                    neighbourEdges[edge.SourceAccount] = new HashSet<SimpleEdge>();
+                }
+                neighbourEdges[edge.SourceAccount].Add(new SimpleEdge(){
+                    SourceAccount = edge.SourceAccount,
+                    DestinationAccount = edge.DestinationAccount,
+                    Capacity = edge.Amount
+                });
+            }
+            foreach(var edge in outcomingEdges){
+                if(!neighbourEdges.ContainsKey(edge.DestinationAccount)){
+                    neighbourEdges[edge.DestinationAccount] = new HashSet<SimpleEdge>();
+                }
+                neighbourEdges[edge.DestinationAccount].Add(new SimpleEdge(){
+                    SourceAccount = edge.SourceAccount,
+                    DestinationAccount = edge.DestinationAccount,
+                    Capacity = edge.Amount
+                });
+            }
+            foreach(var edges in neighbourEdges.Values){
+                var defaultEdge = edges.First<SimpleEdge>();
+                var simpleEdge = new SimpleEdge(){
+                    SourceAccount = defaultEdge.SourceAccount,
+                    DestinationAccount = defaultEdge.DestinationAccount,
+                    Capacity = 0
+                };
+                foreach(var edge in edges){
+                    if(edge.SourceAccount.Equals(simpleEdge.SourceAccount)){
+                        simpleEdge.Capacity += edge.Capacity;
+                    }
+                    else{
+                        simpleEdge.Capacity += edge.Capacity;
+                    }
+                }
+                if(simpleEdge.Capacity < 0){
+                    simpleEdge.Capacity *= -1;
+                    var tmp = simpleEdge.SourceAccount;
+                    simpleEdge.SourceAccount = simpleEdge.DestinationAccount;
+                    simpleEdge.DestinationAccount =tmp;
+                }
+                output.Add(simpleEdge);
+            }
+            return output;
+        }
         public void Dfs(Node source, int pathLength, HashSet<string> visited){
             if(source.AccountId.Equals(Destination)){
                 return;
@@ -102,25 +151,33 @@ namespace GraphLogicLib{
                 select node;
             
             foreach(var neighbour in neighbours){
+                var incomingEdges = new HashSet<Edge>(
+                    ElasticService.Search<Edge>(
+                        new EdgeSearchQuery()
+                        {
+                            SourceAccount = neighbour.AccountId,
+                            DestinationAccount = source.AccountId                            
+                        }
+                    )
+                );
+                var outcomingEdges = new HashSet<Edge>(
+                    ElasticService.Search<Edge>(
+                        new EdgeSearchQuery()
+                        {
+                            SourceAccount = source.AccountId,
+                            DestinationAccount = neighbour.AccountId                            
+                        }
+                    )
+                );
+                if(CopyMaker){
+                    SimpleGraph.Add(new SimpleNode(){
+                        Account = source.AccountId,
+                        Edges = SimplifyingEdges(incomingEdges, outcomingEdges)
+                    });
+                }
                 Nodes.Add(source);
-                Edges.UnionWith(
-                    ElasticService.Search<Edge>(
-                        new EdgeSearchQuery()
-                        {
-                            DestinationAccount = source.AccountId,
-                            SourceAccount = neighbour.AccountId
-                        }
-                    )
-                );
-                Edges.UnionWith(
-                    ElasticService.Search<Edge>(
-                        new EdgeSearchQuery()
-                        {
-                            DestinationAccount = neighbour.AccountId,
-                            SourceAccount = source.AccountId
-                        }
-                    )
-                );
+                Edges.UnionWith(incomingEdges); //can be improved
+                Edges.UnionWith(outcomingEdges);
                 Dfs(neighbour, pathLength + 1, visited);
             }
             visited.Remove(source.AccountId);
