@@ -5,6 +5,7 @@ using ElasticLib.Models;
 using ElasticLib.QueryModel;
 using System.Linq;
 using GraphLogicLib.Models;
+using ElasticLib;
 
 namespace GraphLogicLib
 {
@@ -19,10 +20,6 @@ namespace GraphLogicLib
         public Dictionary<string, HashSet<SimpleEdge>> SimpleGraph; // <accountId, edges>
         public HashSet<Node> Nodes { get; set; }
         public HashSet<Edge> Edges { get; set; }
-        private NetworkBuilder(IElasticService elasticService) //??????????????
-        {
-            this.ElasticService = elasticService;
-        }
         public NetworkBuilder(string source, string destination, int pathMaximumLength = 5, bool copyMaker = false)
         {
             this.Source = source;
@@ -30,7 +27,7 @@ namespace GraphLogicLib
             this.PathMaximumLength = pathMaximumLength;
             this.CopyMaker = copyMaker;
             this.SimpleGraph = new Dictionary<string, HashSet<SimpleEdge>>();
-
+            this.ElasticService = new ElasticService();
         }
         public HashSet<Node> GetNeighbours(string nodes)
         {
@@ -86,7 +83,7 @@ namespace GraphLogicLib
                 var currentLevelNodes = String.Join(" ", queue);
                 nextLevelQueue.UnionWith(
                     from node in GetNeighbours(currentLevelNodes)
-                    where levels.ContainsKey(node.AccountId) is false //?????????
+                    where levels.ContainsKey(node.AccountId) == false //?????????
                     select node.AccountId
                 );
                 foreach (var node in queue)

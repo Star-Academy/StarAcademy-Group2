@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ElasticLib.Models;
 using SourceReaderLib;
 using GraphLogicLib;
+using System.Collections.Generic;
 
 namespace MyWebApi.Controllers
 {
@@ -51,21 +52,21 @@ namespace MyWebApi.Controllers
         }
 
         
-        // [HttpPost]
-        // [Route("testingAllPath")]
-        // public IActionResult Sth([FromBody] string source, string destination)
-        // {
-        //     try
-        //     {
-        //         var nb = new NetworkBuilder(source, destination, 5, true);
-        //         nb.Build();
-        //         return Ok(nb.Nodes);
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         Console.WriteLine(e);
-        //         return BadRequest();
-        //     }
-        // }
+        [HttpPost]
+        [Route("testingAllPath")]
+        public ActionResult<HashSet<Node>> Sth()
+        {
+            try
+            {
+                var nb = new NetworkBuilder("6534454617", "4000000028", 5, true);
+                nb.Build();
+                return Ok(nb.Nodes);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return BadRequest();
+            }
+        }
     }
 }
