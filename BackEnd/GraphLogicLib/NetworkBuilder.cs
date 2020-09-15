@@ -69,11 +69,14 @@ namespace GraphLogicLib{
             var queue = new HashSet<string>();
             queue.Add(Destination);
             for(int i = 0; i < PathMaximumLength; i++){
+                if (queue.Count == 0){
+                    break;
+                }
                 var nextLevelQueue = new HashSet<string>();
                 var currentLevelNodes = String.Join(" ", queue);
                 nextLevelQueue.UnionWith(
                     from node in GetNeighbours(currentLevelNodes)
-                    where levels.ContainsKey(node.AccountId) is false
+                    where levels.ContainsKey(node.AccountId) is false //?????????
                     select node.AccountId
                 );
                 foreach(var node in queue){
@@ -92,7 +95,7 @@ namespace GraphLogicLib{
             visited.Add(source.AccountId);
             var neighbours = 
                 from node in GetNeighbours(source.AccountId)
-                where !visited.Contains(node.AccountId)
+                where !visited.Contains(node.AccountId) //???????????????????????
                 where pathLength + Levels[node.AccountId] < PathMaximumLength
                 select node;
             
@@ -122,10 +125,7 @@ namespace GraphLogicLib{
         }
         public void Build(){
             BfsOnDestination();
-            var nodes = new HashSet<Node>();
-            var edges = new HashSet<Edge>();
-            var visited = new HashSet<string>();
-            Dfs(Source, 0, visited);
+            Dfs(Source, 0, new HashSet<string>());
         }
     }
 }
