@@ -38,8 +38,16 @@ namespace GraphLogicLib
             long result = 0;
 
             while (Bfs())
-                result += SendFlow(sourceId, new List<SimpleEdge>());
-            
+            {
+                var reveresedEdgesToAdd = new HashSet<SimpleEdge>();
+                result += SendFlow(sourceId, new List<SimpleEdge>(), ref reveresedEdgesToAdd);
+                foreach(var edge in reveresedEdgesToAdd)
+                {
+                    Graph[edge.DestinationAccount].Add(edge);
+                    Graph[edge.SourceAccount].Add(edge);
+                }
+            }
+
             return result;
         }
 
@@ -66,10 +74,10 @@ namespace GraphLogicLib
                         .Where(edge => edge.SourceAccount.Equals(node) && edge.RemainingCapacity > 0)
                         .Select(edge => edge.DestinationAccount))
                 {
-                    if (!Levels.ContainsKey(node))
+                    if (!Levels.ContainsKey(neighbour))
                     {
-                        queue.Enqueue(node);
-                        Levels[node] = currnetLevel;
+                        queue.Enqueue(neighbour);
+                        Levels[neighbour] = currnetLevel;
                     }
                 }
             }
@@ -77,22 +85,22 @@ namespace GraphLogicLib
             return Levels.ContainsKey(destinationId);
         }
 
-        public long SendFlow(string node, List<SimpleEdge> path)
+        public long SendFlow(string node, List<SimpleEdge> path, ref HashSet<SimpleEdge> reveresedEdgesToAdd)
         {
             if (node.Equals(destinationId))
             {
-                return UpdateCapacity(path);
+                return UpdateFlow(path, ref reveresedEdgesToAdd);
             }
-            
+
             long result = 0;
 
-            foreach(var edge in Graph[node])
+            foreach (var edge in Graph[node])
             {
-                if(edge.SourceAccount.Equals(node) && edge.RemainingCapacity > 0 
-                    && Levels[edge.DestinationAccount] == Levels[node]+1)
+                if (edge.SourceAccount.Equals(node) && edge.RemainingCapacity > 0
+                    && Levels[edge.DestinationAccount] == Levels[node] + 1)
                 {
                     path.Add(edge);
-                    result += SendFlow(edge.DestinationAccount, path);
+                    result += SendFlow(edge.DestinationAccount, path, ref reveresedEdgesToAdd);
                     path.Remove(edge);
                 }
             }
@@ -100,7 +108,7 @@ namespace GraphLogicLib
             return result;
         }
 
-        public long UpdateCapacity(List<SimpleEdge> path)
+        public long UpdateFlow(List<SimpleEdge> path, ref HashSet<SimpleEdge> reveresedEdgesToAdd)
         {
             long flow = path.Min(edge => edge.RemainingCapacity);
 
@@ -130,8 +138,7 @@ namespace GraphLogicLib
                     equalReversed.Capacity = edge.Capacity;
                     equalReversed.Flow = 0;
 
-                    Graph[edge.DestinationAccount].Add(equalReversed);
-                    Graph[edge.SourceAccount].Add(equalReversed);
+                    reveresedEdgesToAdd.Add(equalReversed);
                 }
             }
 

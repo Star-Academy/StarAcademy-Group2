@@ -8,22 +8,23 @@ using GraphLogicLib;
 
 namespace Test.GraphLogicLib
 {
-    public class GraphLogicLibTest
+    public class BfsTest
     {
         MaxFlowFinder maxFlowFinder;
 
         [Theory]
-        [MemberData(nameof(FlowTestData))]
-        public void FlowTest(Dictionary<string, HashSet<SimpleEdge>> graph
-                            , string src, string dst, long expected)
+        [MemberData(nameof(BfsTestData))]
+        public void Test(Dictionary<string, HashSet<SimpleEdge>> graph
+                            , string src, string dst, Dictionary<string, int> expected)
         {
             maxFlowFinder = new MaxFlowFinder(src, dst);
             maxFlowFinder.Graph = graph; 
 
-            Assert.Equal(expected, maxFlowFinder.Find());
+            Assert.True(maxFlowFinder.Bfs()); //yeah this could be better
+            Assert.Equal(expected, maxFlowFinder.Levels);
         }
 
-        public static IEnumerable<object[]> FlowTestData =>
+        public static IEnumerable<object[]> BfsTestData =>
             new List<object[]>  
             {
                 // 1 2 1 
@@ -63,7 +64,13 @@ namespace Test.GraphLogicLib
                                 }
                         },
                     },
-                    1, 5, 1
+                    1, 5,
+                    new Dictionary<string, int>()
+                    {
+                        {"1", 0},
+                        {"2", 1},
+                        {"5", 2}
+                    }
                 }
                 // ,
                 // new object[] 
