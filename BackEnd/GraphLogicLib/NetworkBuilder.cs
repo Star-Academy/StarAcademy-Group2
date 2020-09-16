@@ -159,10 +159,26 @@ namespace GraphLogicLib
             }
             return output;
         }
-        public void Dfs(Node source, int pathLength, HashSet<string> visited)
+        public void Dfs(Node last, Node source, int pathLength, HashSet<string> visited)
         {
             if (source.AccountId.Equals(Destination))
             {
+                if (CopyMaker)
+                {
+                    SimpleGraph[source.AccountId] = new HashSet<SimpleEdge>();
+                    if(last != null){
+                        SimpleGraph[source.AccountId].UnionWith(
+                            from edge in SimpleGraph[last.AccountId]
+                            where edge.DestinationAccount == source.AccountId
+                            select edge
+                        );
+                        SimpleGraph[source.AccountId].UnionWith(
+                            from edge in SimpleGraph[last.AccountId]
+                            where edge.SourceAccount == source.AccountId
+                            select edge
+                        );
+                    }
+                }
                 return;
             }
             visited.Add(source.AccountId);
@@ -193,22 +209,34 @@ namespace GraphLogicLib
                         }
                     )
                 );
-
                 if (CopyMaker)
                 {
                     SimpleGraph[source.AccountId] = SimplifyingEdges(incomingEdges, outcomingEdges);
+                    if(last != null){
+                        SimpleGraph[source.AccountId].UnionWith(
+                            from edge in SimpleGraph[last.AccountId]
+                            where edge.DestinationAccount == source.AccountId
+                            select edge
+                        );
+                        SimpleGraph[source.AccountId].UnionWith(
+                            from edge in SimpleGraph[last.AccountId]
+                            where edge.SourceAccount == source.AccountId
+                            select edge
+                        );
+                    }
                 }
                 Nodes.Add(source);
                 Edges.UnionWith(incomingEdges); //can be improved
                 Edges.UnionWith(outcomingEdges);
-                Dfs(neighbour, pathLength + 1, visited);
+                Dfs(source, neighbour, pathLength + 1, visited);
             }
+
             visited.Remove(source.AccountId);
         }
         public void Build()
         {
             BfsOnDestination();
-            Dfs(ElasticService.Search<Node>(new NodeSearchQuery() {AccountId = Source}).First<Node>(), 0, new HashSet<string>());
+            Dfs(null, ElasticService.Search<Node>(new NodeSearchQuery() {AccountId = Source}).First<Node>(), 0, new HashSet<string>());
         }
     }
 }
