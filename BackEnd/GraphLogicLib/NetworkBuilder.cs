@@ -5,6 +5,7 @@ using ElasticLib.Models;
 using ElasticLib.QueryModel;
 using System.Linq;
 using GraphLogicLib.Models;
+using ElasticLib;
 
 namespace GraphLogicLib
 {
@@ -19,10 +20,6 @@ namespace GraphLogicLib
         public Dictionary<string, HashSet<SimpleEdge>> SimpleGraph; // <accountId, edges>
         public HashSet<Node> Nodes { get; set; }
         public HashSet<Edge> Edges { get; set; }
-        private NetworkBuilder(IElasticService elasticService) //??????????????
-        {
-            this.ElasticService = elasticService;
-        }
         public NetworkBuilder(string source, string destination, int pathMaximumLength = 5, bool copyMaker = false)
         {
             this.Source = source;
@@ -30,7 +27,9 @@ namespace GraphLogicLib
             this.PathMaximumLength = pathMaximumLength;
             this.CopyMaker = copyMaker;
             this.SimpleGraph = new Dictionary<string, HashSet<SimpleEdge>>();
-
+            this.ElasticService = new ElasticService();
+            this.Nodes = new HashSet<Node>();
+            this.Edges = new HashSet<Edge>();
         }
         public HashSet<Node> GetNeighbours(string nodes)
         {
@@ -82,18 +81,18 @@ namespace GraphLogicLib
                 {
                     break;
                 }
+                foreach (var node in queue)
+                {
+                    levels.Add(node, i);
+                }
+                queue.Clear();
                 var nextLevelQueue = new HashSet<string>();
                 var currentLevelNodes = String.Join(" ", queue);
                 nextLevelQueue.UnionWith(
                     from node in GetNeighbours(currentLevelNodes)
-                    where levels.ContainsKey(node.AccountId) is false //?????????
+                    where !levels.ContainsKey(node.AccountId) //?????????
                     select node.AccountId
                 );
-                foreach (var node in queue)
-                {
-                    levels.Add(node, i);
-                    queue.Remove(node);
-                }
                 queue.UnionWith(nextLevelQueue);
             }
             Levels = levels;
@@ -170,6 +169,7 @@ namespace GraphLogicLib
             var neighbours =
                 from node in GetNeighbours(source.AccountId)
                 where !visited.Contains(node.AccountId) //???????????????????????
+                where Levels.ContainsKey(node.AccountId)
                 where pathLength + Levels[node.AccountId] < PathMaximumLength
                 select node;
 
