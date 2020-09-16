@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ElasticLib.Models;
 using GraphLogicLib.Models;
 
 namespace GraphLogicLib
 {
-    class MaxFlowFinder
+    public class MaxFlowFinder
     {
 
         /*
@@ -18,11 +17,17 @@ namespace GraphLogicLib
         private string destinationId;
         private const int DefaultMaxLength = 5;
 
+        /// <summary>
+        /// Don't forget to call initGraph() after contructing (in the API)
+        /// </summary>
         public MaxFlowFinder(string sourceId, string destId)
         {
             destinationId = destId;
             this.sourceId = sourceId;
+        }
 
+        public void InitGraph()
+        {
             var networkBuilder = new NetworkBuilder(this.sourceId, destinationId, DefaultMaxLength, true);
             networkBuilder.Build();
             Graph = networkBuilder.SimpleGraph;
@@ -32,13 +37,13 @@ namespace GraphLogicLib
         {
             long result = 0;
 
-            while (bfs())
-                result += sendFlow(sourceId, new List<SimpleEdge>());
+            while (Bfs())
+                result += SendFlow(sourceId, new List<SimpleEdge>());
             
             return result;
         }
 
-        private bool bfs()
+        public bool Bfs()
         {
             Levels = new Dictionary<string, int>();
             var queue = new Queue<string>();
@@ -72,11 +77,11 @@ namespace GraphLogicLib
             return Levels.ContainsKey(destinationId);
         }
 
-        private long sendFlow(string node, List<SimpleEdge> path)
+        public long SendFlow(string node, List<SimpleEdge> path)
         {
             if (node.Equals(destinationId))
             {
-                return updateCapacity(path);
+                return UpdateCapacity(path);
             }
             
             long result = 0;
@@ -87,7 +92,7 @@ namespace GraphLogicLib
                     && Levels[edge.DestinationAccount] == Levels[node]+1)
                 {
                     path.Add(edge);
-                    result += sendFlow(edge.DestinationAccount, path);
+                    result += SendFlow(edge.DestinationAccount, path);
                     path.Remove(edge);
                 }
             }
@@ -95,7 +100,7 @@ namespace GraphLogicLib
             return result;
         }
 
-        private long updateCapacity(List<SimpleEdge> path)
+        public long UpdateCapacity(List<SimpleEdge> path)
         {
             long flow = path.Min(edge => edge.RemainingCapacity);
 
@@ -113,12 +118,17 @@ namespace GraphLogicLib
                 if (Graph[edge.DestinationAccount].TryGetValue(equalReversed, out var actualReversed))
                 {
                     actualReversed.Flow -= flow;
-                    // what happens to the one in "DestAcount" 's set?
+                    // 
+                    // what happens to the one in "DestAcount" 's set? 
+                    // TODO refactor:
+                    Graph[edge.SourceAccount].TryGetValue(equalReversed, out actualReversed);
+                    actualReversed.Flow -= flow;
+
                 }
                 else
                 {
                     equalReversed.Capacity = edge.Capacity;
-                    //what happens to the other fields?
+                    equalReversed.Flow = 0;
 
                     Graph[edge.DestinationAccount].Add(equalReversed);
                     Graph[edge.SourceAccount].Add(equalReversed);
