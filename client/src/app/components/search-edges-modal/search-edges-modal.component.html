@@ -1,3 +1,5 @@
+<app-snackbar #snackbar class="error"></app-snackbar>
+
 <div [class]="'container ' + (show === 0 ? 'closed' : '')">
 	<div class="overlay" [@overlayState]="overlayStateStatus" (click)="close()">
 		<round-button btnClass="btn-fade" icon="cross" iconSize="6"></round-button>
@@ -11,14 +13,8 @@
 			<div>{{title}}</div>
 		</div>
 		<div class="body">
-			<search-nodes-form *ngIf="show === 1" [snackbar]="snackbar" (callback)="clickedOnSearchButton($event)">
-			</search-nodes-form>
-			<search-nodes-result *ngIf="show === 2" [results]="results"
-				(addNodeCallback)="clickedOnAddNodeButton($event)" (detailsCallback)="clickedOnDetailsButton($event)">
-			</search-nodes-result>
-			<search-nodes-details *ngIf="show === 3" [node]="activeNode" [searching]="searching"
-				(callback)="clickedOnAddNodeButton($event)">
-			</search-nodes-details>
+			<search-edges-form *ngIf="show === 1" [snackbar]="snackbar" (callback)="clickedOnSearchButton($event)">
+			</search-edges-form>
 		</div>
 	</div>
 </div>

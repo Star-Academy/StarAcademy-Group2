@@ -1,5 +1,10 @@
-import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { OgmaService } from '../../services/ogma.service';
+import {
+	Component,
+	ViewChild,
+	ElementRef,
+	AfterViewInit,
+	Input
+} from '@angular/core';
 import {
 	trigger,
 	state,
@@ -8,6 +13,13 @@ import {
 	animate,
 	keyframes
 } from '@angular/animations';
+
+import { NodeList } from '../../../dependencies/ogma.min.js';
+
+import { OgmaService } from '../../services/ogma.service';
+
+import { SnackbarComponent } from '../snackbar/snackbar.component';
+import { SearchEdgesModalComponent } from '../search-edges-modal/search-edges-modal.component.js';
 
 @Component({
 	selector: 'radial-node-menu',
@@ -51,18 +63,23 @@ import {
 	]
 })
 export class RadialNodeMenuComponent implements AfterViewInit {
+	@Input() snackbar: SnackbarComponent;
+
 	@ViewChild('menu') menuElement: ElementRef;
+	@ViewChild('searchEdgesModal') searchEdgesModal: SearchEdgesModalComponent;
 
 	menu;
 	status: number = 0;
 
 	menuOffset = { x: 0, y: 0 };
 
-	node;
+	nodes: NodeList;
+	location: { x: number; y: number };
+
 	sourceFlag = false;
 	targetFlag = false;
 
-	constructor(private ogmaService: OgmaService) {}
+	constructor(public ogmaService: OgmaService) {}
 
 	ngAfterViewInit(): void {
 		this.menu = this.menuElement.nativeElement;
@@ -77,18 +94,17 @@ export class RadialNodeMenuComponent implements AfterViewInit {
 		}
 	}
 
-	expandMenu(node) {
-		this.node = node;
+	expandMenu(nodes: NodeList, location: { x: number; y: number }) {
+		this.nodes = nodes;
 
-		let pos = this.ogmaService.ogma.view.graphToScreenCoordinates({
-			x: node.getAttribute('x'),
-			y: node.getAttribute('y')
-		});
+		this.location = this.ogmaService.ogma.view.graphToScreenCoordinates(
+			location
+		);
 
 		this.status = 1;
 		this.menu.classList.add('open');
-		this.menu.style.left = `${pos.x + this.menuOffset.x + 40}px`;
-		this.menu.style.top = `${pos.y + this.menuOffset.y + 40}px`;
+		this.menu.style.left = `${this.location.x + this.menuOffset.x + 40}px`;
+		this.menu.style.top = `${this.location.y + this.menuOffset.y + 40}px`;
 		this.menu.style.transform = 'scale(2)';
 		this.menu.addEventListener('click', (e) => {
 			this.close();
@@ -100,15 +116,6 @@ export class RadialNodeMenuComponent implements AfterViewInit {
 		return true;
 	}
 
-	changeOnZooming() {
-		let pos = this.ogmaService.ogma.view.graphToScreenCoordinates({
-			x: this.node.getAttribute('x'),
-			y: this.node.getAttribute('y')
-		});
-		this.menu.style.left = `${pos.x + this.menuOffset.x}px`;
-		this.menu.style.top = `${pos.y + this.menuOffset.y}px`;
-	}
-
 	close() {
 		this.status = 0;
 		this.menu.classList.remove('open');
@@ -117,28 +124,34 @@ export class RadialNodeMenuComponent implements AfterViewInit {
 		return false;
 	}
 
-	lockNode() {
-		this.ogmaService.lockNodes(this.node);
+	lockNodes() {
+		this.ogmaService.lockNodes(this.nodes);
 		this.close();
 	}
 
-	unlockNode() {
-		this.ogmaService.unlockNodes(this.node);
+	unlockNodes() {
+		this.ogmaService.unlockNodes(this.nodes);
 		this.close();
 	}
 
-	expandNode() {
-		this.ogmaService.expandNode(this.node.getId());
+	expandNodes() {
+		this.ogmaService.expandNode(this.nodes.getId());
+		this.searchEdgesModal.open(this.nodes);
 		this.close();
 	}
 
-	deleteNode() {
-		this.ogmaService.removeNode(this.node.getId());
+	deleteNodes() {
+		this.ogmaService.removeNode(this.nodes.getId());
 		this.close();
 	}
 
 	selectAsSource() {
-		if (this.sourceFlag) {
+		if (this.nodes.size > 1) {
+			this.snackbar.show(
+				'فقط یک حساب میتواند به عنوان مبدأ تعیین شود',
+				3000
+			);
+		} else if (this.sourceFlag) {
 			this.ogmaService.removeSource();
 			this.close();
 		} else {
@@ -146,13 +159,18 @@ export class RadialNodeMenuComponent implements AfterViewInit {
 				this.ogmaService.removeTarget();
 			}
 
-			this.ogmaService.setSource(this.node);
+			this.ogmaService.setSource(this.nodes.get(0));
 			this.close();
 		}
 	}
 
 	selectAsTarget() {
-		if (this.targetFlag) {
+		if (this.nodes.size > 1) {
+			this.snackbar.show(
+				'فقط یک حساب میتواند به عنوان مقصد تعیین شود',
+				3000
+			);
+		} else if (this.targetFlag) {
 			this.ogmaService.removeTarget();
 			this.close();
 		} else {
@@ -160,15 +178,17 @@ export class RadialNodeMenuComponent implements AfterViewInit {
 				this.ogmaService.removeSource();
 			}
 
-			this.ogmaService.setTarget(this.node);
+			this.ogmaService.setTarget(this.nodes.get(0));
 			this.close();
 		}
 	}
 
 	setSourceFlag() {
 		if (
+			this.nodes.size === 1 &&
 			this.ogmaService.getSourceNode() &&
-			this.ogmaService.getSourceNode().getId() === this.node.getId()
+			this.ogmaService.getSourceNode().getId() ===
+				this.nodes.get(0).getId()
 		) {
 			this.sourceFlag = true;
 		} else {
@@ -178,8 +198,10 @@ export class RadialNodeMenuComponent implements AfterViewInit {
 
 	setTargetFlag() {
 		if (
+			this.nodes.size === 1 &&
 			this.ogmaService.getTargetNode() &&
-			this.ogmaService.getTargetNode().getId() === this.node.getId()
+			this.ogmaService.getTargetNode().getId() ===
+				this.nodes.get(0).getId()
 		) {
 			this.targetFlag = true;
 		} else {
@@ -207,7 +229,7 @@ export class RadialNodeMenuComponent implements AfterViewInit {
 
 	sourceButton() {
 		let button = document.getElementById('source-select');
-		button.title = 'select as source';
+		button.title = 'انتخاب به عنوان مبدأ';
 		button.style.background = '#ffb726';
 		button.addEventListener('mouseover', (e) => {
 			button.style.color = '#ffb726';
@@ -222,7 +244,7 @@ export class RadialNodeMenuComponent implements AfterViewInit {
 
 	targetButton() {
 		let button = document.getElementById('target-select');
-		button.title = 'select as target';
+		button.title = 'انتخاب به عنوان مقصد';
 		button.style.background = '#ffb726';
 		button.addEventListener('mouseover', (e) => {
 			button.style.color = '#ffb726';
@@ -237,7 +259,7 @@ export class RadialNodeMenuComponent implements AfterViewInit {
 
 	deselectSource() {
 		let button = document.getElementById('source-select');
-		button.title = 'deselct';
+		button.title = 'لغو انتخاب';
 		button.style.background = 'cornflowerblue';
 		button.addEventListener('mouseover', (e) => {
 			button.style.color = 'cornflowerblue';
@@ -252,7 +274,7 @@ export class RadialNodeMenuComponent implements AfterViewInit {
 
 	deselectTarget() {
 		let button = document.getElementById('target-select');
-		button.title = 'deselct';
+		button.title = 'لغو انتخاب';
 		button.style.background = 'cornflowerblue';
 		button.addEventListener('mouseover', (e) => {
 			button.style.color = 'cornflowerblue';

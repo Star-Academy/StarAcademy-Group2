@@ -25,6 +25,9 @@ import { RoundButtonComponent } from './components/round-button/round-button.com
 import { NodeTooltipComponent } from './components/node-tooltip/node-tooltip.component';
 import { EdgeTooltipComponent } from './components/edge-tooltip/edge-tooltip.component';
 import { SnackbarComponent } from './components/snackbar/snackbar.component';
+import { SearchEdgesModalComponent } from './components/search-edges-modal/search-edges-modal.component';
+import { SearchEdgesFormComponent } from './components/search-edges-form/search-edges-form.component';
+import { SearchEdgesDetailsComponent } from './components/search-edges-details/search-edges-details.component';
 
 @NgModule({
 	declarations: [
@@ -41,7 +44,10 @@ import { SnackbarComponent } from './components/snackbar/snackbar.component';
 		RoundButtonComponent,
 		NodeTooltipComponent,
 		EdgeTooltipComponent,
-		SnackbarComponent
+		SnackbarComponent,
+		SearchEdgesModalComponent,
+		SearchEdgesFormComponent,
+		SearchEdgesDetailsComponent
 	],
 	imports: [
 		BrowserModule,

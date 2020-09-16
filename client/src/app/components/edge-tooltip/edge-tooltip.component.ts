@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-edge-tooltip',
-  templateUrl: './edge-tooltip.component.html',
-  styleUrls: ['./edge-tooltip.component.scss']
+	selector: 'edge-tooltip',
+	templateUrl: './edge-tooltip.component.html',
+	styleUrls: [ './edge-tooltip.component.scss' ]
 })
 export class EdgeTooltipComponent implements OnInit {
+	@Input() content: { Amount: string };
+	@Input() position: { x: number; y: number };
 
-  constructor() { }
+	constructor() {}
 
-  ngOnInit(): void {
-  }
-
+	ngOnInit(): void {}
 }

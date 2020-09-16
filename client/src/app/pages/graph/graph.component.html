@@ -1,14 +1,22 @@
-<search-nodes-modal #searchNodesModal (callback)="clickedOnAddNodeButton($event)"></search-nodes-modal>
-<radial-node-menu #radialComponent></radial-node-menu>
-<node-tooltip *ngIf="hoveredContent" [content]="hoveredContent" [position]="hoveredPosition"></node-tooltip>
+<app-snackbar #snackbar class="error"></app-snackbar>
+
+<search-nodes-modal #searchNodesModal [snackbar]="snackbar" (callback)="clickedOnAddNodeButton($event)">
+</search-nodes-modal>
+<radial-node-menu #radialComponent [snackbar]="snackbar"></radial-node-menu>
+
+<node-tooltip *ngIf="nodeHoveredContent" [content]="nodeHoveredContent" [position]="hoveredPosition"></node-tooltip>
+<edge-tooltip *ngIf="edgeHoveredContent" [content]="edgeHoveredContent" [position]="hoveredPosition"></edge-tooltip>
+
 <div #findPathMenu *ngIf="ogmaService.sourceNode && ogmaService.targetNode" class="find-path btn btn-primary closed"
 	(click)="toggleFindPathMenu($event)">
 	<span class="title">محاسبه مسیر</span>
-	<div class="form">
-		<span class="label">حداکثر طول:</span>
-		<input type="number" min="1" max="7" value="1">
+	<div class="form-container" (click)="stopPropagation($event)">
+		<div class="form">
+			<span class="label">حداکثر طول:</span>
+			<input type="number" min="1" max="7" value="1">
+		</div>
+		<div class="btn btn-primary-reverse" (click)="clickedOnFindPathButton($event)">پردازش</div>
 	</div>
-	<div class="btn btn-primary-reverse" (click)="clickedOnFindPathButton($event)">پردازش</div>
 </div>
 
 <nav class="bg-primary text-default-05">

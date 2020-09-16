@@ -1,0 +1,55 @@
+<form #searchForm="ngForm" (ngSubmit)="clickedOnSearchButton(searchForm.value)">
+	<div>
+		<label>محدوده قیمت تراکنش:</label>
+		<span class="input-group">
+			<label>از</label>
+			<input ngModel name="amountFloor" class="form-control" type="number" placeholder="1000">
+			<span class="input-group-addon">
+				<input ngModel type="checkbox" name="amountFloorCheck">
+			</span>
+		</span>
+		<span class="input-group">
+			<label>تا</label>
+			<input ngModel name="amountCeiling" class="form-control" type="number" placeholder="1000000">
+			<span class="input-group-addon">
+				<input ngModel type="checkbox" name="amountCeilingCheck">
+			</span>
+		</span>
+	</div>
+
+	<div>
+		<label>محدوده زمان تراکنش:</label>
+		<span class="input-group">
+			<label>از</label>
+			<input ngModel name="dateFloor" class="form-control" type="date" placeholder="01/01/2000">
+			<span class="input-group-addon">
+				<input ngModel type="checkbox" name="dateFloorCheck">
+			</span>
+		</span>
+		<span class="input-group">
+			<label>تا</label>
+			<input ngModel name="dateCeiling" class="form-control" type="date" placeholder="">
+			<span class="input-group-addon">
+				<input ngModel type="checkbox" name="dateCeilingCheck">
+			</span>
+		</span>
+	</div>
+
+	<div>
+		<label>شماره تراکنش:</label>
+		<input ngModel name="transactionId" type="number" placeholder="">
+		<span class="input-group-addon">
+			<input ngModel type="checkbox" name="transactionIdCheck">
+		</span>
+	</div>
+
+	<div>
+		<label>نوع تراکنش:</label>
+		<input ngModel name="transactionType" type="text" placeholder="">
+		<span class="input-group-addon">
+			<input ngModel type="checkbox" name="transactionTypeCheck">
+		</span>
+	</div>
+
+	<button class="btn btn-primary" type="submit">گسترش دادن</button>
+</form>

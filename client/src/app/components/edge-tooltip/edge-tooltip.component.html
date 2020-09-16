@@ -1,1 +1,6 @@
-<p>edge-tooltip works!</p>
+<div class="tooltip shadow-narrow" [style.top.px]="position.y" [style.left.px]="position.x">
+	<div class="overlay bg-default"></div>
+
+	<div class="key">مقدار تراکنش</div>
+	<div class="value">{{content.Amount}}</div>
+</div>

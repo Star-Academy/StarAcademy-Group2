@@ -1,20 +1,22 @@
+<search-edges-modal #searchEdgesModal [ogmaService]='ogmaService'></search-edges-modal>
+
 <div #menu class="open" id="menu" [@menuState]="menuStateStatus">
-	<span class="menu-item" title="Expand" (click)="expandNode()">
+	<span class="menu-item" title="بسط دادن" (click)="expandNodes()">
 		<svg-icon key="expand"></svg-icon>
 	</span>
-	<span class="menu-item" title="Delete" (click)="deleteNode()">
+	<span class="menu-item" title="حذف" (click)="deleteNodes()">
 		<svg-icon key="garbageBin"></svg-icon>
 	</span>
-	<span class="menu-item" title="Lock" (click)="lockNode()">
+	<span class="menu-item" title="قفل‌کردن" (click)="lockNodes()">
 		<svg-icon key="lock"></svg-icon>
 	</span>
-	<span class="menu-item" title="Unlock" (click)="unlockNode()">
+	<span class="menu-item" title="بازکردن قفل" (click)="unlockNodes()">
 		<svg-icon key="unlock"></svg-icon>
 	</span>
-	<span id="source-select" class="menu-item" title="Select as Source" (click)="selectAsSource()">
+	<span id="source-select" class="menu-item" title="انتخاب به عنوان مبدأ" (click)="selectAsSource()">
 		<svg-icon key="dollar"></svg-icon>
 	</span>
-	<span id="target-select" class="menu-item" title="Select as Destination" (click)="selectAsTarget()">
+	<span id="target-select" class="menu-item" title="انتخاب به عنوان مقصد" (click)="selectAsTarget()">
 		<svg-icon key="shirt"></svg-icon>
 	</span>
 </div>

@@ -1,11 +1,13 @@
 import { OnInit, Component, Input, ViewChild, ElementRef } from '@angular/core';
 
-import { NodeId, HoverEvent } from '../../../dependencies/ogma.min.js';
+import { HoverEvent } from '../../../dependencies/ogma.min.js';
 
 import { OgmaService } from '../../services/ogma.service';
+import { SearchNodesService } from '../../services/search-nodes.service.js';
 
 import { SearchNodesModalComponent } from '../../components/search-nodes-modal/search-nodes-modal.component.js';
 import { RadialNodeMenuComponent } from '../../components/radial-node-menu/radial-node-menu.component.js';
+import { SnackbarComponent } from '../../components/snackbar/snackbar.component.js';
 
 @Component({
 	selector: 'app-graph',
@@ -20,19 +22,29 @@ export class GraphComponent implements OnInit {
 	@ViewChild('radialComponent') radialComponent: RadialNodeMenuComponent;
 	@ViewChild('findPathMenu') findPathMenu: ElementRef;
 
+	@ViewChild('snackbar') snackbar: SnackbarComponent;
+
 	// TODO: Remove
 	@Input() currentLayout: string = 'force';
 
 	// TODO: Remove
 	layouts: string[] = [ 'force', 'hierarchical' ];
 
-	hoveredContent: { branchName: string; ownerId: string; ownerName: string };
+	nodeHoveredContent: {
+		branchName: string;
+		ownerId: string;
+		ownerName: string;
+	};
+	edgeHoveredContent: { Amount: string };
 	hoveredPosition: { x: number; y: number };
 
 	devTools: boolean = true;
 	isMenuOn = false;
 
-	constructor(public ogmaService: OgmaService) {}
+	constructor(
+		public ogmaService: OgmaService,
+		private searchService: SearchNodesService
+	) {}
 
 	ngOnInit() {
 		this.ogmaService.initConfig({
@@ -48,13 +60,20 @@ export class GraphComponent implements OnInit {
 			this.isMenuOn = this.radialComponent.close();
 
 			if (target && target.isNode) {
-				this.hoveredContent = null;
+				this.nodeHoveredContent = null;
+				this.edgeHoveredContent = null;
 
 				if (button === 'right')
 					if (domEvent.shiftKey)
 						this.ogmaService.toggleNodeLockStatus(target);
 					else
-						this.isMenuOn = this.radialComponent.expandMenu(target);
+						this.isMenuOn = this.radialComponent.expandMenu(
+							this.ogmaService.ogma
+								.getSelectedNodes()
+								.concat(target)
+								.dedupe(),
+							target.getAttributes([ 'x', 'y' ])
+						);
 				else if (button === 'left' && domEvent.shiftKey)
 					this.searchNodesModal.open(target.getData());
 			}
@@ -76,21 +95,24 @@ export class GraphComponent implements OnInit {
 		});
 
 		this.ogmaService.ogma.events.onHover(({ x, y, target }: HoverEvent) => {
+			// target.setAttributes({ outerStroke: { color: 'green' } });
+			this.hoveredPosition = {
+				x,
+				y: y + 20
+			};
+
 			if (target.isNode) {
-				target.setAttributes({ outerStroke: { color: 'green' } });
-
-				this.hoveredPosition = {
-					x,
-					y: y + 20
-				};
-
-				this.hoveredContent = {
+				this.nodeHoveredContent = {
 					branchName: target.getData('branchName'),
 					ownerId: target.getData('ownerId'),
 					ownerName:
 						target.getData('ownerName') +
 						' ' +
 						target.getData('ownerFamilyName')
+				};
+			} else if (!target.isNode) {
+				this.edgeHoveredContent = {
+					Amount: target.getData('Amount')
 				};
 			}
 		});
@@ -99,20 +121,29 @@ export class GraphComponent implements OnInit {
 			if (target.isNode) {
 				target.setAttributes({ outerStroke: null });
 
-				this.hoveredContent = null;
+				this.nodeHoveredContent = null;
+				this.edgeHoveredContent = null;
 			}
 		});
 	}
 
 	ngAfterContentInit() {
 		this.ogmaService.ogma.setContainer(this.container.nativeElement);
-		return this.runLayout();
+		this.runLayout();
 	}
 
 	// TODO: Remove
-	addNode() {
-		// this.ogmaService.addNode();
-		// this.runLayout();
+	async addNode() {
+		let results = await this.searchService.search('OwnerName', 'ارژنگ');
+		this.clickedOnAddNodeButton({ node: results[0] });
+
+		results = await this.searchService.search('OwnerName', 'دریا');
+		this.clickedOnAddNodeButton({ node: results[0] });
+
+		results = await this.searchService.search('OwnerName', 'افسر');
+		this.clickedOnAddNodeButton({ node: results[0] });
+
+		this.runLayout();
 	}
 
 	runLayout() {
@@ -148,5 +179,9 @@ export class GraphComponent implements OnInit {
 
 	unlockNodes(nodes) {
 		this.ogmaService.unlockNodes(nodes);
+	}
+
+	stopPropagation(e: Event) {
+		e.stopPropagation();
 	}
 }

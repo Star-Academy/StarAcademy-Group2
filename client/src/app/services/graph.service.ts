@@ -11,11 +11,6 @@ export class GraphService {
 	constructor(private httpClient: HttpClient) {}
 
 	public addNode(node: AccountNode) {
-		// return this.httpClient.post(
-		// 	'https://localhost:5001/mapState/addNode',
-		// 	node.accountId
-		// );
-
 		let header = new HttpHeaders().set('Content-Type', 'application/json');
 
 		return this.httpClient.post(
@@ -25,12 +20,12 @@ export class GraphService {
 		);
 	}
 
-	public expandRequest(nodeIds) {
+	public expandRequest(payload) {
 		let header = new HttpHeaders();
 		header = header.set('Content-Type', 'application/json');
 		return this.httpClient.post(
 			'https://localhost:5001/UserQuery/expand',
-			{ accounts: nodeIds },
+			payload,
 			{ responseType: 'json', headers: header }
 		);
 	}

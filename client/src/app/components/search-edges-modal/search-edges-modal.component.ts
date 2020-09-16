@@ -1,30 +1,28 @@
 import {
+	animate,
+	keyframes,
+	state,
+	style,
+	transition,
+	trigger
+} from '@angular/animations';
+import {
 	Component,
-	OnInit,
-	Input,
-	Output,
 	EventEmitter,
+	Input,
+	OnInit,
+	Output,
 	ViewChild
 } from '@angular/core';
-import {
-	trigger,
-	style,
-	state,
-	transition,
-	animate,
-	keyframes
-} from '@angular/animations';
 
-import { SearchNodesService } from '../../services/search-nodes.service';
-
-import { AccountNode } from '../../models/AccountNode';
+import { OgmaService } from 'src/app/services/ogma.service';
 
 import { SnackbarComponent } from '../snackbar/snackbar.component';
 
 @Component({
-	selector: 'search-nodes-modal',
-	templateUrl: './search-nodes-modal.component.html',
-	styleUrls: [ './search-nodes-modal.component.scss' ],
+	selector: 'search-edges-modal',
+	templateUrl: './search-edges-modal.component.html',
+	styleUrls: [ './search-edges-modal.component.scss' ],
 	animations: [
 		trigger('overlayState', [
 			state(
@@ -123,22 +121,24 @@ import { SnackbarComponent } from '../snackbar/snackbar.component';
 		])
 	]
 })
-export class SearchNodesModalComponent implements OnInit {
-	@Input() snackbar: SnackbarComponent;
+export class SearchEdgesModalComponent implements OnInit {
+	@ViewChild('snackbar') snackbar: SnackbarComponent;
+
 	@Input() show: number;
 
 	@Output() callback = new EventEmitter();
 
 	title: string;
-	results: Array<AccountNode> = [];
-	activeNode: AccountNode;
+	nodes: string[];
 	searching: boolean = true;
 
-	constructor(private searchService: SearchNodesService) {}
+	@Input() ogmaService: OgmaService;
+
+	constructor() {}
 
 	ngOnInit(): void {
 		this.show = 0;
-		this.title = 'جستجو';
+		this.title = '';
 	}
 
 	get modalStateStatus() {
@@ -147,10 +147,6 @@ export class SearchNodesModalComponent implements OnInit {
 				return 'closed';
 			case 1:
 				return 'form';
-			case 2:
-				return 'results';
-			case 3:
-				return 'details';
 		}
 	}
 
@@ -158,16 +154,10 @@ export class SearchNodesModalComponent implements OnInit {
 		return this.show === 0 ? 'closed' : 'open';
 	}
 
-	open(node?: AccountNode) {
-		if (node) {
-			this.show = 3;
-			this.title = 'جزئیات';
-			this.activeNode = node;
-			this.searching = false;
-		} else {
-			this.show = 1;
-			this.title = 'جستجو';
-		}
+	public open(nodes) {
+		this.nodes = nodes;
+		this.show = 1;
+		this.title = 'بسط‌دادن';
 	}
 
 	back() {
@@ -178,28 +168,8 @@ export class SearchNodesModalComponent implements OnInit {
 		this.show = 0;
 	}
 
-	async clickedOnSearchButton(e) {
-		console.log(e.field, e.query);
-
-		this.results = await this.searchService.search(e.field, e.query);
-
-		if (this.results.length === 0) {
-			this.snackbar.show('نتیجه‌ای یافت نشد');
-		} else {
-			this.show = 2;
-			this.title = 'نتایج جستجو';
-		}
-	}
-
-	clickedOnAddNodeButton(e) {
+	clickedOnSearchButton(e) {
+		this.ogmaService.expandNode(this.nodes, e);
 		this.close();
-		this.callback.emit(e);
-	}
-
-	clickedOnDetailsButton(e) {
-		this.show = 3;
-		this.title = 'جزئیات';
-
-		this.activeNode = e.node;
 	}
 }

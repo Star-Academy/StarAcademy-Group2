@@ -70,7 +70,6 @@ export class OgmaService {
 					this.ogma.getNode(edge.SourceAccount) &&
 					this.ogma.getNode(edge.DestinationAccount)
 				) {
-					console.log(edge);
 					this.addEdge(
 						edge.SourceAccount,
 						edge.DestinationAccount,
@@ -93,8 +92,6 @@ export class OgmaService {
 		};
 
 		this.ogma.addNode({ data, attributes, id });
-
-		this.runLayout();
 	}
 
 	public addEdge(
@@ -104,25 +101,30 @@ export class OgmaService {
 		attributes?
 	) {
 		let id = this.ogma.getEdges().getId().length;
-		if (data) id = data.TransactionId;
-
-		console.log('source', source);
-		console.log('target', data);
-		console.log('data', target);
+		if (data) id = data.TransactionID;
 
 		this.ogma.addEdge({ source, target, data, attributes, id });
-
-		this.runLayout();
 	}
 
 	public removeNode(nodeId) {
 		this.ogma.removeNode(nodeId);
-
-		this.runLayout();
 	}
 
-	public expandNode(nodeId) {
-		let jsonResponse = this.graphService.expandRequest([ nodeId ]);
+	public expandNode(nodeIds: string[], filter?) {
+		let request = { accounts: nodeIds };
+		if (filter) {
+			request['amountCeiling'] = String(filter.amountCeiling);
+			request['amountFloor'] = String(filter.amountFloor);
+			request['dateCeiling'] = String(filter.dateCeiling);
+			request['dateFloor'] = String(filter.dateFloor);
+			if (filter.tratransactionId) {
+				request['transactionId'] = String(filter.transactionId);
+			}
+			if (filter.type) {
+				request['type'] = String(filter.type);
+			}
+		}
+		let jsonResponse = this.graphService.expandRequest(request);
 		jsonResponse.subscribe((res) => {
 			let jsonString = JSON.parse(JSON.stringify(res));
 			jsonString.forEach((single) => {

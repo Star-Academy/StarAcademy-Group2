@@ -12,7 +12,8 @@
 		z-index: 8;
 	}
 
-	node-tooltip {
+	node-tooltip,
+	edge-tooltip {
 		z-index: 7;
 
 		pointer-events: none;
