@@ -6,6 +6,7 @@ using ElasticLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GraphLogicLib;
 
 namespace MyWebApi.Controllers
 {
@@ -38,7 +39,7 @@ namespace MyWebApi.Controllers
                 return BadRequest(e.Message);
             }
         }
-        
+
         [HttpPost]
         [Route("expand")]
         public ActionResult<List<Tuple<HashSet<Node>, HashSet<Edge>>>> Expand([FromBody] ExpandQuery expandQuery)
@@ -87,7 +88,7 @@ namespace MyWebApi.Controllers
         // To improve expand
 
 
-        
+
         // [HttpPost]
         // [Route("testnewexpand")]
         // public ActionResult<List<Tuple<HashSet<Node>, HashSet<Edge>>>> Sth(/*[FromBody] string json*/)
@@ -108,5 +109,14 @@ namespace MyWebApi.Controllers
         //             select new {Source = something.Key , Edges = something.ToList() };
         //     return output;
         // }
+
+        [HttpPost]
+        [Route("flow")]
+        public ActionResult<long> Flow([FromBody] Tuple<string,string> sourceAndDestinationId)
+        {
+            var maxFlowFinder = new MaxFlowFinder(sourceAndDestinationId.Item1, sourceAndDestinationId.Item2);
+            maxFlowFinder.InitGraph();
+            return maxFlowFinder.Find();
+        }
     }
 }
