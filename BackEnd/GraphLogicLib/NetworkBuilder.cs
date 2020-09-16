@@ -20,7 +20,7 @@ namespace GraphLogicLib
         public Dictionary<string, HashSet<SimpleEdge>> SimpleGraph; // <accountId, edges>
         public HashSet<Node> Nodes { get; set; }
         public HashSet<Edge> Edges { get; set; }
-        public NetworkBuilder(string source, string destination, int pathMaximumLength = 5, bool copyMaker = false)
+        public NetworkBuilder(string source, string destination, int pathMaximumLength, bool copyMaker = false)
         {
             this.Source = source;
             this.Destination = destination;
@@ -85,7 +85,6 @@ namespace GraphLogicLib
                 {
                     levels.Add(node, i);
                 }
-                queue.Clear();
                 var nextLevelQueue = new HashSet<string>();
                 var currentLevelNodes = String.Join(" ", queue);
                 nextLevelQueue.UnionWith(
@@ -93,6 +92,7 @@ namespace GraphLogicLib
                     where !levels.ContainsKey(node.AccountId) //?????????
                     select node.AccountId
                 );
+                queue.Clear();
                 queue.UnionWith(nextLevelQueue);
             }
             Levels = levels;
@@ -186,6 +186,7 @@ namespace GraphLogicLib
                 from node in GetNeighbours(source.AccountId)
                 where !visited.Contains(node.AccountId) //???????????????????????
                 where Levels.ContainsKey(node.AccountId)
+                where Levels[node.AccountId] <= Levels[source.AccountId]
                 where pathLength + Levels[node.AccountId] < PathMaximumLength
                 select node;
 

@@ -118,5 +118,22 @@ namespace MyWebApi.Controllers
             maxFlowFinder.InitGraph();
             return maxFlowFinder.Find();
         }
+
+        [HttpGet]
+        [Route("FindAllPath")]
+        public IActionResult FindAllPath(string sourceId, string destinationId, int maxLength=5)
+        {
+            try
+            {
+                var nb = new NetworkBuilder(sourceId, destinationId, maxLength, false);
+                nb.Build();
+                return Ok(new Tuple<HashSet<Node>, HashSet<Edge>>(nb.Nodes, nb.Edges));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return BadRequest();
+            }
+        }
     }
 }
