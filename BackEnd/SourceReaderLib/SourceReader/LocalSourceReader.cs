@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 
-namespace SourceReaderLib
+namespace SourceReaderLib.SourceReader
 {
-    public class LocalSourceReader
+    public class LocalSourceReader: ISourceReader
     {
         public string[] Read(string url)
         {

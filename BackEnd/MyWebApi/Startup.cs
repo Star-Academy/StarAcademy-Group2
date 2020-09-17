@@ -1,17 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using ElasticLib;
 using ElasticLib.Abstraction;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using SourceReaderLib.SourceReader;
 
 namespace MyWebApi
 {
@@ -31,6 +27,7 @@ namespace MyWebApi
             services.AddControllers();
             services.AddSingleton<IElasticService, ElasticService>();
             services.AddSingleton<HashSet<string>>();
+            services.AddTransient<ISourceReader, LocalSourceReader>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
