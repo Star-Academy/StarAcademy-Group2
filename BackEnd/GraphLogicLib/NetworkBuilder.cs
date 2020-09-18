@@ -101,36 +101,26 @@ namespace GraphLogicLib
         public HashSet<SimpleEdge> SimplifyingEdges(HashSet<Edge> incomingEdges, HashSet<Edge> outcomingEdges)
         {
             var output = new HashSet<SimpleEdge>();
-            var neighbourEdges = new Dictionary<string, HashSet<SimpleEdge>>();
+            var neighbourEdges = new Dictionary<string, HashSet<Edge>>();
             foreach (var edge in incomingEdges)
             {
                 if (!neighbourEdges.ContainsKey(edge.SourceAccount))
                 {
-                    neighbourEdges[edge.SourceAccount] = new HashSet<SimpleEdge>();
+                    neighbourEdges[edge.SourceAccount] = new HashSet<Edge>();
                 }
-                neighbourEdges[edge.SourceAccount].Add(new SimpleEdge()
-                {
-                    SourceAccount = edge.SourceAccount,
-                    DestinationAccount = edge.DestinationAccount,
-                    Capacity = edge.Amount
-                });
+                neighbourEdges[edge.SourceAccount].Add(edge);
             }
             foreach (var edge in outcomingEdges)
             {
                 if (!neighbourEdges.ContainsKey(edge.DestinationAccount))
                 {
-                    neighbourEdges[edge.DestinationAccount] = new HashSet<SimpleEdge>();
+                    neighbourEdges[edge.DestinationAccount] = new HashSet<Edge>();
                 }
-                neighbourEdges[edge.DestinationAccount].Add(new SimpleEdge()
-                {
-                    SourceAccount = edge.SourceAccount,
-                    DestinationAccount = edge.DestinationAccount,
-                    Capacity = edge.Amount
-                });
+                neighbourEdges[edge.DestinationAccount].Add(edge);
             }
             foreach (var edges in neighbourEdges.Values)
             {
-                var defaultEdge = edges.First<SimpleEdge>();
+                var defaultEdge = edges.First<Edge>();
                 var simpleEdge = new SimpleEdge()
                 {
                     SourceAccount = defaultEdge.SourceAccount,
@@ -141,11 +131,11 @@ namespace GraphLogicLib
                 {
                     if (edge.SourceAccount.Equals(simpleEdge.SourceAccount))
                     {
-                        simpleEdge.Capacity += edge.Capacity;
+                        simpleEdge.Capacity += edge.Amount;
                     }
                     else
                     {
-                        simpleEdge.Capacity += edge.Capacity;
+                        simpleEdge.Capacity -= edge.Amount;
                     }
                 }
                 if (simpleEdge.Capacity < 0)
@@ -155,7 +145,9 @@ namespace GraphLogicLib
                     simpleEdge.SourceAccount = simpleEdge.DestinationAccount;
                     simpleEdge.DestinationAccount = tmp;
                 }
-                output.Add(simpleEdge);
+                if(simpleEdge.Capacity != 0){
+                    output.Add(simpleEdge);
+                }
             }
             return output;
         }
