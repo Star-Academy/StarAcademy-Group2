@@ -15,6 +15,17 @@ export class OgmaService {
 	sourceNode = null;
 	targetNode = null;
 
+	attributes = {
+		shape: 'square',
+		color: 'transparent',
+		outerStroke: 'transparent',
+		innerStroke: 'transparent',
+		image: {
+			fit: true,
+			url: '../../../assets/svg/washing_machine.svg'
+		}
+	};
+
 	constructor(private graphService: GraphService) {}
 
 	public initConfig(configuration = {}) {
@@ -106,7 +117,7 @@ export class OgmaService {
 	}
 
 	public removeNode(nodeId) {
-		this.ogma.removeNode(nodeId);
+		this.ogma.removeNodes(nodeId);
 	}
 
 	lockNodes(nodes) {
@@ -141,7 +152,11 @@ export class OgmaService {
 		if (this.sourceNode) this.removeSource();
 		this.sourceNode = node;
 
-		this.sourceNode.setAttributes({
+		this.setSourceAttributes(this.sourceNode);
+	}
+
+	setSourceAttributes(node) {
+		node.setAttributes({
 			image: {
 				fit: true,
 				url: '../../../assets/svg/money_source.svg'
@@ -153,7 +168,11 @@ export class OgmaService {
 		if (this.targetNode) this.removeTarget();
 		this.targetNode = node;
 
-		this.targetNode.setAttributes({
+		this.setTargetAttributes(this.targetNode);
+	}
+
+	setTargetAttributes(node) {
+		node.setAttributes({
 			image: {
 				fit: true,
 				url: '../../../assets/svg/clean_clothes.svg'
@@ -213,6 +232,76 @@ export class OgmaService {
 				});
 			});
 			this.runLayout();
+		});
+	}
+
+	removePreviousGraph() {
+		this.ogma.removeNodes(this.ogma.getNodes('raw'));
+	}
+
+	findPath(length) {
+		this.removePreviousGraph();
+		this.ogma.addNode({
+			data: this.targetNode.getData(),
+			attributes: this.attributes,
+			id: this.targetNode.getId()
+		});
+		this.ogma.addNode({
+			data: this.sourceNode.getData(),
+			attributes: this.attributes,
+			id: this.sourceNode.getId()
+		});
+		const sourceId = this.sourceNode.getId();
+		const targetId = this.targetNode.getId();
+		this.setSource(this.ogma.getNode(sourceId));
+		this.setTarget(this.ogma.getNode(targetId));
+
+		let jsonResponse = this.graphService.findMaxFlow(sourceId, targetId);
+		jsonResponse.subscribe((res) => {
+			this.ogma.addEdge({
+				id: 'flow',
+				source: sourceId,
+				target: targetId,
+				attributes: {
+					color: 'pink',
+					width: 3,
+					opacity: 0.5
+				},
+				data: { Amount: res }
+			});
+		});
+
+		this.ogma.addEdge({
+			id: 'dummy',
+			source: sourceId,
+			target: targetId,
+			attributes: {
+				opacity: 0,
+				detectable: false
+			}
+		});
+
+		jsonResponse = this.graphService.findPath(
+			this.sourceNode.getId(),
+			this.targetNode.getId(),
+			length
+		);
+
+		jsonResponse.subscribe((res) => {
+			let jsonString = JSON.parse(JSON.stringify(res));
+			jsonString.item1.forEach((node: AccountNode) => {
+				this.addNode(node);
+			});
+			jsonString.item2.forEach((edge: TransactionEdge) => {
+				this.addEdge(edge.SourceAccount, edge.DestinationAccount, edge);
+			});
+
+			this.ogma.layouts.hierarchical({
+				direction: 'LR',
+				duration: 300,
+				nodeDistance: 30,
+				levelDistance: 40
+			});
 		});
 	}
 }

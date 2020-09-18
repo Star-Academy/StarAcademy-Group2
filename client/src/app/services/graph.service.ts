@@ -20,6 +20,25 @@ export class GraphService {
 		);
 	}
 
+	public findPath(source, target, pathLength) {
+		pathLength = Math.max(1, Math.min(7, pathLength));
+
+		let request = `sourceId=${source}&destinationId=${target}&maxLength=${pathLength}`;
+		return this.httpClient.get(
+			`https://localhost:5001/UserQuery/FindAllPath?${request}`,
+			{ responseType: 'json' }
+		);
+	}
+
+	public findMaxFlow(source, target) {
+		let header = new HttpHeaders().set('Content-Type', 'application/json');
+		return this.httpClient.post(
+			'https://localhost:5001/UserQuery/flow',
+			{ item1: source, item2: target },
+			{ headers: header }
+		);
+	}
+
 	public expandRequest(payload) {
 		let header = new HttpHeaders();
 		header = header.set('Content-Type', 'application/json');

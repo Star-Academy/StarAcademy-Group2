@@ -158,7 +158,7 @@ export class GraphComponent implements OnInit {
 	clickedOnFindPathButton(e) {
 		e.stopPropagation();
 
-		// TODO: Request for path
+		this.ogmaService.findPath(5);
 	}
 
 	toggleFindPathMenu(e: Event) {
