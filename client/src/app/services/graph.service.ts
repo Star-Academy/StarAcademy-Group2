@@ -15,7 +15,7 @@ export class GraphService {
 
 		return this.httpClient.post(
 			'https://localhost:5001/mapState/addNode',
-			`"${node.accountId}"`,
+			`"${node.AccountID}"`,
 			{ headers: header }
 		);
 	}

@@ -1,18 +1,4 @@
-import {
-	Component,
-	ViewChild,
-	ElementRef,
-	AfterViewInit,
-	Input
-} from '@angular/core';
-import {
-	trigger,
-	state,
-	style,
-	transition,
-	animate,
-	keyframes
-} from '@angular/animations';
+import { Component, ViewChild, Input } from '@angular/core';
 
 import { NodeList } from '../../../dependencies/ogma.min.js';
 
@@ -21,269 +7,151 @@ import { OgmaService } from '../../services/ogma.service';
 import { SnackbarComponent } from '../snackbar/snackbar.component';
 import { SearchEdgesModalComponent } from '../search-edges-modal/search-edges-modal.component.js';
 
+import { Animations } from './animations';
+
 @Component({
 	selector: 'radial-node-menu',
 	templateUrl: './radial-node-menu.component.html',
 	styleUrls: [ './radial-node-menu.component.scss' ],
-	animations: [
-		trigger('menuState', [
-			state(
-				'closed',
-				style({
-					display: 'none'
-				})
-			),
-			state(
-				'open',
-				style({
-					display: 'block'
-				})
-			),
-			transition(
-				'closed => open',
-				animate(
-					'300ms',
-					keyframes([
-						style({ display: 'none' }),
-						style({ display: 'block' })
-					])
-				)
-			),
-			transition(
-				'open => closed',
-				animate(
-					'300ms',
-					keyframes([
-						style({ display: 'block' }),
-						style({ display: 'none' })
-					])
-				)
-			)
-		])
-	]
+	animations: Animations
 })
-export class RadialNodeMenuComponent implements AfterViewInit {
+export class RadialNodeMenuComponent {
 	@Input() snackbar: SnackbarComponent;
 
-	@ViewChild('menu') menuElement: ElementRef;
 	@ViewChild('searchEdgesModal') searchEdgesModal: SearchEdgesModalComponent;
 
-	menu;
-	status: number = 0;
+	public menu: {
+		class: string;
+		left: number;
+		top: number;
+	};
+	public sourceSelectionButton: { class: string; title: string };
+	public targetSelectionButton: { class: string; title: string };
 
-	menuOffset = { x: 0, y: 0 };
+	private state: number;
+	private nodes: NodeList;
+	private location: { x: number; y: number };
+	private menuOffset: { x: number; y: number };
+	private sourceFlag: boolean;
+	private targetFlag: boolean;
 
-	nodes: NodeList;
-	location: { x: number; y: number };
+	public constructor(public ogmaService: OgmaService) {
+		this.menu = {
+			class: '',
+			left: 0,
+			top: 0
+		};
 
-	sourceFlag = false;
-	targetFlag = false;
+		this.setState(0);
+		this.menuOffset = { x: 40, y: 40 };
 
-	constructor(public ogmaService: OgmaService) {}
-
-	ngAfterViewInit(): void {
-		this.menu = this.menuElement.nativeElement;
+		this.sourceSelectionButton = { class: '', title: '' };
+		this.targetSelectionButton = { class: '', title: '' };
 	}
 
-	get menuStateStatus() {
-		switch (this.status) {
-			case 0:
-				return 'closed';
-			case 1:
-				return 'open';
-		}
+	public get menuStateStatus() {
+		return this.state === 0 ? 'closed' : 'open ';
 	}
 
-	expandMenu(nodes: NodeList, location: { x: number; y: number }) {
+	private setState(state: number) {
+		this.state = state;
+		this.menu.class = state === 1 ? 'open' : '';
+	}
+
+	public expandMenu(nodes: NodeList, location: { x: number; y: number }) {
+		this.setState(1);
 		this.nodes = nodes;
-
 		this.location = this.ogmaService.ogma.view.graphToScreenCoordinates(
 			location
 		);
 
-		this.status = 1;
-		this.menu.classList.add('open');
-		this.menu.style.left = `${this.location.x + this.menuOffset.x + 40}px`;
-		this.menu.style.top = `${this.location.y + this.menuOffset.y + 40}px`;
-		this.menu.style.transform = 'scale(2)';
-		this.menu.addEventListener('click', (e) => {
-			this.close();
-		});
+		this.menu = {
+			...this.menu,
+			left: (this.location.x + this.menuOffset.x) | 0,
+			top: (this.location.y + this.menuOffset.y) | 0
+		};
 
 		this.setSourceState();
 		this.setTargetState();
-
-		return true;
 	}
 
-	close() {
-		this.status = 0;
-		this.menu.classList.remove('open');
-		this.menu.style.transform = 'scale(0)';
+	public close = () => this.setState(0);
+	public lockNodes = () => this.ogmaService.lockNodes(this.nodes);
+	public unlockNodes = () => this.ogmaService.unlockNodes(this.nodes);
+	public deleteNodes = () => this.ogmaService.removeNode(this.nodes.getId());
 
-		return false;
-	}
-
-	lockNodes() {
-		this.ogmaService.lockNodes(this.nodes);
-		this.close();
-	}
-
-	unlockNodes() {
-		this.ogmaService.unlockNodes(this.nodes);
-		this.close();
-	}
-
-	expandNodes() {
+	public expandNodes() {
 		this.ogmaService.expandNode(this.nodes.getId());
 		this.searchEdgesModal.open(this.nodes);
-		this.close();
 	}
 
-	deleteNodes() {
-		this.ogmaService.removeNode(this.nodes.getId());
-		this.close();
-	}
-
-	selectAsSource() {
+	public selectAsSource() {
 		if (this.nodes.size > 1) {
-			this.snackbar.show(
-				'فقط یک حساب میتواند به عنوان مبدأ تعیین شود',
-				3000
-			);
+			this.snackbar.show('فقط یک حساب میتواند به عنوان مبدأ تعیین شود');
 		} else if (this.sourceFlag) {
 			this.ogmaService.removeSource();
-			this.close();
 		} else {
-			if (this.targetFlag) {
-				this.ogmaService.removeTarget();
-			}
-
+			if (this.targetFlag) this.ogmaService.removeTarget();
 			this.ogmaService.setSource(this.nodes.get(0));
-			this.close();
 		}
 	}
 
-	selectAsTarget() {
+	public selectAsTarget() {
 		if (this.nodes.size > 1) {
-			this.snackbar.show(
-				'فقط یک حساب میتواند به عنوان مقصد تعیین شود',
-				3000
-			);
+			this.snackbar.show('فقط یک حساب میتواند به عنوان مقصد تعیین شود');
 		} else if (this.targetFlag) {
 			this.ogmaService.removeTarget();
-			this.close();
 		} else {
-			if (this.sourceFlag) {
-				this.ogmaService.removeSource();
-			}
-
+			if (this.sourceFlag) this.ogmaService.removeSource();
 			this.ogmaService.setTarget(this.nodes.get(0));
-			this.close();
 		}
 	}
 
-	setSourceFlag() {
-		if (
+	private setSourceState() {
+		this.setSourceFlag();
+
+		if (!this.sourceFlag)
+			this.sourceSelectionButton = {
+				class: '',
+				title: 'انتخاب به عنوان مبدأ'
+			};
+		else {
+			this.sourceSelectionButton = {
+				class: 'active',
+				title: 'لغو انتخاب'
+			};
+		}
+	}
+
+	private setTargetState() {
+		this.setTargetFlag();
+
+		if (!this.targetFlag)
+			this.targetSelectionButton = {
+				class: '',
+				title: 'انتخاب به عنوان مقصد'
+			};
+		else {
+			this.targetSelectionButton = {
+				class: 'active',
+				title: 'لغو انتخاب'
+			};
+		}
+	}
+
+	private setSourceFlag() {
+		this.sourceFlag =
 			this.nodes.size === 1 &&
 			this.ogmaService.getSourceNode() &&
 			this.ogmaService.getSourceNode().getId() ===
-				this.nodes.get(0).getId()
-		) {
-			this.sourceFlag = true;
-		} else {
-			this.sourceFlag = false;
-		}
+				this.nodes.get(0).getId();
 	}
 
-	setTargetFlag() {
-		if (
+	private setTargetFlag() {
+		this.targetFlag =
 			this.nodes.size === 1 &&
 			this.ogmaService.getTargetNode() &&
 			this.ogmaService.getTargetNode().getId() ===
-				this.nodes.get(0).getId()
-		) {
-			this.targetFlag = true;
-		} else {
-			this.targetFlag = false;
-		}
-	}
-
-	setSourceState() {
-		this.setSourceFlag();
-		if (this.sourceFlag) {
-			this.deselectSource();
-		} else {
-			this.sourceButton();
-		}
-	}
-
-	setTargetState() {
-		this.setTargetFlag();
-		if (this.targetFlag) {
-			this.deselectTarget();
-		} else {
-			this.targetButton();
-		}
-	}
-
-	sourceButton() {
-		let button = document.getElementById('source-select');
-		button.title = 'انتخاب به عنوان مبدأ';
-		button.style.background = '#ffb726';
-		button.addEventListener('mouseover', (e) => {
-			button.style.color = '#ffb726';
-			button.style.background = 'white';
-		});
-
-		button.addEventListener('mouseleave', (e) => {
-			button.style.background = '#ffb726';
-			button.style.color = 'white';
-		});
-	}
-
-	targetButton() {
-		let button = document.getElementById('target-select');
-		button.title = 'انتخاب به عنوان مقصد';
-		button.style.background = '#ffb726';
-		button.addEventListener('mouseover', (e) => {
-			button.style.color = '#ffb726';
-			button.style.background = 'white';
-		});
-
-		button.addEventListener('mouseleave', (e) => {
-			button.style.background = '#ffb726';
-			button.style.color = 'white';
-		});
-	}
-
-	deselectSource() {
-		let button = document.getElementById('source-select');
-		button.title = 'لغو انتخاب';
-		button.style.background = 'cornflowerblue';
-		button.addEventListener('mouseover', (e) => {
-			button.style.color = 'cornflowerblue';
-			button.style.background = 'white';
-		});
-
-		button.addEventListener('mouseleave', (e) => {
-			button.style.background = 'cornflowerblue';
-			button.style.color = 'white';
-		});
-	}
-
-	deselectTarget() {
-		let button = document.getElementById('target-select');
-		button.title = 'لغو انتخاب';
-		button.style.background = 'cornflowerblue';
-		button.addEventListener('mouseover', (e) => {
-			button.style.color = 'cornflowerblue';
-			button.style.background = 'white';
-		});
-
-		button.addEventListener('mouseleave', (e) => {
-			button.style.background = 'cornflowerblue';
-			button.style.color = 'white';
-		});
+				this.nodes.get(0).getId();
 	}
 }

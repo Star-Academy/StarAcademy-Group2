@@ -2,8 +2,6 @@
 @import "../../../styles/math";
 
 :host {
-	background-color: gray;
-
 	$pi: 3.14;
 
 	$menu-items: 6+1;
@@ -15,7 +13,7 @@
 	}
 
 	%ball {
-		background: $color_orange_supernova;
+		background-color: $color_orange_supernova;
 		color: $color_white;
 
 		position: absolute;
@@ -32,6 +30,8 @@
 		line-height: 8rem;
 
 		transition: transform ease-out 200ms;
+
+		cursor: pointer;
 	}
 
 	#menu {
@@ -40,6 +40,8 @@
 		$height: 25rem;
 
 		position: absolute;
+
+		transform: scale(1);
 
 		display: none;
 
@@ -64,13 +66,19 @@
 			}
 
 			&:hover {
-				background: $color_white;
+				background-color: $color_white !important;
 				color: $color_orange_supernova;
+			}
+
+			&.active {
+				background-color: $color_blue_cornflower;
 			}
 		}
 
 		&.open {
 			display: block;
+
+			transform: scale(2);
 
 			.menu-item {
 				transition-timing-function: cubic-bezier(0.935, 0.000, 0.340, 1.330);

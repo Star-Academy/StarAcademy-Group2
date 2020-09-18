@@ -15,16 +15,24 @@
 		border-radius: 1rem;
 	}
 
-	.key {
-		font-size: 1.2rem;
-	}
+	.item {
+		.key {
+			font-size: 1.2rem;
+		}
 
-	.value {
-		font-size: 1.8rem;
-		font-weight: 500;
-	}
+		.value {
+			font-size: 1.8rem;
+			font-weight: 500;
+		}
 
-	hr {
-		margin: 1rem 0;
+		hr {
+			margin: 1rem 0;
+		}
+
+		&:last-child {
+			hr {
+				display: none;
+			}
+		}
 	}
 }

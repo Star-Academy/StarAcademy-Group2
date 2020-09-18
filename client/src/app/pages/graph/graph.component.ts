@@ -5,7 +5,7 @@ import { HoverEvent } from '../../../dependencies/ogma.min.js';
 import { OgmaService } from '../../services/ogma.service';
 import { SearchNodesService } from '../../services/search-nodes.service.js';
 
-import { SearchNodesModalComponent } from '../../components/search-nodes-modal/search-nodes-modal.component.js';
+import { ModalComponent } from '../../components/modal/modal.component.js';
 import { RadialNodeMenuComponent } from '../../components/radial-node-menu/radial-node-menu.component.js';
 import { SnackbarComponent } from '../../components/snackbar/snackbar.component.js';
 
@@ -18,7 +18,7 @@ export class GraphComponent implements OnInit {
 	@ViewChild('ogmaContainer', { static: true })
 	private container;
 
-	@ViewChild('searchNodesModal') searchNodesModal: SearchNodesModalComponent;
+	@ViewChild('nodesModal') nodesModal: ModalComponent;
 	@ViewChild('radialComponent') radialComponent: RadialNodeMenuComponent;
 	@ViewChild('findPathMenu') findPathMenu: ElementRef;
 
@@ -30,16 +30,10 @@ export class GraphComponent implements OnInit {
 	// TODO: Remove
 	layouts: string[] = [ 'force', 'hierarchical' ];
 
-	nodeHoveredContent: {
-		branchName: string;
-		ownerId: string;
-		ownerName: string;
-	};
-	edgeHoveredContent: { Amount: string };
+	hoveredContent;
 	hoveredPosition: { x: number; y: number };
 
 	devTools: boolean = true;
-	isMenuOn = false;
 
 	constructor(
 		public ogmaService: OgmaService,
@@ -57,17 +51,16 @@ export class GraphComponent implements OnInit {
 		});
 
 		this.ogmaService.ogma.events.onClick(({ target, button, domEvent }) => {
-			this.isMenuOn = this.radialComponent.close();
+			this.radialComponent.close();
 
 			if (target && target.isNode) {
-				this.nodeHoveredContent = null;
-				this.edgeHoveredContent = null;
+				this.hoveredContent = null;
 
 				if (button === 'right')
 					if (domEvent.shiftKey)
 						this.ogmaService.toggleNodeLockStatus(target);
 					else
-						this.isMenuOn = this.radialComponent.expandMenu(
+						this.radialComponent.expandMenu(
 							this.ogmaService.ogma
 								.getSelectedNodes()
 								.concat(target)
@@ -75,56 +68,50 @@ export class GraphComponent implements OnInit {
 							target.getAttributes([ 'x', 'y' ])
 						);
 				else if (button === 'left' && domEvent.shiftKey)
-					this.searchNodesModal.open(target.getData());
+					this.nodesModal.open(target.getData());
 			}
 		});
 
 		this.ogmaService.ogma.events.onMouseButtonDown((e) => {
-			if (this.isMenuOn) this.isMenuOn = this.radialComponent.close();
+			this.radialComponent.close();
 		});
 
-		this.ogmaService.ogma.events.onDoubleClick(({ target }) => {
-			if (target && target.isNode)
+		this.ogmaService.ogma.events.onDoubleClick(({ target, button }) => {
+			if (target && target.isNode && button === 'left')
 				this.ogmaService.toggleNodeLockStatus(target);
 		});
 
 		this.ogmaService.ogma.events.onZoomProgress(() => {
-			if (this.isMenuOn) {
-				this.isMenuOn = this.radialComponent.close();
-			}
+			this.radialComponent.close();
 		});
 
 		this.ogmaService.ogma.events.onHover(({ x, y, target }: HoverEvent) => {
-			// target.setAttributes({ outerStroke: { color: 'green' } });
 			this.hoveredPosition = {
 				x,
 				y: y + 20
 			};
 
 			if (target.isNode) {
-				this.nodeHoveredContent = {
-					branchName: target.getData('branchName'),
-					ownerId: target.getData('ownerId'),
-					ownerName:
+				this.hoveredContent = [
+					[ 'شعبه', target.getData('branchName') ],
+					[ 'شناسه صاحب حساب', target.getData('ownerId') ],
+					[
+						'نام صاحب حساب',
 						target.getData('ownerName') +
-						' ' +
-						target.getData('ownerFamilyName')
-				};
-			} else if (!target.isNode) {
-				this.edgeHoveredContent = {
-					Amount: target.getData('Amount')
-				};
+							' ' +
+							target.getData('ownerFamilyName')
+					]
+				];
+			} else {
+				this.hoveredContent = [
+					[ 'حجم تراکنش', target.getData('Amount') ]
+				];
 			}
 		});
 
-		this.ogmaService.ogma.events.onUnhover(({ target }: HoverEvent) => {
-			if (target.isNode) {
-				target.setAttributes({ outerStroke: null });
-
-				this.nodeHoveredContent = null;
-				this.edgeHoveredContent = null;
-			}
-		});
+		this.ogmaService.ogma.events.onUnhover(
+			() => (this.hoveredContent = null)
+		);
 	}
 
 	ngAfterContentInit() {
@@ -155,7 +142,7 @@ export class GraphComponent implements OnInit {
 	}
 
 	clickedOnSearchNodesButton(e) {
-		this.searchNodesModal.open();
+		this.nodesModal.open();
 	}
 
 	clickedOnAddNodeButton(e) {

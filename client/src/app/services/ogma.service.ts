@@ -62,7 +62,7 @@ export class OgmaService {
 	}
 
 	public addNode(data: AccountNode, attributes?): void {
-		let id = data.accountId;
+		let id = data.AccountID;
 
 		this.graphService.addNode(data).subscribe((res: TransactionEdge[]) => {
 			for (let edge of res) {

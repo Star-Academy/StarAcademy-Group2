@@ -1,11 +1,10 @@
 <app-snackbar #snackbar class="error"></app-snackbar>
 
-<search-nodes-modal #searchNodesModal [snackbar]="snackbar" (callback)="clickedOnAddNodeButton($event)">
-</search-nodes-modal>
+<modal #nodesModal [snackbar]="snackbar" (callback)="clickedOnAddNodeButton($event)">
+</modal>
 <radial-node-menu #radialComponent [snackbar]="snackbar"></radial-node-menu>
 
-<node-tooltip *ngIf="nodeHoveredContent" [content]="nodeHoveredContent" [position]="hoveredPosition"></node-tooltip>
-<edge-tooltip *ngIf="edgeHoveredContent" [content]="edgeHoveredContent" [position]="hoveredPosition"></edge-tooltip>
+<graph-tooltip *ngIf="hoveredContent" [content]="hoveredContent" [position]="hoveredPosition"></graph-tooltip>
 
 <div #findPathMenu *ngIf="ogmaService.sourceNode && ogmaService.targetNode" class="find-path btn btn-primary closed"
 	(click)="toggleFindPathMenu($event)">
