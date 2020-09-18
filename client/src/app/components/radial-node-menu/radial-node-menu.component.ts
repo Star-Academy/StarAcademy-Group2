@@ -1,11 +1,16 @@
-import { Component, ViewChild, Input } from '@angular/core';
+import {
+	Component,
+	ViewChild,
+	Input,
+	EventEmitter,
+	Output
+} from '@angular/core';
 
 import { NodeList } from '../../../dependencies/ogma.min.js';
 
 import { OgmaService } from '../../services/ogma.service';
 
 import { SnackbarComponent } from '../snackbar/snackbar.component';
-import { SearchEdgesModalComponent } from '../search-edges-modal/search-edges-modal.component.js';
 
 import { Animations } from './animations';
 
@@ -18,7 +23,7 @@ import { Animations } from './animations';
 export class RadialNodeMenuComponent {
 	@Input() snackbar: SnackbarComponent;
 
-	@ViewChild('searchEdgesModal') searchEdgesModal: SearchEdgesModalComponent;
+	@Output() expandCallback = new EventEmitter();
 
 	public menu: {
 		class: string;
@@ -80,10 +85,8 @@ export class RadialNodeMenuComponent {
 	public unlockNodes = () => this.ogmaService.unlockNodes(this.nodes);
 	public deleteNodes = () => this.ogmaService.removeNode(this.nodes.getId());
 
-	public expandNodes() {
-		this.ogmaService.expandNode(this.nodes.getId());
-		this.searchEdgesModal.open(this.nodes);
-	}
+	public expandNodes = () =>
+		this.expandCallback.emit({ nodeIds: this.nodes.getId() });
 
 	public selectAsSource() {
 		if (this.nodes.size > 1) {

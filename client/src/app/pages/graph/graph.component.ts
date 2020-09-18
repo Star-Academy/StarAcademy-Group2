@@ -5,9 +5,10 @@ import { HoverEvent } from '../../../dependencies/ogma.min.js';
 import { OgmaService } from '../../services/ogma.service';
 import { SearchNodesService } from '../../services/search-nodes.service.js';
 
-import { ModalComponent } from '../../components/modal/modal.component.js';
+import { GraphModalComponent } from '../../components/graph-modal/graph-modal.component.js';
 import { RadialNodeMenuComponent } from '../../components/radial-node-menu/radial-node-menu.component.js';
 import { SnackbarComponent } from '../../components/snackbar/snackbar.component.js';
+import { AccountNode } from 'src/app/models/AccountNode.js';
 
 @Component({
 	selector: 'app-graph',
@@ -18,7 +19,7 @@ export class GraphComponent implements OnInit {
 	@ViewChild('ogmaContainer', { static: true })
 	private container;
 
-	@ViewChild('nodesModal') nodesModal: ModalComponent;
+	@ViewChild('nodesModal') nodesModal: GraphModalComponent;
 	@ViewChild('radialComponent') radialComponent: RadialNodeMenuComponent;
 	@ViewChild('findPathMenu') findPathMenu: ElementRef;
 
@@ -148,6 +149,10 @@ export class GraphComponent implements OnInit {
 	clickedOnAddNodeButton(e) {
 		if (e.attributes) this.ogmaService.addNode(e.node, e.attributes);
 		else this.ogmaService.addNode(e.node);
+	}
+
+	clickedOnExpandButton(e) {
+		this.nodesModal.open(null, 4, e.nodeIds);
 	}
 
 	clickedOnFindPathButton(e) {

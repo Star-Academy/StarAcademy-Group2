@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SnackbarComponent } from '../snackbar/snackbar.component';
 
 @Component({
@@ -6,52 +6,35 @@ import { SnackbarComponent } from '../snackbar/snackbar.component';
 	templateUrl: './search-edges-form.component.html',
 	styleUrls: [ './search-edges-form.component.scss' ]
 })
-export class SearchEdgesFormComponent implements OnInit {
+export class SearchEdgesFormComponent {
 	@Input() snackbar: SnackbarComponent;
 
 	@Output() callback = new EventEmitter();
 
-	maxLength: number = 100;
+	public clickedOnSearchButton = (form: any) =>
+		this.callback.emit(this.createFilters(form));
 
-	constructor() {}
+	private createFilters(form) {
+		let filters = {};
 
-	ngOnInit(): void {}
+		filters['amountFloor'] = form.amountFloor ? form.amountFloor : 0;
+		filters['amountCeiling'] = form.amountCeiling
+			? form.amountCeiling
+			: '999999999999';
 
-	clickedOnSearchButton(form: any) {
-		this.callback.emit(this.createFilter(form));
+		filters['dateFloor'] = form.amountFloor
+			? this.parseDate(form.dateFloor)
+			: '1900/01/01';
+
+		filters['dateCeiling'] = form.amountFloor
+			? this.parseDate(form.dateCeiling)
+			: '2100/01/01';
+
+		if (form.transactionId) filters['transactionId'] = form.transactionId;
+		if (form.transactionType) filters['type'] = form.transactionType;
+
+		return filters;
 	}
 
-	createFilter(form) {
-		let filter = {
-			amountFloor: '',
-			amountCeiling: '',
-			dateFloor: '',
-			dateCeiling: ''
-		};
-
-		if (form.amountFloorCheck) filter.amountFloor = form.amountFloor;
-		else filter.amountFloor = '0';
-
-		if (form.amountCeilingCheck) filter.amountCeiling = form.amountCeiling;
-		else filter.amountCeiling = '9000000000000000000';
-
-		if (form.dateFloorCheck)
-			filter.dateFloor = String(form.dateFloor).replace(/-/g, '/');
-		else filter.dateFloor = '1900/01/01';
-
-		if (form.dateCeilingCheck)
-			filter.dateCeiling = String(form.dateCeiling).replace(/-/g, '/');
-		else filter.dateCeiling = '2100/01/01';
-
-		if (form.transactionIdCheck)
-			filter['transactionId'] = form.transactionId;
-
-		if (form.transactionTypeCheck) filter['type'] = form.transactionType;
-
-		return filter;
-	}
-
-	validateForm(form: any) {
-		return null;
-	}
+	private parseDate = (date: string) => String(date).replace(/-/g, '/');
 }

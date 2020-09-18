@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
+import { OgmaService } from '../../services/ogma.service';
 import { SearchNodesService } from '../../services/search-nodes.service';
 
 import { AccountNode } from '../../models/AccountNode';
@@ -9,12 +10,12 @@ import { SnackbarComponent } from '../snackbar/snackbar.component';
 import { Animations } from './animations';
 
 @Component({
-	selector: 'modal',
-	templateUrl: './modal.component.html',
-	styleUrls: [ './modal.component.scss' ],
+	selector: 'graph-modal',
+	templateUrl: './graph-modal.component.html',
+	styleUrls: [ './graph-modal.component.scss' ],
 	animations: Animations
 })
-export class ModalComponent {
+export class GraphModalComponent {
 	@Input() snackbar: SnackbarComponent;
 
 	@Output() callback = new EventEmitter();
@@ -25,20 +26,27 @@ export class ModalComponent {
 	public title: string;
 	public results: AccountNode[];
 
-	public constructor(private searchService: SearchNodesService) {
+	private nodeIds: string[];
+
+	public constructor(
+		public ogmaService: OgmaService,
+		private searchService: SearchNodesService
+	) {
 		this.setState(0);
 	}
 
 	public get modalStateStatus() {
 		switch (this.state) {
-			case 0:
-				return 'closed';
 			case 1:
+			case 4:
 				return 'form';
 			case 2:
 				return 'results';
 			case 3:
+			case 5:
 				return 'details';
+			default:
+				return 'closed';
 		}
 	}
 
@@ -53,28 +61,28 @@ export class ModalComponent {
 			this.title = title;
 		} else {
 			switch (state) {
-				case 0:
-					this.title = '';
-					this.results = [];
-					break;
 				case 1:
+				case 4:
 					this.title = 'جستجو';
 					break;
 				case 2:
 					this.title = 'نتایج';
 					break;
 				case 3:
+				case 5:
 					this.title = 'جزئیات';
 					break;
 				default:
-					break;
+					this.title = '';
+					this.results = [];
 			}
 		}
 	}
 
-	public open(node?: AccountNode) {
+	public open(node?: AccountNode, state?: number, nodeIds?: string[]) {
 		this.activeNode = node;
-		this.setState(node ? 3 : 1);
+		this.nodeIds = nodeIds;
+		this.setState(state ? state : node ? 3 : 1);
 	}
 
 	public back = () => this.setState(this.state - 1);
@@ -85,6 +93,15 @@ export class ModalComponent {
 
 		if (this.results.length === 0) this.snackbar.show('نتیجه‌ای یافت نشد');
 		else this.setState(2);
+	}
+
+	public clickedOnExpandButton(e) {
+		this.ogmaService.expand(this.nodeIds, e.filters);
+
+		// if (!result) this.snackbar.show('نتیجه‌ای یافت نشد');
+		// else this.close();
+
+		this.close();
 	}
 
 	public clickedOnAddNodeButton(e) {

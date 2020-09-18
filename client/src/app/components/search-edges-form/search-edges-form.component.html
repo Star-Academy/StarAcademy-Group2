@@ -1,55 +1,39 @@
 <form #searchForm="ngForm" (ngSubmit)="clickedOnSearchButton(searchForm.value)">
-	<div>
-		<label>محدوده قیمت تراکنش:</label>
-		<span class="input-group">
-			<label>از</label>
-			<input ngModel name="amountFloor" class="form-control" type="number" placeholder="1000">
-			<span class="input-group-addon">
-				<input ngModel type="checkbox" name="amountFloorCheck">
-			</span>
-		</span>
-		<span class="input-group">
-			<label>تا</label>
-			<input ngModel name="amountCeiling" class="form-control" type="number" placeholder="1000000">
-			<span class="input-group-addon">
-				<input ngModel type="checkbox" name="amountCeilingCheck">
-			</span>
-		</span>
+	<div class="item">
+		<label class="text-default-25" for="transaction-amount-floor-input">از مبلغ</label>
+		<input class="input-default" ngModel name="amountFloor" id="transaction-amount-floor-input" type="number"
+			placeholder="مثال: 100000000">
 	</div>
 
-	<div>
-		<label>محدوده زمان تراکنش:</label>
-		<span class="input-group">
-			<label>از</label>
-			<input ngModel name="dateFloor" class="form-control" type="date" placeholder="01/01/2000">
-			<span class="input-group-addon">
-				<input ngModel type="checkbox" name="dateFloorCheck">
-			</span>
-		</span>
-		<span class="input-group">
-			<label>تا</label>
-			<input ngModel name="dateCeiling" class="form-control" type="date" placeholder="">
-			<span class="input-group-addon">
-				<input ngModel type="checkbox" name="dateCeilingCheck">
-			</span>
-		</span>
+	<div class="item">
+		<label class="text-default-25" for="transaction-amount-ceiling-input">تا مبلغ</label>
+		<input class="input-default" ngModel name="amountCeiling" id="transaction-amount-ceiling-input" type="number"
+			placeholder="مثال: 999999999">
 	</div>
 
-	<div>
-		<label>شماره تراکنش:</label>
-		<input ngModel name="transactionId" type="number" placeholder="">
-		<span class="input-group-addon">
-			<input ngModel type="checkbox" name="transactionIdCheck">
-		</span>
+	<div class="item">
+		<label class="text-default-25" for="transaction-date-floor-input">از تاریخ</label>
+		<input class="input-default" ngModel name="dateFloor" id="transaction-date-floor-input" type="date"
+			placeholder="مثال: 1390-12-30">
 	</div>
 
-	<div>
-		<label>نوع تراکنش:</label>
-		<input ngModel name="transactionType" type="text" placeholder="">
-		<span class="input-group-addon">
-			<input ngModel type="checkbox" name="transactionTypeCheck">
-		</span>
+	<div class="item">
+		<label class="text-default-25" for="transaction-date-ceiling-input">تا تاریخ</label>
+		<input class="input-default" ngModel name="dateCeiling" id="transaction-date-ceiling-input" type="date"
+			placeholder="مثال: 1399-12-30">
 	</div>
 
-	<button class="btn btn-primary" type="submit">گسترش دادن</button>
+	<div class="item">
+		<label class="text-default-25" for="transaction-id-input">شناسه</label>
+		<input class="input-default" ngModel name="transactionId" id="transaction-id-input" type="text"
+			placeholder="مثال: 153348811341">
+	</div>
+
+	<div class="item">
+		<label class="text-default-25" for="transaction-type-input">نوع</label>
+		<input class="input-default" ngModel name="transactionType" id="transaction-type-input" type="text"
+			placeholder="مثال: پایا">
+	</div>
+
+	<button class="btn btn-primary" type="submit">بسط دادن گراف</button>
 </form>

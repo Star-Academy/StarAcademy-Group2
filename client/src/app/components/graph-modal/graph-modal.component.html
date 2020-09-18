@@ -6,7 +6,7 @@
 	<div class='modal bg-default' [@modalState]="modalStateStatus">
 		<div class="head bg-primary text-default-complement">
 			<span (click)="back()">
-				<svg-icon *ngIf="state > 1 && activeNode" key="arrowBack"></svg-icon>
+				<svg-icon *ngIf="state > 1 && this.results.length > 0" key="arrowBack"></svg-icon>
 			</span>
 			<div>{{title}}</div>
 		</div>
@@ -19,6 +19,9 @@
 			<search-nodes-details *ngIf="state === 3" [node]="activeNode" [searching]="this.results.length > 0"
 				(callback)="clickedOnAddNodeButton($event)">
 			</search-nodes-details>
+
+			<search-edges-form *ngIf="state === 4" [snackbar]="snackbar" (callback)="clickedOnExpandButton($event)">
+			</search-edges-form>
 		</div>
 	</div>
 </div>

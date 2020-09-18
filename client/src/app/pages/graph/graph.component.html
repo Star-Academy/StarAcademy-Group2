@@ -1,8 +1,9 @@
 <app-snackbar #snackbar class="error"></app-snackbar>
 
-<modal #nodesModal [snackbar]="snackbar" (callback)="clickedOnAddNodeButton($event)">
-</modal>
-<radial-node-menu #radialComponent [snackbar]="snackbar"></radial-node-menu>
+<graph-modal #nodesModal [snackbar]="snackbar" (callback)="clickedOnAddNodeButton($event)">
+</graph-modal>
+<radial-node-menu #radialComponent [snackbar]="snackbar" (expandCallback)="clickedOnExpandButton($event)">
+</radial-node-menu>
 
 <graph-tooltip *ngIf="hoveredContent" [content]="hoveredContent" [position]="hoveredPosition"></graph-tooltip>
 
@@ -44,7 +45,7 @@
 <main>
 	<round-button btnClass="btn-secondary" icon="search" iconSize="6" (callback)="clickedOnSearchNodesButton($event)">
 	</round-button>
-	<div #ogmaContainer id="ogma-container"></div>
+	<div #ogmaContainer id="ogma-container" onclick="event.stopPropagation()"></div>
 </main>
 
 <div *ngIf="devTools" class="dev-tools bg-primary text-default-complement">

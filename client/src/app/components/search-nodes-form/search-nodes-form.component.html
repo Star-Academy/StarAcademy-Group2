@@ -1,7 +1,7 @@
 <form #searchForm="ngForm" (ngSubmit)="clickedOnSearchButton(searchForm.value)">
 	<label class="text-default-25" for="search-field-input">جستجو در</label>
 	<select class="input-default" #field ngModel name="field" id="search-field-input"
-		(change)="onFieldChanged(field.value)" required>
+		(change)="updateMaxLength(field.value)" required>
 		<option value="branchName" selected>نام شعبه</option>
 		<option value="branchTelephone">شماره تلفن شعبه</option>
 		<option value="ownerID">شناسه صاحب حساب</option>

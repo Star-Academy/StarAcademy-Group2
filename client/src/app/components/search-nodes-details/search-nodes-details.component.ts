@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 import { AccountNode } from 'src/app/models/AccountNode';
 
@@ -7,17 +7,12 @@ import { AccountNode } from 'src/app/models/AccountNode';
 	templateUrl: './search-nodes-details.component.html',
 	styleUrls: [ './search-nodes-details.component.scss' ]
 })
-export class SearchNodesDetailsComponent implements OnInit {
+export class SearchNodesDetailsComponent {
 	@Input() node: AccountNode;
 	@Input() searching: boolean;
 
 	@Output() callback = new EventEmitter();
 
-	constructor() {}
-
-	ngOnInit(): void {}
-
-	clickedOnAddNodeButton(node: AccountNode) {
+	clickedOnAddNodeButton = (node: AccountNode) =>
 		this.callback.emit({ node });
-	}
 }

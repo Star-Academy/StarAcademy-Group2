@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 
-import Ogma, { NodeId, RawNode, RawEdge } from '../../dependencies/ogma.min.js';
+import Ogma, { NodeId } from '../../dependencies/ogma.min.js';
 
 import { GraphService } from './graph.service';
 
 import { AccountNode } from '../models/AccountNode.js';
 import { TransactionEdge } from '../models/TransactionEdge.js';
-import { JsonPipe } from '@angular/common';
 
 @Injectable({
 	providedIn: 'root'
@@ -62,7 +61,7 @@ export class OgmaService {
 	}
 
 	public addNode(data: AccountNode, attributes?): void {
-		let id = data.AccountID;
+		let id = data.accountId;
 
 		this.graphService.addNode(data).subscribe((res: TransactionEdge[]) => {
 			for (let edge of res) {
@@ -108,39 +107,6 @@ export class OgmaService {
 
 	public removeNode(nodeId) {
 		this.ogma.removeNode(nodeId);
-	}
-
-	public expandNode(nodeIds: string[], filter?) {
-		let request = { accounts: nodeIds };
-		if (filter) {
-			request['amountCeiling'] = String(filter.amountCeiling);
-			request['amountFloor'] = String(filter.amountFloor);
-			request['dateCeiling'] = String(filter.dateCeiling);
-			request['dateFloor'] = String(filter.dateFloor);
-			if (filter.tratransactionId) {
-				request['transactionId'] = String(filter.transactionId);
-			}
-			if (filter.type) {
-				request['type'] = String(filter.type);
-			}
-		}
-		let jsonResponse = this.graphService.expandRequest(request);
-		jsonResponse.subscribe((res) => {
-			let jsonString = JSON.parse(JSON.stringify(res));
-			jsonString.forEach((single) => {
-				single.item1.forEach((node: AccountNode) => this.addNode(node));
-			});
-			jsonString.forEach((single) => {
-				single.item2.forEach((edge: TransactionEdge) => {
-					this.addEdge(
-						edge.SourceAccount,
-						edge.DestinationAccount,
-						edge
-					);
-				});
-			});
-			this.runLayout();
-		});
 	}
 
 	lockNodes(nodes) {
@@ -215,5 +181,38 @@ export class OgmaService {
 		});
 
 		this.targetNode = null;
+	}
+
+	public expand(nodeIds: string[], filters?) {
+		let request = { accounts: nodeIds };
+		if (filters) {
+			request['amountCeiling'] = String(filters.amountCeiling);
+			request['amountFloor'] = String(filters.amountFloor);
+			request['dateCeiling'] = String(filters.dateCeiling);
+			request['dateFloor'] = String(filters.dateFloor);
+			if (filters.tratransactionId) {
+				request['transactionId'] = String(filters.transactionId);
+			}
+			if (filters.type) {
+				request['type'] = String(filters.type);
+			}
+		}
+		let jsonResponse = this.graphService.expandRequest(request);
+		jsonResponse.subscribe((res) => {
+			let jsonString = JSON.parse(JSON.stringify(res));
+			jsonString.forEach((single) => {
+				single.item1.forEach((node: AccountNode) => this.addNode(node));
+			});
+			jsonString.forEach((single) => {
+				single.item2.forEach((edge: TransactionEdge) => {
+					this.addEdge(
+						edge.SourceAccount,
+						edge.DestinationAccount,
+						edge
+					);
+				});
+			});
+			this.runLayout();
+		});
 	}
 }

@@ -1,5 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
-import { PatternValidator, Form, NgForm } from '@angular/forms';
+import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { SnackbarComponent } from '../snackbar/snackbar.component';
 
 @Component({
@@ -7,59 +6,66 @@ import { SnackbarComponent } from '../snackbar/snackbar.component';
 	templateUrl: './search-nodes-form.component.html',
 	styleUrls: [ './search-nodes-form.component.scss' ]
 })
-export class SearchNodesFormComponent implements OnInit {
+export class SearchNodesFormComponent {
 	@Input() snackbar: SnackbarComponent;
 
 	@Output() callback = new EventEmitter();
 
-	numberPattern = /^\d+$/;
-	shebaPattern = /^IR(\d)+$/;
-	nonNumericalPattern = /^\D+$/;
+	public maxLength: number = 100;
 
-	patterns = {
-		branchTelephone: { pattern: this.numberPattern, length: 8 },
-		ownerId: { pattern: this.numberPattern, length: 10 },
-		accountType: { pattern: this.nonNumericalPattern, length: 20 },
-		accountId: { pattern: this.numberPattern, length: 10 },
-		cardId: { pattern: this.numberPattern, length: 16 },
-		sheba: { pattern: this.shebaPattern, length: 23 }
+	private validators = {
+		branchTelephone: new Validator(PATTERNS.numberPattern, 8),
+		ownerId: new Validator(PATTERNS.numberPattern, 10),
+		accountType: new Validator(PATTERNS.nonNumericalPattern, 20),
+		accountId: new Validator(PATTERNS.numberPattern, 10),
+		cardId: new Validator(PATTERNS.numberPattern, 16),
+		sheba: new Validator(PATTERNS.shebaPattern, 23)
 	};
 
-	maxLength: number = 100;
-
-	constructor() {}
-
-	ngOnInit(): void {}
-
-	onFieldChanged(field: string) {
-		if (this.patterns[field]) this.maxLength = this.patterns[field].length;
-		else this.maxLength = 256;
+	public updateMaxLength(field: string) {
+		this.maxLength = this.validators[field]
+			? this.validators[field].length
+			: 256;
 	}
 
-	clickedOnSearchButton(form: any) {
-		const error = this.validateForm(form);
+	public clickedOnSearchButton({ field, query }) {
+		const error = this.validateForm(field, query);
 
-		if (!error) {
-			this.callback.emit({
-				field: form.field,
-				query: form.query
-			});
-		} else {
-			this.snackbar.show(error, 3000);
-		}
+		if (!error) this.callback.emit({ field, query });
+		else this.snackbar.show(error);
 	}
 
-	validateForm(form: any) {
-		if (!form.field || !form.query)
+	private validateForm(field: string, query: string): string {
+		if (!field || !query)
 			return 'لطفاً ابتدا تمام موارد خواسته‌شده را ثبت کنید';
 
-		if (
-			!this.patterns[form.field] ||
-			(form.query.length === this.patterns[form.field].length &&
-				form.query.match(this.patterns[form.field].pattern))
-		)
-			return null;
+		const validator = this.validators[field];
 
-		return 'فرمت واردشده صحیح نمی‌باشد';
+		return validator && !this.validQuery(query, validator)
+			? 'فرمت واردشده صحیح نمی‌باشد'
+			: null;
+	}
+
+	private validQuery(query: string, validator: Validator): boolean {
+		return (
+			query.length === validator.length &&
+			query.match(validator.pattern).length > 0
+		);
 	}
 }
+
+class Validator {
+	public pattern: RegExp;
+	public length: number;
+
+	public constructor(pattern: RegExp, length: number) {
+		this.pattern = pattern;
+		this.length = length;
+	}
+}
+
+const PATTERNS = {
+	numberPattern: /^\d+$/,
+	shebaPattern: /^IR(\d)+$/,
+	nonNumericalPattern: /^\D+$/
+};

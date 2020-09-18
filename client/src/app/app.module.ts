@@ -12,7 +12,7 @@ import { GraphComponent } from './pages/graph/graph.component';
 
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
-import { ModalComponent } from './components/modal/modal.component';
+import { GraphModalComponent } from './components/graph-modal/graph-modal.component';
 import { SearchNodesResultComponent } from './components/search-nodes-result/search-nodes-result.component';
 
 import { SvgIconsModule } from '@ngneat/svg-icon';
@@ -22,7 +22,6 @@ import { SearchNodesFormComponent } from './components/search-nodes-form/search-
 import { SearchNodesDetailsComponent } from './components/search-nodes-details/search-nodes-details.component';
 import { RoundButtonComponent } from './components/round-button/round-button.component';
 import { SnackbarComponent } from './components/snackbar/snackbar.component';
-import { SearchEdgesModalComponent } from './components/search-edges-modal/search-edges-modal.component';
 import { SearchEdgesFormComponent } from './components/search-edges-form/search-edges-form.component';
 import { SearchEdgesDetailsComponent } from './components/search-edges-details/search-edges-details.component';
 import { GraphTooltipComponent } from './components/graph-tooltip/graph-tooltip.component';
@@ -33,14 +32,13 @@ import { GraphTooltipComponent } from './components/graph-tooltip/graph-tooltip.
 		GraphComponent,
 		HeaderComponent,
 		FooterComponent,
-		ModalComponent,
+		GraphModalComponent,
 		SearchNodesResultComponent,
 		RadialNodeMenuComponent,
 		SearchNodesFormComponent,
 		SearchNodesDetailsComponent,
 		RoundButtonComponent,
 		SnackbarComponent,
-		SearchEdgesModalComponent,
 		SearchEdgesFormComponent,
 		SearchEdgesDetailsComponent,
 		GraphTooltipComponent
