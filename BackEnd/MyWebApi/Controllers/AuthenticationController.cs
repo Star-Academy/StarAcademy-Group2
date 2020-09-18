@@ -1,6 +1,7 @@
-
 using Microsoft.AspNetCore.Mvc;
+using MyWebApi.Utils;
 using MyWebApi.Models;
+using MyWebApi.Services;
 
 namespace MyWebApi.Controllers
 {
@@ -8,6 +9,13 @@ namespace MyWebApi.Controllers
     [Route("[controller]")]
     public class AuthenticationController : ControllerBase
     {
+        private IUserService _userService;
+
+        public AuthenticationController(IUserService userService)
+        {
+            _userService = userService;
+        }
+
         [HttpPost("login")]
         public IActionResult Login(AuthenticateRequest model)
         {
@@ -17,6 +25,14 @@ namespace MyWebApi.Controllers
                 return BadRequest("Username or password is incorrect");
 
             return Ok(response);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            var users = _userService.GetAll();
+            return Ok(users);
         }
     }
 }
