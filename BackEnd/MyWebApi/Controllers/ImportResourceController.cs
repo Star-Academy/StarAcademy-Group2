@@ -3,6 +3,7 @@ using ElasticLib.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 using ElasticLib.Models;
 using SourceReaderLib;
+using SourceReaderLib.SourceReader;
 
 namespace MyWebApi.Controllers
 {
@@ -11,10 +12,12 @@ namespace MyWebApi.Controllers
     public class ImportResourceController : ControllerBase
     {
         private IElasticService elasticService;
+        private ISourceReader localSourceReader;
 
-        public ImportResourceController(IElasticService elasticService)
+        public ImportResourceController(IElasticService elasticService, ISourceReader localSourceReader)
         {
             this.elasticService = elasticService;
+            this.localSourceReader = localSourceReader;
         }
 
         [HttpPost]
@@ -23,13 +26,13 @@ namespace MyWebApi.Controllers
         {
             try
             {
-                elasticService.ImportDocument<Node>(CsvToJson.Convert(new LocalSourceReader().Read(url)));
+                elasticService.ImportDocument<Node>(CsvToJson.Convert(localSourceReader.Read(url)));
                 return Ok();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                return BadRequest();
+                return BadRequest(e.Message);
             }
         }
 
@@ -39,14 +42,15 @@ namespace MyWebApi.Controllers
         {
             try
             {
-                elasticService.ImportDocument<Edge>(CsvToJson.Convert(new LocalSourceReader().Read(url)));
+                elasticService.ImportDocument<Edge>(CsvToJson.Convert(localSourceReader.Read(url)));
                 return Ok();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                return BadRequest();
+                return BadRequest(e.Message);
             }
         }
+
     }
 }

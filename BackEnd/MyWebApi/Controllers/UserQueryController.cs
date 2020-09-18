@@ -6,6 +6,7 @@ using ElasticLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GraphLogicLib;
 
 namespace MyWebApi.Controllers
 {
@@ -38,39 +39,6 @@ namespace MyWebApi.Controllers
                 return BadRequest(e.Message);
             }
         }
-        
-        /*
-         *  testing ---------------------------------
-         */
-        
-        // [HttpPost]
-        // [Route("searchEdge")]
-        // public ActionResult<IEnumerable<Edge>> EdgeSearch()
-        // {
-        //     try
-        //     {
-        //         var result = elasticService.Search<Edge>(new EdgeSearchQuery()
-        //         {
-        //             SourceAccount = "6039548046",
-        //             DestinationAccount = "5718373092"
-        //             // AmountCeiling = "200000000",
-        //             // AmountFloor = "1",
-        //             // DateFloor = "1399/04/22 00:00:00",
-        //             // DateCeiling = "1399/04/27 00:00:00"
-        //         });
-        //         return Ok(result);
-        //     }
-        //     //TODO
-        //     //dummy code
-        //     catch (Exception e)
-        //     {
-        //         return BadRequest(e.Message);
-        //     }
-        // }
-        
-        /*
-         *  end of testinggggg ----------------------
-         */
 
         [HttpPost]
         [Route("expand")]
@@ -120,7 +88,7 @@ namespace MyWebApi.Controllers
         // To improve expand
 
 
-        
+
         // [HttpPost]
         // [Route("testnewexpand")]
         // public ActionResult<List<Tuple<HashSet<Node>, HashSet<Edge>>>> Sth(/*[FromBody] string json*/)
@@ -141,5 +109,31 @@ namespace MyWebApi.Controllers
         //             select new {Source = something.Key , Edges = something.ToList() };
         //     return output;
         // }
+
+        [HttpPost]
+        [Route("flow")]
+        public ActionResult<long> Flow([FromBody] Tuple<string,string> sourceAndDestinationId)
+        {
+            var maxFlowFinder = new MaxFlowFinder(sourceAndDestinationId.Item1, sourceAndDestinationId.Item2);
+            maxFlowFinder.InitGraph();
+            return maxFlowFinder.Find();
+        }
+
+        [HttpGet]
+        [Route("FindAllPath")]
+        public IActionResult FindAllPath(string sourceId, string destinationId, int maxLength=5)
+        {
+            try
+            {
+                var nb = new NetworkBuilder(sourceId, destinationId, maxLength, false);
+                nb.Build();
+                return Ok(new Tuple<HashSet<Node>, HashSet<Edge>>(nb.Nodes, nb.Edges));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return BadRequest(e.Message);
+            }
+        }
     }
 }

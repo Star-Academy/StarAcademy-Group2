@@ -46,5 +46,13 @@ namespace MyWebApi.Controllers
             map.Remove(idNode);
             return Ok();
         }
+
+        [HttpPost]
+        [Route("clearMap")]
+        public ActionResult ClearMap([FromBody] string idNode)
+        {
+            map.Clear();
+            return Ok();
+        }
     }
 }
