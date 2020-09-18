@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using ElasticLib;
 using ElasticLib.Abstraction;
@@ -8,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MyWebApi.Services;
+using MyWebApi.Utils;
 using SourceReaderLib.SourceReader;
 using WebApi.Utils;
 
@@ -56,6 +56,8 @@ namespace MyWebApi
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<JwtMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

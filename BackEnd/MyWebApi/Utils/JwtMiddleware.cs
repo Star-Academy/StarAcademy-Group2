@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WebApi.Utils;
 
-namespace WebApi.Helpers
+namespace MyWebApi.Utils
 {
     public class JwtMiddleware
     {
@@ -48,8 +48,7 @@ namespace WebApi.Helpers
                 }, out SecurityToken validatedToken);
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
-                //TODO remove
-                // var userid = int.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
+               
                 var username = jwtToken.Claims.First(x => x.Type == "username").Value;
 
                 // attach user to context on successful jwt validation
@@ -57,7 +56,7 @@ namespace WebApi.Helpers
             }
             catch
             {
-                // do nothing if jwt validation fails
+                // we do nothing if jwt validation fails
                 // user is not attached to context so request won't have access to secure routes
             }
         }

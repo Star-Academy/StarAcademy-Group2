@@ -15,8 +15,6 @@ namespace MyWebApi.Services
     {
         AuthenticateResponse Authenticate(AuthenticateRequest model);
         User GetByUsername(string username);
-        IEnumerable<User> GetAll(); //TODO remove
-
     }
 
     public class UserService : IUserService
@@ -48,11 +46,6 @@ namespace MyWebApi.Services
             var token = generateJwtToken(user);
 
             return new AuthenticateResponse(user, token);
-        }
-
-        public IEnumerable<User> GetAll() //TODO remove
-        {
-            return _users;
         }
 
         public User GetByUsername(string username)

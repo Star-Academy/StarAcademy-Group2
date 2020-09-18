@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using ElasticLib.Abstraction;
 using ElasticLib;
 using ElasticLib.QueryModel;
+using MyWebApi.Utils;
 
 namespace MyWebApi.Controllers
 {
@@ -22,6 +23,7 @@ namespace MyWebApi.Controllers
             this.map = map;
         }
 
+        [Authorize]
         [HttpPost]
         [Route("addNode")]
         public ActionResult<List<Edge>> AddNode([FromBody] string idNode)
@@ -39,6 +41,7 @@ namespace MyWebApi.Controllers
             return Ok(edges);
         }
 
+        [Authorize]
         [HttpPost]
         [Route("deleteNode")]
         public ActionResult DeleteNode([FromBody] string idNode)
