@@ -15,13 +15,13 @@ export class GraphService {
 
 		return this.httpClient.post(
 			'https://localhost:5001/mapState/addNode',
-			`"${node.accountId}"`,
+			`"${node.AccountID}"`,
 			{ headers: header }
 		);
 	}
 
 	public findPath(source, target, pathLength) {
-		pathLength = Math.max(1, Math.min(7, pathLength));
+		pathLength = Math.max(1, Math.min(5, pathLength));
 
 		let request = `sourceId=${source}&destinationId=${target}&maxLength=${pathLength}`;
 		return this.httpClient.get(

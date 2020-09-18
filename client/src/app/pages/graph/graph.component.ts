@@ -22,6 +22,7 @@ export class GraphComponent implements OnInit {
 	@ViewChild('nodesModal') nodesModal: GraphModalComponent;
 	@ViewChild('radialComponent') radialComponent: RadialNodeMenuComponent;
 	@ViewChild('findPathMenu') findPathMenu: ElementRef;
+	@ViewChild('pathMaxLength') pathMaxLength: ElementRef;
 
 	@ViewChild('snackbar') snackbar: SnackbarComponent;
 
@@ -94,13 +95,13 @@ export class GraphComponent implements OnInit {
 
 			if (target.isNode) {
 				this.hoveredContent = [
-					[ 'شعبه', target.getData('branchName') ],
-					[ 'شناسه صاحب حساب', target.getData('ownerId') ],
+					[ 'شعبه', target.getData('BranchName') ],
+					[ 'شناسه صاحب حساب', target.getData('OwnerID') ],
 					[
 						'نام صاحب حساب',
-						target.getData('ownerName') +
+						target.getData('OwnerName') +
 							' ' +
-							target.getData('ownerFamilyName')
+							target.getData('OwnerFamilyName')
 					]
 				];
 			} else {
@@ -158,7 +159,7 @@ export class GraphComponent implements OnInit {
 	clickedOnFindPathButton(e) {
 		e.stopPropagation();
 
-		this.ogmaService.findPath(5);
+		this.ogmaService.findPath(this.pathMaxLength.nativeElement.value);
 	}
 
 	toggleFindPathMenu(e: Event) {

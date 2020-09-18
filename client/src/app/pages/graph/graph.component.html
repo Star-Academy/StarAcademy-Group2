@@ -13,7 +13,7 @@
 	<div class="form-container" (click)="stopPropagation($event)">
 		<div class="form">
 			<span class="label">حداکثر طول:</span>
-			<input type="number" min="1" max="7" value="1">
+			<input #pathMaxLength type="number" min="1" max="7" value="1">
 		</div>
 		<div class="btn btn-primary-reverse" (click)="clickedOnFindPathButton($event)">پردازش</div>
 	</div>

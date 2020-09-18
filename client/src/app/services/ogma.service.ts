@@ -72,7 +72,9 @@ export class OgmaService {
 	}
 
 	public addNode(data: AccountNode, attributes?): void {
-		let id = data.accountId;
+		console.log('Data:', data);
+
+		let id = data.AccountID;
 
 		this.graphService.addNode(data).subscribe((res: TransactionEdge[]) => {
 			for (let edge of res) {
@@ -241,6 +243,7 @@ export class OgmaService {
 
 	findPath(length) {
 		this.removePreviousGraph();
+
 		this.ogma.addNode({
 			data: this.targetNode.getData(),
 			attributes: this.attributes,
@@ -251,8 +254,10 @@ export class OgmaService {
 			attributes: this.attributes,
 			id: this.sourceNode.getId()
 		});
+
 		const sourceId = this.sourceNode.getId();
 		const targetId = this.targetNode.getId();
+
 		this.setSource(this.ogma.getNode(sourceId));
 		this.setTarget(this.ogma.getNode(targetId));
 
@@ -277,7 +282,8 @@ export class OgmaService {
 			target: targetId,
 			attributes: {
 				opacity: 0,
-				detectable: false
+				detectable: false,
+				layer: -1
 			}
 		});
 

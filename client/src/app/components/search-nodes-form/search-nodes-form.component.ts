@@ -14,12 +14,11 @@ export class SearchNodesFormComponent {
 	public maxLength: number = 100;
 
 	private validators = {
-		branchTelephone: new Validator(PATTERNS.numberPattern, 8),
-		ownerId: new Validator(PATTERNS.numberPattern, 10),
-		accountType: new Validator(PATTERNS.nonNumericalPattern, 20),
-		accountId: new Validator(PATTERNS.numberPattern, 10),
-		cardId: new Validator(PATTERNS.numberPattern, 16),
-		sheba: new Validator(PATTERNS.shebaPattern, 23)
+		BranchTelephone: new Validator(PATTERNS.numberPattern, 8),
+		OwnerID: new Validator(PATTERNS.numberPattern, 10),
+		AccountID: new Validator(PATTERNS.numberPattern, 10),
+		CardID: new Validator(PATTERNS.numberPattern, 16),
+		Sheba: new Validator(PATTERNS.shebaPattern, 23)
 	};
 
 	public updateMaxLength(field: string) {
