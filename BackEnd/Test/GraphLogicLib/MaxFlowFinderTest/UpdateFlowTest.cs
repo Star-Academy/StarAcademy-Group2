@@ -6,25 +6,28 @@ using GraphLogicLib.Models;
 using GraphLogicLib;
 
 
-namespace Test.GraphLogicLib
+namespace Test.GraphLogicLib.MaxFlowFinderTest
 {
-    public class BfsTest
+    public class UpdateFlowTest
     {
         MaxFlowFinder maxFlowFinder;
 
         [Theory]
-        [MemberData(nameof(BfsTestData))]
-        public void Test(Dictionary<string, HashSet<SimpleEdge>> graph
-                            , string src, string dst, Dictionary<string, int> expected)
+        [MemberData(nameof(UpdateFlowTestData))]
+        public void Test(Dictionary<string, HashSet<SimpleEdge>> graph,
+                         List<SimpleEdge> path,
+                         Dictionary<SimpleEdge, long> expectedFlowsOnEdges, long expectedFlow)
         {
-            maxFlowFinder = new MaxFlowFinder(src, dst);
+            maxFlowFinder = new MaxFlowFinder("1", "2"); //some dum shit
             maxFlowFinder.Graph = graph; 
 
-            Assert.True(maxFlowFinder.Bfs()); //yeah this could be better
-            Assert.Equal(expected, maxFlowFinder.Levels);
+            var reveresedEdgesToAdd = new HashSet<SimpleEdge>();
+            Assert.Equal(expectedFlow, maxFlowFinder.UpdateFlow(path, ref reveresedEdgesToAdd));
+            foreach(var edge in path)
+                Assert.Equal(expectedFlowsOnEdges[edge],edge.Flow);
         }
 
-        public static IEnumerable<object[]> BfsTestData =>
+        public static IEnumerable<object[]> UpdateFlowTestData =>
             new List<object[]>  
             {
                 // 1 2 1 
@@ -64,13 +67,17 @@ namespace Test.GraphLogicLib
                                 }
                         },
                     },
-                    1, 5,
-                    new Dictionary<string, int>()
+                    new List<SimpleEdge>()
                     {
-                        {"1", 0},
-                        {"2", 1},
-                        {"5", 2}
-                    }
+                        new SimpleEdge() {SourceAccount = "1", DestinationAccount = "2", Capacity = 1} ,
+                        new SimpleEdge() {SourceAccount = "2", DestinationAccount = "5", Capacity = 5}
+                    },
+                    new Dictionary<SimpleEdge, long>()
+                    {
+                        {new SimpleEdge() {SourceAccount = "1", DestinationAccount = "2"}, 1},
+                        {new SimpleEdge() {SourceAccount = "2", DestinationAccount = "5"}, 1}
+                    },
+                    1
                 }
                 // ,
                 // new object[] 
@@ -92,3 +99,4 @@ namespace Test.GraphLogicLib
             };
     }
 }
+
