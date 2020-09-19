@@ -49,7 +49,7 @@ namespace MyWebApi.Controllers
 
         [HttpPost]
         [Route("clearMap")]
-        public ActionResult ClearMap([FromBody] string idNode)
+        public ActionResult ClearMap()
         {
             map.Clear();
             return Ok();
