@@ -54,5 +54,15 @@ namespace MyWebApi.Controllers
             map.Clear();
             return Ok();
         }
+
+        [HttpPost]
+        [Route("import")]
+        public ActionResult Import([FromBody] HashSet<string> idNodes)
+        {
+            foreach(var idNode in idNodes){
+                map.Add(idNode);
+            }
+            return Ok();
+        }
     }
 }
