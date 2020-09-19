@@ -33,13 +33,22 @@ export default {
 				}
 			},
 			edges: {
-				text: (edge) => ({
-					content: edge.getData('Amount'),
+				text: {
 					scale: 1.5,
 					scaling: true
-				}),
+				},
 				shape: { head: 'arrow' }
 			}
+		},
+		edgesAmount: {
+			text: (edge) => ({
+				content: (+edge.getData('Amount')).toLocaleString()
+			})
+		},
+		edgesPercent: {
+			text: (edge) => ({
+				content: edge.getData('percent').toFixed(2) + '%'
+			})
 		}
 	},
 	classes: {

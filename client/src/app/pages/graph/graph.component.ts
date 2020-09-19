@@ -31,10 +31,11 @@ export class GraphComponent implements OnInit {
 	// TODO: Remove
 	layouts: string[] = [ 'force', 'hierarchical' ];
 
-	hoveredContent;
-	hoveredPosition: { x: number; y: number };
+	public hoveredContent;
+	public hoveredPosition: { x: number; y: number };
 
-	devTools: boolean = true;
+	// TODO: remove
+	public devTools: boolean = true;
 
 	constructor(
 		public ogmaService: OgmaService,
@@ -99,9 +100,12 @@ export class GraphComponent implements OnInit {
 	public lockNodes = (nodes) => this.ogmaService.lockNodes(nodes);
 	public unlockNodes = (nodes) => this.ogmaService.unlockNodes(nodes);
 
+	public toggleEdgeContentType = () =>
+		this.ogmaService.toggleEdgeContentType();
+
 	public stopPropagation = (e: Event) => e.stopPropagation();
 
-	private runLayout = () => this.ogmaService.runLayout(this.currentLayout);
+	public runLayout = () => this.ogmaService.runLayout(this.currentLayout);
 
 	private setupOgmaEventHandlers() {
 		this.ogmaService.ogma.events.onClick(({ target, button, domEvent }) => {

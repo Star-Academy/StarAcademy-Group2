@@ -23,10 +23,13 @@ export class OgmaService {
 	private sourceNode: RawNode;
 	private targetNode: RawNode;
 
+	private edgeNormalContentType: boolean;
+
 	constructor(private graphService: GraphService) {}
 
 	public initConfig(configuration = {}) {
 		this.ogma = new Ogma(configuration);
+		this.edgeNormalContentType = true;
 
 		this.setInitialStyles();
 	}
@@ -42,6 +45,7 @@ export class OgmaService {
 					for (const edge of edges) this.addEdge(edge);
 				});
 
+		data['totalDeposit'] = 0;
 		this.ogma.addNode({ data, attributes, id: data.AccountID });
 	}
 
@@ -144,6 +148,16 @@ export class OgmaService {
 			});
 	}
 
+	public toggleEdgeContentType() {
+		this.edgeNormalContentType = !this.edgeNormalContentType;
+
+		const attributes = this.edgeNormalContentType
+			? configs.attributes.edgesAmount
+			: configs.attributes.edgesPercent;
+
+		this.ogma.getEdges().setAttributes(attributes);
+	}
+
 	private setInitialStyles() {
 		this.ogma.styles.setSelectedNodeAttributes(
 			configs.attributes.default.selectedNodes
@@ -164,18 +178,39 @@ export class OgmaService {
 	}
 
 	private addEdge(data: TransactionEdge) {
-		if (
-			this.ogma.getNodes([ data.SourceAccount, data.DestinationAccount ])
-				.size !== 2
-		)
-			return;
+		const source = this.ogma.getNode(data.SourceAccount);
+		const target = this.ogma.getNode(data.DestinationAccount);
 
-		this.ogma.addEdge({
+		if (!source || !target) return;
+
+		const result = this.ogma.addEdge({
 			source: data.SourceAccount,
 			target: data.DestinationAccount,
 			data,
 			id: data.TransactionID
 		});
+
+		if (!result) return;
+
+		const totalDeposit = +source.getData('totalDeposit') + +data.Amount;
+		source.setData('totalDeposit', totalDeposit);
+
+		this.setEdgesPercentValue(source, totalDeposit);
+
+		const attributes = this.edgeNormalContentType
+			? configs.attributes.edgesAmount
+			: configs.attributes.edgesPercent;
+		result.setAttributes(attributes);
+	}
+
+	private setEdgesPercentValue(node: Node, totalDeposit: number) {
+		const edges = node.getAdjacentEdges({ direction: 'out' }).toArray();
+
+		for (const edge of edges)
+			edge.setData(
+				'percent',
+				edge.getData('Amount') / totalDeposit * 100
+			);
 	}
 
 	private clearGraph = () => this.ogma.removeNodes(this.ogma.getNodes('raw'));

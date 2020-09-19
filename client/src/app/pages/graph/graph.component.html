@@ -30,12 +30,14 @@
 
 <div *ngIf="devTools" class="dev-tools bg-primary text-default-complement">
 	<span class="title">DevTools</span>
+
 	<div class="nodes-count">
 		<span class="label text-default-10">Nodes Count: </span>
 		<span class="value">{{countNodes()}}</span>
 	</div>
-	<div class="add-node">
+	<div class="buttons">
 		<button class="btn text-primary" (click)="addNode()">Add a node</button>
+		<button class="btn text-primary" (click)="toggleEdgeContentType()">Edges Content Type</button>
 	</div>
 	<div class="layouts">
 		<span class="label text-default-10">Layouts</span>

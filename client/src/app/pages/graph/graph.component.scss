@@ -154,12 +154,17 @@
 			font-weight: 300;
 		}
 
-		.add-node {
+		.buttons {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+
 			button {
 				background-color: #f2f2f2;
 
 				width: 100%;
 
+				margin: 0.5rem 0;
 				padding: 1rem 2rem;
 
 				border-radius: 2rem;
