@@ -1,4 +1,5 @@
-<div class="result bg-default-95" *ngFor="let node of results">
+<div class="result bg-default-95" *ngFor="let node of results" (cdkDragStarted)="dragStart($event)"
+	(cdkDragEnded)="dragEnd($event, node)" (cdkDragMoved)="dragProgress($event, node)" cdkDrag>
 	<span class="title text-default-40">{{node.OwnerName + " " + node.OwnerFamilyName}}</span>
 	<div class="icons">
 		<round-button btnClass="btn-secondary btn-secondary-success" icon="plus" iconSize="3"

@@ -37,7 +37,6 @@ export class GraphService {
 
 	public findPath(sourceId, destinationId, maxLength) {
 		maxLength = Math.max(1, Math.min(5, maxLength));
-		console.log(maxLength);
 
 		return this.httpClient.get(
 			'https://localhost:5001/UserQuery/FindAllPath',

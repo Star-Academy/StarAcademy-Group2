@@ -1,4 +1,4 @@
-<div [class]="'container ' + (state === 0 ? 'closed' : '')">
+<div [class]="'container ' + (state === 0 ? 'closed' : '') + containerClassName">
 	<div class="overlay" [@overlayState]="overlayStateStatus" (click)="close()">
 		<round-button btnClass="btn-fade" icon="cross" iconSize="6"></round-button>
 	</div>
@@ -13,9 +13,13 @@
 		<div class="body">
 			<search-nodes-form *ngIf="state === 1" [snackbar]="snackbar" (callback)="clickedOnSearchButton($event)">
 			</search-nodes-form>
+
 			<search-nodes-result *ngIf="state === 2" [results]="results"
-				(addNodeCallback)="clickedOnAddNodeButton($event)" (detailsCallback)="clickedOnDetailsButton($event)">
+				(addNodeCallback)="clickedOnAddNodeButton($event)" (detailsCallback)="clickedOnDetailsButton($event)"
+				(dragStartCallback)="dragStart($event)" (dragMoveCallback)="dragMove($event)"
+				(dragEndCallback)="dragEnd($event)">
 			</search-nodes-result>
+
 			<search-nodes-details *ngIf="state === 3" [node]="activeNode" [searching]="this.results.length > 0"
 				(callback)="clickedOnAddNodeButton($event)">
 			</search-nodes-details>

@@ -18,7 +18,11 @@ import { Animations } from './animations';
 export class GraphModalComponent {
 	@Input() snackbar: SnackbarComponent;
 
-	@Output() callback = new EventEmitter();
+	@Output() addNodeCallback = new EventEmitter();
+	@Output() dragMoveCallback = new EventEmitter();
+	@Output() dragEndCallback = new EventEmitter();
+
+	public containerClassName: string;
 
 	public activeNode: AccountNode;
 
@@ -32,6 +36,7 @@ export class GraphModalComponent {
 		public ogmaService: OgmaService,
 		private searchService: SearchNodesService
 	) {
+		this.containerClassName = '';
 		this.setState(0);
 	}
 
@@ -107,11 +112,22 @@ export class GraphModalComponent {
 
 	public clickedOnAddNodeButton(e) {
 		this.close();
-		this.callback.emit(e);
+		this.emit(this.addNodeCallback, e);
 	}
 
 	public clickedOnDetailsButton(e) {
 		this.setState(3);
 		this.activeNode = e.node;
 	}
+
+	public dragStart = () => (this.containerClassName = 'closed');
+
+	public dragMove = (e) => this.emit(this.dragMoveCallback, e);
+
+	public dragEnd(e) {
+		this.emit(this.dragEndCallback, e);
+		this.close();
+	}
+
+	private emit = (emitter, e) => emitter.emit(e);
 }

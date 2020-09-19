@@ -191,5 +191,57 @@
 				}
 			}
 		}
+
+		.layout-directions {
+			.value {
+				margin-left: 1rem;
+
+				input {
+					border: none;
+					outline: none;
+				}
+
+				label {
+					margin-left: 0.5rem;
+				}
+			}
+		}
 	}
+}
+
+
+#draggable {
+	position: fixed;
+	left: 100px;
+	top: 100px;
+	height: 50px;
+	width: 50px;
+	z-index: -1;
+
+	img {
+		height: 50px;
+		width: 50px;
+		opacity: 0.5;
+	}
+}
+
+#trash {
+	position: fixed;
+	left: 20%;
+	top: 20px;
+	z-index: -1;
+	height: 50px;
+	z-index: 50px;
+
+
+	img {
+		height: 50px;
+		width: 50px;
+		opacity: 0.5;
+	}
+}
+
+#trash:hover {
+	border: 70px solid rgb(50, 100, 200);
+	border-radius: 80%;
 }

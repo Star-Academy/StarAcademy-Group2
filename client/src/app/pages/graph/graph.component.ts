@@ -25,11 +25,11 @@ export class GraphComponent implements OnInit {
 
 	@ViewChild('snackbar') snackbar: SnackbarComponent;
 
-	// TODO: Remove
-	@Input() currentLayout: string = 'force';
+	public layouts: string[] = [ 'force', 'hierarchical', 'sequential' ];
+	public directions: string[] = [ 'TB', 'BT', 'LR', 'RL' ];
 
-	// TODO: Remove
-	layouts: string[] = [ 'force', 'hierarchical' ];
+	public currentLayout: string = 'sequential';
+	public currentDirection: string = 'LR';
 
 	public hoveredContent;
 	public hoveredPosition: { x: number; y: number };
@@ -73,6 +73,10 @@ export class GraphComponent implements OnInit {
 			.search('OwnerName', 'افسر')
 			.subscribe((res) => this.clickedOnAddNodeButton({ node: res[0] }));
 
+		this.searchService
+			.search('OwnerName', 'ژیلا')
+			.subscribe((res) => this.clickedOnAddNodeButton({ node: res[0] }));
+
 		setTimeout(() => this.runLayout(), 500);
 	}
 
@@ -87,11 +91,12 @@ export class GraphComponent implements OnInit {
 	public clickedOnExpandButton = ({ nodeIds }) =>
 		this.nodesModal.open(null, 4, nodeIds);
 
-	public clickedOnFindPathButton(e: Event) {
+	public clickedOnFindPathButton() {
 		this.ogmaService.findPath(this.pathMaxLength.nativeElement.value);
 
 		// TODO: check if path was found
 		this.toggleFindPathMenu();
+		this.runLayout();
 	}
 
 	public toggleFindPathMenu = () =>
@@ -103,9 +108,40 @@ export class GraphComponent implements OnInit {
 	public toggleEdgeContentType = () =>
 		this.ogmaService.toggleEdgeContentType();
 
+	dragMove(e) {
+		document.getElementById('trash').style.zIndex = '20';
+		let draggable = document.getElementById('draggable');
+		draggable.style.zIndex = '20';
+		draggable.style.left = `${e.position.x}px`;
+		draggable.style.top = `${e.position.y}px`;
+	}
+
+	dragEnd(e) {
+		let trash = document.getElementById('trash');
+		trash.style.zIndex = '-1';
+		document.getElementById('draggable').style.zIndex = '-1';
+		const ogmaCoordinates = this.ogmaService.ogma.view.screenToGraphCoordinates(
+			{
+				x: e.position.x,
+				y: e.position.y
+			}
+		);
+		if (!trash.onmouseover) {
+			this.ogmaService.addNode(e.node, ogmaCoordinates);
+		}
+	}
+
 	public stopPropagation = (e: Event) => e.stopPropagation();
 
-	public runLayout = () => this.ogmaService.runLayout(this.currentLayout);
+	public runLayout() {
+		const options = {
+			direction: this.currentDirection
+		};
+
+		this.ogmaService.runLayout(this.currentLayout, options);
+	}
+
+	public disableDirections = () => this.currentLayout === 'force';
 
 	private setupOgmaEventHandlers() {
 		this.ogmaService.ogma.events.onClick(({ target, button, domEvent }) => {

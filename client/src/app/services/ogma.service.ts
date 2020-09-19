@@ -34,9 +34,6 @@ export class OgmaService {
 		this.setInitialStyles();
 	}
 
-	public runLayout = (layout: string) =>
-		this.ogma.layouts[layout]({ locate: true });
-
 	public addNode(data: AccountNode, attributes?, register = true) {
 		if (register)
 			this.graphService
@@ -46,7 +43,7 @@ export class OgmaService {
 				});
 
 		data['totalDeposit'] = 0;
-		this.ogma.addNode({ data, attributes, id: data.AccountID });
+		return this.ogma.addNode({ data, attributes, id: data.AccountID });
 	}
 
 	public removeNode = (nodeId: NodeId) => this.ogma.removeNodes(nodeId);
@@ -97,16 +94,14 @@ export class OgmaService {
 				item1.forEach((node) => this.addNode(node));
 				item2.forEach((edge) => this.addEdge(edge));
 			});
-
-			this.runLayout('force');
 		});
 	}
 
 	public findPath(maxLength: number) {
 		this.clearGraph();
 
-		this.setSource(this.addUnregisteredNode(this.sourceNode.getData()));
-		this.setTarget(this.addUnregisteredNode(this.targetNode.getData()));
+		this.setSource(this.addNode(this.sourceNode.getData(), null, false));
+		this.setTarget(this.addNode(this.targetNode.getData(), null, false));
 
 		const sourceId = this.sourceNode.getId();
 		const targetId = this.targetNode.getId();
@@ -158,6 +153,14 @@ export class OgmaService {
 		this.ogma.getEdges().setAttributes(attributes);
 	}
 
+	public runLayout(layout: string, options?: object) {
+		this.ogma.layouts[layout]({
+			arrangeComponents: 'fit',
+			locate: true,
+			...options
+		});
+	}
+
 	private setInitialStyles() {
 		this.ogma.styles.setSelectedNodeAttributes(
 			configs.attributes.default.selectedNodes
@@ -171,10 +174,6 @@ export class OgmaService {
 			nodeAttributes: configs.attributes.default.nodes,
 			edgeAttributes: configs.attributes.default.edges
 		});
-	}
-
-	private addUnregisteredNode(data: AccountNode, attributes?) {
-		return this.ogma.addNode({ data, attributes, id: data.AccountID });
 	}
 
 	private addEdge(data: TransactionEdge) {

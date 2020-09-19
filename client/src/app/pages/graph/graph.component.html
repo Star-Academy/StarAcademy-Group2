@@ -1,6 +1,7 @@
 <app-snackbar #snackbar class="error"></app-snackbar>
 
-<graph-modal #nodesModal [snackbar]="snackbar" (callback)="clickedOnAddNodeButton($event)">
+<graph-modal #nodesModal [snackbar]="snackbar" (addNodeCallback)="clickedOnAddNodeButton($event)"
+	(dragMoveCallback)="dragMove($event)" (dragEndCallback)="dragEnd($event)">
 </graph-modal>
 <radial-node-menu #radialComponent [snackbar]="snackbar" (expandCallback)="clickedOnExpandButton($event)">
 </radial-node-menu>
@@ -22,9 +23,13 @@
 
 <navigation></navigation>
 
-<main>
+<main cdkDropList>
 	<round-button btnClass="btn-secondary" icon="search" iconSize="6" (callback)="clickedOnSearchNodesButton($event)">
 	</round-button>
+
+	<div id="draggable"><img src="../../../assets/svg/washing_machine.svg"></div>
+	<div id="trash"><img src="../../../assets/svg/cross.svg"></div>
+
 	<div #ogmaContainer id="ogma-container" onclick="event.stopPropagation()"></div>
 </main>
 
@@ -36,9 +41,11 @@
 		<span class="value">{{countNodes()}}</span>
 	</div>
 	<div class="buttons">
-		<button class="btn text-primary" (click)="addNode()">Add a node</button>
+		<button class="btn text-primary" (click)="addNode()">Add Some nodes</button>
 		<button class="btn text-primary" (click)="toggleEdgeContentType()">Edges Content Type</button>
+		<button class="btn text-primary" (click)="runLayout()">Run Layout</button>
 	</div>
+
 	<div class="layouts">
 		<span class="label text-default-10">Layouts</span>
 		<div class="value">
@@ -46,6 +53,17 @@
 				<input [id]="layout" type="radio" name="layout" [(ngModel)]="currentLayout" [value]="layout"
 					(change)="runLayout()" />
 				<label [attr.for]="layout">{{layout | titlecase}}</label>
+			</div>
+		</div>
+	</div>
+
+	<div class="layout-directions">
+		<span class="label text-default-10">Layout Directions</span>
+		<div class="value">
+			<div class="direction" *ngFor="let direction of directions">
+				<input id={{direction}} type="radio" [(ngModel)]="currentDirection" value={{direction}}
+					[disabled]="disableDirections()" (change)="runLayout()" />
+				<label for={{direction}}>{{direction}}</label>
 			</div>
 		</div>
 	</div>

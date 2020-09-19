@@ -6,6 +6,7 @@ export default {
 				color: 'transparent',
 				outerStroke: 'transparent',
 				innerStroke: 'transparent',
+				layer: 1,
 				image: {
 					fit: true,
 					url: '../../../assets/svg/washing_machine.svg'
@@ -37,7 +38,15 @@ export default {
 					scale: 1.5,
 					scaling: true
 				},
-				shape: { head: 'arrow' }
+				shape: { head: 'arrow' },
+				color: (edge) => {
+					const gb = Math.floor(
+						2.55 * (100 - edge.getData('percent'))
+					);
+
+					return `rgb(255, ${gb}, ${gb})`;
+				},
+				width: (edge) => 1 + 0.015 * edge.getData('percent')
 			}
 		},
 		edgesAmount: {
