@@ -1,313 +1,182 @@
 import { Injectable } from '@angular/core';
 
-import Ogma, { NodeId } from '../../dependencies/ogma.min.js';
+import Ogma, {
+	Node,
+	NodeList,
+	RawNode,
+	NodeId
+} from '../../dependencies/ogma.min.js';
 
 import { GraphService } from './graph.service';
 
 import { AccountNode } from '../models/AccountNode.js';
 import { TransactionEdge } from '../models/TransactionEdge.js';
 
+import configs from './ogmaConfigs';
+
 @Injectable({
 	providedIn: 'root'
 })
 export class OgmaService {
-	ogma: Ogma;
-	sourceNode = null;
-	targetNode = null;
-
-	attributes = {
-		shape: 'square',
-		color: 'transparent',
-		outerStroke: 'transparent',
-		innerStroke: 'transparent',
-		image: {
-			fit: true,
-			url: '../../../assets/svg/washing_machine.svg'
-		}
-	};
+	private ogma: Ogma;
+	private sourceNode: RawNode;
+	private targetNode: RawNode;
 
 	constructor(private graphService: GraphService) {}
 
 	public initConfig(configuration = {}) {
 		this.ogma = new Ogma(configuration);
-		this.ogma.setOptions({ zoom: { enabled: false } });
 
-		this.ogma.styles.setSelectedNodeAttributes({
-			color: false,
-			outline: false,
-			outerStroke: {
-				color: 'blue'
-			}
-		});
-
-		this.ogma.styles.setHoveredNodeAttributes({
-			color: false,
-			outline: false,
-			outerStroke: {
-				color: 'green'
-			}
-		});
-
-		this.addRule();
+		this.setInitialStyles();
 	}
 
-	public runLayout(layout: string = 'force'): Promise<void> {
+	public runLayout(layout: string) {
 		return this.ogma.layouts[layout]({ locate: true });
 	}
 
-	public addRule() {
-		this.ogma.styles.addRule({
-			nodeAttributes: {
-				text: (node) => {
-					return node.getId();
-				}
-			},
-			edgeAttributes: {
-				text: (node) => {
-					return node.getData('Amount');
-				},
-				shape: { head: 'arrow' }
-			}
-		});
+	public addNode(data: AccountNode, attributes?, register = true) {
+		if (register)
+			this.graphService
+				.addNode(data)
+				.subscribe((edges: TransactionEdge[]) => {
+					for (const edge of edges) this.addEdge(edge);
+				});
+
+		this.ogma.addNode({ data, attributes, id: data.AccountID });
 	}
 
-	public addNode(data: AccountNode, attributes?): void {
-		console.log('Data:', data);
+	public removeNode = (nodeId: NodeId) => this.ogma.removeNodes(nodeId);
 
-		let id = data.AccountID;
+	public lockNodes = (nodes: NodeList) =>
+		nodes.setAttributes(configs.classes.locked);
 
-		this.graphService.addNode(data).subscribe((res: TransactionEdge[]) => {
-			for (let edge of res) {
-				if (
-					this.ogma.getNode(edge.SourceAccount) &&
-					this.ogma.getNode(edge.DestinationAccount)
-				) {
-					this.addEdge(
-						edge.SourceAccount,
-						edge.DestinationAccount,
-						edge
-					);
-				}
-			}
-		});
+	public unlockNodes = (nodes: NodeList) =>
+		nodes.setAttributes(configs.classes.unlocked);
 
-		attributes = {
-			shape: 'square',
-			color: 'transparent',
-			outerStroke: 'transparent',
-			innerStroke: 'transparent',
-			image: {
-				fit: true,
-				url: '../../../assets/svg/washing_machine.svg'
-			},
-			...attributes
-		};
-
-		this.ogma.addNode({ data, attributes, id });
-	}
-
-	public addEdge(
-		source: NodeId,
-		target: NodeId,
-		data?: TransactionEdge,
-		attributes?
-	) {
-		let id = this.ogma.getEdges().getId().length;
-		if (data) id = data.TransactionID;
-
-		this.ogma.addEdge({ source, target, data, attributes, id });
-	}
-
-	public removeNode(nodeId) {
-		this.ogma.removeNodes(nodeId);
-	}
-
-	lockNodes(nodes) {
-		nodes.setAttributes({
-			color: 'gray',
-			draggable: false
-		});
-	}
-
-	unlockNodes(nodes) {
-		nodes.setAttributes({
-			color: 'transparent',
-			draggable: true
-		});
-	}
-
-	toggleNodeLockStatus(node) {
+	public toggleNodeLockStatus = (node: Node) =>
 		node.getAttribute('draggable')
 			? this.lockNodes(node)
 			: this.unlockNodes(node);
-	}
 
-	getSourceNode() {
-		return this.sourceNode;
-	}
+	public getSourceNode = () => this.sourceNode;
+	public getTargetNode = () => this.targetNode;
 
-	getTargetNode() {
-		return this.targetNode;
-	}
-
-	setSource(node) {
+	public setSource(node: Node) {
 		if (this.sourceNode) this.removeSource();
 		this.sourceNode = node;
 
-		this.setSourceAttributes(this.sourceNode);
+		this.sourceNode.setAttributes(configs.classes.source);
 	}
 
-	setSourceAttributes(node) {
-		node.setAttributes({
-			image: {
-				fit: true,
-				url: '../../../assets/svg/money_source.svg'
-			}
-		});
-	}
-
-	setTarget(node) {
+	public setTarget(node: RawNode) {
 		if (this.targetNode) this.removeTarget();
 		this.targetNode = node;
 
-		this.setTargetAttributes(this.targetNode);
+		this.targetNode.setAttributes(configs.classes.target);
 	}
 
-	setTargetAttributes(node) {
-		node.setAttributes({
-			image: {
-				fit: true,
-				url: '../../../assets/svg/clean_clothes.svg'
-			}
-		});
-	}
-
-	removeSource() {
-		this.sourceNode.setAttributes({
-			image: {
-				fit: true,
-				url: '../../../assets/svg/washing_machine.svg'
-			}
-		});
-
+	public removeSource() {
+		this.sourceNode.setAttributes(configs.classes.normal);
 		this.sourceNode = null;
 	}
 
-	removeTarget() {
-		this.targetNode.setAttributes({
-			image: {
-				fit: true,
-				url: '../../../assets/svg/washing_machine.svg'
-			}
-		});
-
+	public removeTarget() {
+		this.targetNode.setAttributes(configs.classes.normal);
 		this.targetNode = null;
 	}
 
-	public expand(nodeIds: string[], filters?) {
-		let request = { accounts: nodeIds };
-		if (filters) {
-			request['amountCeiling'] = String(filters.amountCeiling);
-			request['amountFloor'] = String(filters.amountFloor);
-			request['dateCeiling'] = String(filters.dateCeiling);
-			request['dateFloor'] = String(filters.dateFloor);
-			if (filters.tratransactionId) {
-				request['transactionId'] = String(filters.transactionId);
-			}
-			if (filters.type) {
-				request['type'] = String(filters.type);
-			}
-		}
-		let jsonResponse = this.graphService.expandRequest(request);
-		jsonResponse.subscribe((res) => {
-			let jsonString = JSON.parse(JSON.stringify(res));
-			jsonString.forEach((single) => {
-				single.item1.forEach((node: AccountNode) => this.addNode(node));
+	public expand(nodeIds: string[], filters) {
+		let request = { accounts: nodeIds, ...filters };
+
+		this.graphService.expand(request).subscribe((res: any[]) => {
+			res.forEach(({ item1, item2 }) => {
+				item1.forEach((node) => this.addNode(node));
+				item2.forEach((edge) => this.addEdge(edge));
 			});
-			jsonString.forEach((single) => {
-				single.item2.forEach((edge: TransactionEdge) => {
-					this.addEdge(
-						edge.SourceAccount,
-						edge.DestinationAccount,
-						edge
-					);
-				});
-			});
-			this.runLayout();
+
+			this.runLayout('force');
 		});
 	}
 
-	removePreviousGraph() {
-		this.ogma.removeNodes(this.ogma.getNodes('raw'));
-	}
+	public findPath(maxLength: number) {
+		this.clearGraph();
 
-	findPath(length) {
-		this.removePreviousGraph();
-
-		this.ogma.addNode({
-			data: this.targetNode.getData(),
-			attributes: this.attributes,
-			id: this.targetNode.getId()
-		});
-		this.ogma.addNode({
-			data: this.sourceNode.getData(),
-			attributes: this.attributes,
-			id: this.sourceNode.getId()
-		});
+		this.setSource(this.addUnregisteredNode(this.sourceNode.getData()));
+		this.setTarget(this.addUnregisteredNode(this.targetNode.getData()));
 
 		const sourceId = this.sourceNode.getId();
 		const targetId = this.targetNode.getId();
 
-		this.setSource(this.ogma.getNode(sourceId));
-		this.setTarget(this.ogma.getNode(targetId));
-
-		let jsonResponse = this.graphService.findMaxFlow(sourceId, targetId);
-		jsonResponse.subscribe((res) => {
+		this.graphService.findMaxFlow(sourceId, targetId).subscribe((res) => {
 			this.ogma.addEdge({
-				id: 'flow',
+				id: 'dummy',
 				source: sourceId,
 				target: targetId,
-				attributes: {
-					color: 'pink',
-					width: 3,
-					opacity: 0.5
-				},
+				attributes: configs.classes.dummy
+			});
+
+			this.ogma.addEdge({
+				id: 'max-flow',
+				source: sourceId,
+				target: targetId,
+				attributes: configs.classes.maxFlow,
 				data: { Amount: res }
 			});
 		});
 
-		this.ogma.addEdge({
-			id: 'dummy',
-			source: sourceId,
-			target: targetId,
-			attributes: {
-				opacity: 0,
-				detectable: false,
-				layer: -1
-			}
-		});
+		this.graphService
+			.findPath(
+				this.sourceNode.getId(),
+				this.targetNode.getId(),
+				maxLength
+			)
+			.subscribe((res: any) => {
+				res.item1.forEach((node) => this.addNode(node));
+				res.item2.forEach((edge) => this.addEdge(edge));
 
-		jsonResponse = this.graphService.findPath(
-			this.sourceNode.getId(),
-			this.targetNode.getId(),
-			length
+				// TODO: use layout manager
+				this.ogma.layouts.hierarchical({
+					direction: 'LR',
+					duration: 300,
+					nodeDistance: 30,
+					levelDistance: 40
+				});
+			});
+	}
+
+	private setInitialStyles() {
+		this.ogma.styles.setSelectedNodeAttributes(
+			configs.attributes.default.selectedNodes
 		);
 
-		jsonResponse.subscribe((res) => {
-			let jsonString = JSON.parse(JSON.stringify(res));
-			jsonString.item1.forEach((node: AccountNode) => {
-				this.addNode(node);
-			});
-			jsonString.item2.forEach((edge: TransactionEdge) => {
-				this.addEdge(edge.SourceAccount, edge.DestinationAccount, edge);
-			});
+		this.ogma.styles.setHoveredNodeAttributes(
+			configs.attributes.default.hoveredNodes
+		);
 
-			this.ogma.layouts.hierarchical({
-				direction: 'LR',
-				duration: 300,
-				nodeDistance: 30,
-				levelDistance: 40
-			});
+		this.ogma.styles.addRule({
+			nodeAttributes: configs.attributes.default.nodes,
+			edgeAttributes: configs.attributes.default.edges
 		});
 	}
+
+	private addUnregisteredNode(data: AccountNode, attributes?) {
+		return this.ogma.addNode({ data, attributes, id: data.AccountID });
+	}
+
+	private addEdge(data: TransactionEdge) {
+		if (
+			this.ogma.getNodes([ data.SourceAccount, data.DestinationAccount ])
+				.size !== 2
+		)
+			return;
+
+		this.ogma.addEdge({
+			source: data.SourceAccount,
+			target: data.DestinationAccount,
+			data,
+			id: data.TransactionID
+		});
+	}
+
+	private clearGraph = () => this.ogma.removeNodes(this.ogma.getNodes('raw'));
 }

@@ -88,19 +88,20 @@ export class GraphModalComponent {
 	public back = () => this.setState(this.state - 1);
 	public close = () => this.setState(0);
 
-	public async clickedOnSearchButton(e) {
-		this.results = await this.searchService.search(e.field, e.query);
+	public clickedOnSearchButton(e) {
+		this.searchService
+			.search(e.field, e.query)
+			.subscribe((res: AccountNode[]) => {
+				this.results = res;
 
-		if (this.results.length === 0) this.snackbar.show('نتیجه‌ای یافت نشد');
-		else this.setState(2);
+				if (this.results.length === 0)
+					this.snackbar.show('نتیجه‌ای یافت نشد');
+				else this.setState(2);
+			});
 	}
 
 	public clickedOnExpandButton(e) {
 		this.ogmaService.expand(this.nodeIds, e.filters);
-
-		// if (!result) this.snackbar.show('نتیجه‌ای یافت نشد');
-		// else this.close();
-
 		this.close();
 	}
 
@@ -111,7 +112,6 @@ export class GraphModalComponent {
 
 	public clickedOnDetailsButton(e) {
 		this.setState(3);
-
 		this.activeNode = e.node;
 	}
 }
