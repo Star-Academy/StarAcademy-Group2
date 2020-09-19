@@ -1,6 +1,8 @@
 .tooltip {
 	position: absolute;
+	transform: translate3d(-50%, -110%, 0);
 
+	margin-bottom: -2rem;
 	padding: 1rem 2rem;
 
 	.overlay {

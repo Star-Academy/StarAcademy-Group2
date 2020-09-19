@@ -5,42 +5,22 @@
 <radial-node-menu #radialComponent [snackbar]="snackbar" (expandCallback)="clickedOnExpandButton($event)">
 </radial-node-menu>
 
-<graph-tooltip *ngIf="hoveredContent" [content]="hoveredContent" [position]="hoveredPosition"></graph-tooltip>
+<graph-tooltip *ngIf="hoveredContent" [content]="hoveredContent" [position]="hoveredPosition">
+</graph-tooltip>
 
-<div #findPathMenu *ngIf="ogmaService.sourceNode && ogmaService.targetNode" class="find-path btn btn-primary closed"
-	(click)="toggleFindPathMenu($event)">
+<div #findPathMenu *ngIf="ogmaService.getSourceNode() && ogmaService.getTargetNode()"
+	class="find-path btn btn-primary closed" (click)="toggleFindPathMenu($event)">
 	<span class="title">محاسبه مسیر</span>
 	<div class="form-container" (click)="stopPropagation($event)">
 		<div class="form">
 			<span class="label">حداکثر طول:</span>
-			<input #pathMaxLength type="number" min="1" max="7" value="1">
+			<input #pathMaxLength type="number" min="1" max="5" value="1">
 		</div>
 		<div class="btn btn-primary-reverse" (click)="clickedOnFindPathButton($event)">پردازش</div>
 	</div>
 </div>
 
-<nav class="bg-primary text-default-05">
-	<a class="logo text-default-05" href="/">لوگو</a>
-	<ul>
-		<div class="top">
-			<li class="btn active">
-				<svg-icon key="nodes"></svg-icon>
-				<span>گراف</span>
-			</li>
-			<li class="btn">
-				<svg-icon key="settings"></svg-icon>
-				<span>تنظیمات</span>
-			</li>
-		</div>
-		<div class="bottom">
-			<li class="btn">
-				<svg-icon key="logout"></svg-icon>
-				<span>خروج</span>
-			</li>
-		</div>
-	</ul>
-	<img class="highlighter" src="../../../assets/svg/nav-highligher.svg" />
-</nav>
+<navigation></navigation>
 
 <main>
 	<round-button btnClass="btn-secondary" icon="search" iconSize="6" (callback)="clickedOnSearchNodesButton($event)">

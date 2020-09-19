@@ -8,7 +8,6 @@ import { SearchNodesService } from '../../services/search-nodes.service.js';
 import { GraphModalComponent } from '../../components/graph-modal/graph-modal.component.js';
 import { RadialNodeMenuComponent } from '../../components/radial-node-menu/radial-node-menu.component.js';
 import { SnackbarComponent } from '../../components/snackbar/snackbar.component.js';
-import { AccountNode } from 'src/app/models/AccountNode.js';
 
 @Component({
 	selector: 'app-graph',
@@ -42,7 +41,7 @@ export class GraphComponent implements OnInit {
 		private searchService: SearchNodesService
 	) {}
 
-	ngOnInit() {
+	public ngOnInit() {
 		this.ogmaService.initConfig({
 			options: {
 				backgroundColor: '#f2f2f2',
@@ -52,6 +51,59 @@ export class GraphComponent implements OnInit {
 			}
 		});
 
+		this.setupOgmaEventHandlers();
+	}
+
+	public ngAfterContentInit() {
+		this.ogmaService.ogma.setContainer(this.container.nativeElement);
+	}
+
+	// TODO: Remove
+	public addNode() {
+		this.searchService
+			.search('OwnerName', 'ارژنگ')
+			.subscribe((res) => this.clickedOnAddNodeButton({ node: res[0] }));
+
+		this.searchService
+			.search('OwnerName', 'دریا')
+			.subscribe((res) => this.clickedOnAddNodeButton({ node: res[0] }));
+
+		this.searchService
+			.search('OwnerName', 'افسر')
+			.subscribe((res) => this.clickedOnAddNodeButton({ node: res[0] }));
+
+		setTimeout(() => this.runLayout(), 500);
+	}
+
+	// TODO: use this
+	public countNodes = (): number => this.ogmaService.ogma.getNodes().size;
+
+	public clickedOnSearchNodesButton = () => this.nodesModal.open();
+
+	public clickedOnAddNodeButton = ({ node, attributes = null }) =>
+		this.ogmaService.addNode(node, attributes);
+
+	public clickedOnExpandButton = ({ nodeIds }) =>
+		this.nodesModal.open(null, 4, nodeIds);
+
+	public clickedOnFindPathButton(e: Event) {
+		this.ogmaService.findPath(this.pathMaxLength.nativeElement.value);
+
+		// TODO: check if path was found
+		this.toggleFindPathMenu();
+	}
+
+	public toggleFindPathMenu = () =>
+		this.findPathMenu.nativeElement.classList.toggle('closed');
+
+	public lockNodes = (nodes) => this.ogmaService.lockNodes(nodes);
+	public unlockNodes = (nodes) => this.ogmaService.unlockNodes(nodes);
+
+	public stopPropagation = (e: Event) => e.stopPropagation();
+
+	private runLayout = () => this.ogmaService.runLayout(this.currentLayout);
+
+	private setupOgmaEventHandlers() {
 		this.ogmaService.ogma.events.onClick(({ target, button, domEvent }) => {
 			this.radialComponent.close();
 
@@ -59,23 +111,16 @@ export class GraphComponent implements OnInit {
 				this.hoveredContent = null;
 
 				if (button === 'right')
-					if (domEvent.shiftKey)
-						this.ogmaService.toggleNodeLockStatus(target);
-					else
-						this.radialComponent.expandMenu(
-							this.ogmaService.ogma
-								.getSelectedNodes()
-								.concat(target)
-								.dedupe(),
-							target.getAttributes([ 'x', 'y' ])
-						);
+					this.radialComponent.expandMenu(
+						this.ogmaService.ogma
+							.getSelectedNodes()
+							.concat(target)
+							.dedupe(),
+						target.getPosition()
+					);
 				else if (button === 'left' && domEvent.shiftKey)
 					this.nodesModal.open(target.getData());
 			}
-		});
-
-		this.ogmaService.ogma.events.onMouseButtonDown((e) => {
-			this.radialComponent.close();
 		});
 
 		this.ogmaService.ogma.events.onDoubleClick(({ target, button }) => {
@@ -83,98 +128,51 @@ export class GraphComponent implements OnInit {
 				this.ogmaService.toggleNodeLockStatus(target);
 		});
 
+		this.ogmaService.ogma.events.onMouseButtonDown(() =>
+			this.radialComponent.close()
+		);
+
 		this.ogmaService.ogma.events.onZoomProgress(() => {
 			this.radialComponent.close();
+			this.hoveredContent = null;
 		});
 
-		this.ogmaService.ogma.events.onHover(({ x, y, target }: HoverEvent) => {
-			this.hoveredPosition = {
-				x,
-				y: y + 20
-			};
-
-			if (target.isNode) {
-				this.hoveredContent = [
-					[ 'شعبه', target.getData('BranchName') ],
-					[ 'شناسه صاحب حساب', target.getData('OwnerID') ],
-					[
-						'نام صاحب حساب',
-						target.getData('OwnerName') +
-							' ' +
-							target.getData('OwnerFamilyName')
-					]
-				];
-			} else {
-				this.hoveredContent = [
-					[ 'حجم تراکنش', target.getData('Amount') ]
-				];
-			}
-		});
+		this.ogmaService.ogma.events.onHover(({ target }) =>
+			this.updateTooltip(target)
+		);
 
 		this.ogmaService.ogma.events.onUnhover(
 			() => (this.hoveredContent = null)
 		);
 	}
 
-	ngAfterContentInit() {
-		this.ogmaService.ogma.setContainer(this.container.nativeElement);
-		this.runLayout();
-	}
+	private updateTooltip(target) {
+		let offset = 0;
+		if (target.isNode) offset = target.getAttribute('radius');
 
-	// TODO: Remove
-	async addNode() {
-		let results = await this.searchService.search('OwnerName', 'ارژنگ');
-		this.clickedOnAddNodeButton({ node: results[0] });
+		const position = target.getBoundingBox();
+		this.hoveredPosition = this.ogmaService.ogma.view.graphToScreenCoordinates(
+			{
+				x: position.cx,
+				y: position.cy - offset
+			}
+		);
 
-		results = await this.searchService.search('OwnerName', 'دریا');
-		this.clickedOnAddNodeButton({ node: results[0] });
-
-		results = await this.searchService.search('OwnerName', 'افسر');
-		this.clickedOnAddNodeButton({ node: results[0] });
-
-		this.runLayout();
-	}
-
-	runLayout() {
-		this.ogmaService.runLayout(this.currentLayout);
-	}
-
-	countNodes(): number {
-		return this.ogmaService.ogma.getNodes().size;
-	}
-
-	clickedOnSearchNodesButton(e) {
-		this.nodesModal.open();
-	}
-
-	clickedOnAddNodeButton(e) {
-		if (e.attributes) this.ogmaService.addNode(e.node, e.attributes);
-		else this.ogmaService.addNode(e.node);
-	}
-
-	clickedOnExpandButton(e) {
-		this.nodesModal.open(null, 4, e.nodeIds);
-	}
-
-	clickedOnFindPathButton(e) {
-		e.stopPropagation();
-
-		this.ogmaService.findPath(this.pathMaxLength.nativeElement.value);
-	}
-
-	toggleFindPathMenu(e: Event) {
-		this.findPathMenu.nativeElement.classList.toggle('closed');
-	}
-
-	lockNodes(nodes) {
-		this.ogmaService.lockNodes(nodes);
-	}
-
-	unlockNodes(nodes) {
-		this.ogmaService.unlockNodes(nodes);
-	}
-
-	stopPropagation(e: Event) {
-		e.stopPropagation();
+		if (target.isNode) {
+			this.hoveredContent = [
+				[ 'شعبه', target.getData('BranchName') ],
+				[ 'شناسه صاحب حساب', target.getData('OwnerID') ],
+				[
+					'نام صاحب حساب',
+					target.getData('OwnerName') +
+						' ' +
+						target.getData('OwnerFamilyName')
+				]
+			];
+		} else {
+			this.hoveredContent = [
+				[ 'حجم تراکنش', target.getData('Amount') ]
+			];
+		}
 	}
 }

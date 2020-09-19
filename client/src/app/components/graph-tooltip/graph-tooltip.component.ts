@@ -6,6 +6,6 @@ import { Component, Input } from '@angular/core';
 	styleUrls: [ './graph-tooltip.component.scss' ]
 })
 export class GraphTooltipComponent {
-	@Input() content;
+	@Input() content: object;
 	@Input() position: { x: number; y: number };
 }

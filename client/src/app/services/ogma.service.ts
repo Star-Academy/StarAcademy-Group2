@@ -18,7 +18,8 @@ import configs from './ogmaConfigs';
 	providedIn: 'root'
 })
 export class OgmaService {
-	private ogma: Ogma;
+	public ogma: Ogma;
+
 	private sourceNode: RawNode;
 	private targetNode: RawNode;
 
@@ -30,9 +31,8 @@ export class OgmaService {
 		this.setInitialStyles();
 	}
 
-	public runLayout(layout: string) {
-		return this.ogma.layouts[layout]({ locate: true });
-	}
+	public runLayout = (layout: string) =>
+		this.ogma.layouts[layout]({ locate: true });
 
 	public addNode(data: AccountNode, attributes?, register = true) {
 		if (register)

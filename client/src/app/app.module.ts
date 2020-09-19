@@ -25,6 +25,7 @@ import { SnackbarComponent } from './components/snackbar/snackbar.component';
 import { SearchEdgesFormComponent } from './components/search-edges-form/search-edges-form.component';
 import { SearchEdgesDetailsComponent } from './components/search-edges-details/search-edges-details.component';
 import { GraphTooltipComponent } from './components/graph-tooltip/graph-tooltip.component';
+import { NavigationComponent } from './components/navigation/navigation.component';
 
 @NgModule({
 	declarations: [
@@ -41,7 +42,8 @@ import { GraphTooltipComponent } from './components/graph-tooltip/graph-tooltip.
 		SnackbarComponent,
 		SearchEdgesFormComponent,
 		SearchEdgesDetailsComponent,
-		GraphTooltipComponent
+		GraphTooltipComponent,
+		NavigationComponent
 	],
 	imports: [
 		BrowserModule,
