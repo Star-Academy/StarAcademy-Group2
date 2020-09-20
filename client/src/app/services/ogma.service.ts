@@ -4,7 +4,8 @@ import Ogma, {
 	Node,
 	NodeList,
 	RawNode,
-	NodeId
+	NodeId,
+	EdgeList
 } from '../../dependencies/ogma.min.js';
 
 import { GraphService } from './graph.service';
@@ -106,7 +107,7 @@ export class OgmaService {
 	}
 
 	public findPath(maxLength: number) {
-		this.clearGraph();
+		this.ogma.removeNodes(this.ogma.getNodes('raw'));
 
 		this.setSource(this.addNode(this.sourceNode.getData(), null, false));
 		this.setTarget(this.addNode(this.targetNode.getData(), null, false));
@@ -151,14 +152,10 @@ export class OgmaService {
 			});
 	}
 
-	public toggleEdgeContentType() {
+	public toggleEdgesContentType() {
 		this.edgeNormalContentType = !this.edgeNormalContentType;
 
-		const attributes = this.edgeNormalContentType
-			? configs.attributes.edgesAmount
-			: configs.attributes.edgesPercent;
-
-		this.ogma.getEdges().setAttributes(attributes);
+		this.updateEdgesContentType(this.ogma.getEdges());
 	}
 
 	public saveGraph(): Promise<string> {
@@ -220,21 +217,26 @@ export class OgmaService {
 		source.setData('totalDeposit', totalDeposit);
 
 		this.setEdgesPercentValue(source, totalDeposit);
-
-		const attributes = this.edgeNormalContentType
-			? configs.attributes.edgesAmount
-			: configs.attributes.edgesPercent;
-		result.setAttributes(attributes);
 	}
 
 	private setEdgesPercentValue(node: Node, totalDeposit: number) {
-		const edges = node.getAdjacentEdges({ direction: 'out' }).toArray();
+		const edges = node.getAdjacentEdges({ direction: 'out' });
 
-		for (const edge of edges)
+		for (const edge of edges.toArray())
 			edge.setData(
 				'percent',
 				edge.getData('Amount') / totalDeposit * 100
 			);
+
+		this.updateEdgesContentType(edges);
+	}
+
+	private updateEdgesContentType(edges: EdgeList) {
+		const attributes = this.edgeNormalContentType
+			? configs.attributes.edgesAmount
+			: configs.attributes.edgesPercent;
+
+		edges.setAttributes(attributes);
 	}
 
 	private clearGraph() {

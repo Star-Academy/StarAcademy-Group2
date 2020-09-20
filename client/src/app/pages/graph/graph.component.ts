@@ -105,8 +105,8 @@ export class GraphComponent implements OnInit {
 	public lockNodes = (nodes) => this.ogmaService.lockNodes(nodes);
 	public unlockNodes = (nodes) => this.ogmaService.unlockNodes(nodes);
 
-	public toggleEdgeContentType = () =>
-		this.ogmaService.toggleEdgeContentType();
+	public toggleEdgesContentType = () =>
+		this.ogmaService.toggleEdgesContentType();
 
 	public saveGraph = () => this.ogmaService.saveGraph();
 	public loadGraph = () => document.getElementById('upload-file').click();
