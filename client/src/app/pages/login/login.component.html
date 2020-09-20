@@ -1,0 +1,58 @@
+<div class="cont">
+	<div class="form employee">
+		<div class="input-list">
+			<h2 class="enter">ورود کارمند</h2>
+			<label>
+				<span>نام کاربری</span>
+				<input [(ngModel)]="user.username" type="email" name="email">
+			</label>
+			<label>
+				<span>رمز عبور</span>
+				<input [(ngModel)]="user.password" type="password" name="password">
+			</label>
+			<button class="submit" type="button" (click)="userLogin()">ورود</button>
+		</div>
+	</div>
+
+	<div class="sub-cont">
+		<div class="img">
+			<div class="img-text m-up">
+				<br><br>
+				<h2>صفحه کارمندان</h2>
+				<p>
+					امکان دسترسی به بخش های:
+					<br><br>مشاهده اطلاعات حساب و تراکنش
+					<br><br>بررسی ارتباط بین حساب های مختلف
+					<br><br>شناسایی موارد مشکوک
+				</p>
+			</div>
+			<div class="img-text m-in">
+				<br><br>
+				<h2>صفحه مدیران</h2>
+				<p>
+					دسترسی های بیشتر برای مدیران:
+					<br><br>بارگذاری پایگاه داده
+					<br><br>مدیریت حساب های کاربری
+				</p>
+			</div>
+			<div class="img-btn" (click)="changeAccess()">
+				<span class="m-up">مدیر هستید؟</span>
+				<span class="m-in">کارمند هستید؟</span>
+			</div>
+		</div>
+		<div class="form manager">
+			<div id="input-list-manager" class="input-list">
+				<h2 class="enter">ورود مدیر</h2>
+				<label>
+					<span>نام کاربری</span>
+					<input [(ngModel)]="admin.username" type="text">
+				</label>
+				<label>
+					<span>رمز عبور</span>
+					<input [(ngModel)]="admin.password" type="password">
+				</label>
+				<button type="button" (click)="adminLogin()" class="submit">ورود</button>
+			</div>
+		</div>
+	</div>
+</div>
