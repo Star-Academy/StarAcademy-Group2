@@ -38,7 +38,7 @@ namespace MyWebApi.Controllers
 
         [HttpPost]
         [Route("expand")]
-        public ActionResult<List<Tuple<HashSet<Node>, HashSet<Edge>>>> Expand([FromBody] ExpandQuery expandQuery)
+        public ActionResult<Tuple<HashSet<Node>, HashSet<Edge>>> Expand([FromBody] ExpandQuery expandQuery) //informing front
         {
             var output = new List<Tuple<HashSet<Node>, HashSet<Edge>>>();
             var nodes = new HashSet<Node>();
@@ -73,8 +73,7 @@ namespace MyWebApi.Controllers
                     }
                 )
             );
-            output.Add(new Tuple<HashSet<Node>, HashSet<Edge>>(nodes, edges));
-            return output;
+            return new Tuple<HashSet<Node>, HashSet<Edge>>(nodes, edges);
         }
 
         [HttpPost]
