@@ -26,6 +26,7 @@ import { SearchEdgesFormComponent } from './components/search-edges-form/search-
 import { SearchEdgesDetailsComponent } from './components/search-edges-details/search-edges-details.component';
 import { GraphTooltipComponent } from './components/graph-tooltip/graph-tooltip.component';
 import { NavigationComponent } from './components/navigation/navigation.component';
+import { FaqComponent } from './pages/faq/faq.component';
 
 @NgModule({
 	declarations: [
@@ -43,7 +44,8 @@ import { NavigationComponent } from './components/navigation/navigation.componen
 		SearchEdgesFormComponent,
 		SearchEdgesDetailsComponent,
 		GraphTooltipComponent,
-		NavigationComponent
+		NavigationComponent,
+		FaqComponent
 	],
 	imports: [
 		BrowserModule,

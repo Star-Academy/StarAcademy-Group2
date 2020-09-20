@@ -1,0 +1,40 @@
+<div class="container">
+	<div class="title-container">
+		<h1 class="title">سوالات متداول</h1>
+		<div class="title-expression">
+			برای مشاهده‌ی سوالات متداول، می‌توانید هر یک از دسته‌بندی های زیر را انتخاب نمایید و با انتخاب هر سوال پاسخ
+			آن
+			را مشاهده نمایید
+		</div>
+	</div>
+
+	<div name="category" class="categories">
+		<div class="category" *ngFor="let category of categories; index as i;" (click)="click(i)">
+			<svg-icon key="{{category.icon}}" class="svg"></svg-icon>
+			<h2>{{category.title}}</h2>
+		</div>
+	</div>
+
+	<div class="categories">
+		<h1>
+			{{categories[categoryIndex].title}}
+		</h1>
+		<div class="category-expression">
+			{{categories[categoryIndex].subtitle}}
+		</div>
+	</div>
+
+	<div class="questions">
+		<ul>
+			<li *ngFor="let item of categories[categoryIndex].items">
+				<div class="question" (click)="item.show = !item.show">
+					<span>{{item.question}}</span>
+				</div>
+
+				<div class="answer" *ngIf="item.show">
+					<p>{{item.answer}}</p>
+				</div>
+			</li>
+		</ul>
+	</div>
+</div>
