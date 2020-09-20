@@ -9,7 +9,7 @@ import options from './options';
 	providedIn: 'root'
 })
 export class SearchNodesService {
-	constructor(private httpClient: HttpClient) {}
+	public constructor(private httpClient: HttpClient) {}
 
 	// TODO: update this after server changed format
 	camelize(str) {

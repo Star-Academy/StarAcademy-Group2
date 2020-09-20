@@ -20,7 +20,10 @@ export class LoginComponent {
 		password: ''
 	};
 
-	constructor(private router: Router, private authService: AuthService) {}
+	public constructor(
+		private router: Router,
+		private authService: AuthService
+	) {}
 
 	changeAccess() {
 		document.querySelector('.cont').classList.toggle('s-signup');

@@ -1,76 +1,94 @@
-<app-snackbar #snackbar class="error"></app-snackbar>
+<div class="overlays">
+	<app-snackbar #snackbar class="error"></app-snackbar>
 
-<graph-modal #nodesModal [snackbar]="snackbar" (addNodeCallback)="clickedOnAddNodeButton($event)"
-	(dragMoveCallback)="dragMove($event)" (dragEndCallback)="dragEnd($event)">
-</graph-modal>
-<radial-node-menu #radialComponent [snackbar]="snackbar" (expandCallback)="clickedOnExpandButton($event)">
-</radial-node-menu>
+	<graph-modal #nodesModal [snackbar]="snackbar" (addNodeCallback)="clickedOnAddNodeButton($event)"
+		(dragMoveCallback)="dragMove($event)" (dragEndCallback)="dragEnd($event)">
+	</graph-modal>
+	<radial-node-menu #radialComponent [snackbar]="snackbar" (expandCallback)="clickedOnExpandButton($event)">
+	</radial-node-menu>
 
-<graph-tooltip *ngIf="hoveredContent" [content]="hoveredContent" [position]="hoveredPosition">
-</graph-tooltip>
+	<graph-tooltip *ngIf="hoveredContent" [content]="hoveredContent" [position]="hoveredPosition">
+	</graph-tooltip>
 
-<div #findPathMenu *ngIf="ogmaService.getSourceNode() && ogmaService.getTargetNode()"
-	class="find-path btn btn-primary closed" (click)="toggleFindPathMenu($event)">
-	<span class="title">محاسبه مسیر</span>
-	<div class="form-container" (click)="stopPropagation($event)">
-		<div class="form">
-			<span class="label">حداکثر طول:</span>
-			<input #pathMaxLength type="number" min="1" max="5" value="1">
+	<div #findPathMenu *ngIf="ogmaService.getSourceNode() && ogmaService.getTargetNode()"
+		class="find-path btn btn-primary closed" (click)="toggleFindPathMenu($event)">
+		<span class="title">محاسبه مسیر</span>
+		<div class="form-container" (click)="stopPropagation($event)">
+			<div class="form">
+				<span class="label">حداکثر طول:</span>
+				<input #pathMaxLength type="number" min="1" max="5" value="1">
+			</div>
+			<div class="btn btn-primary-reverse" (click)="clickedOnFindPathButton($event)">پردازش</div>
 		</div>
-		<div class="btn btn-primary-reverse" (click)="clickedOnFindPathButton($event)">پردازش</div>
 	</div>
 </div>
 
-<navigation></navigation>
+<header>
+	<div class="logo">TODO: logo</div>
+</header>
+<nav>TODO: graph tabs</nav>
 
 <main cdkDropList>
-	<round-button btnClass="btn-secondary" icon="search" iconSize="6" (callback)="clickedOnSearchNodesButton()">
-	</round-button>
+	<div class="toolbar" [ngStyle]="theme.light">
+		<div class="right">
+			<div class="btn" [ngStyle]="theme.default" (click)="addSomeNode()">
+				<span class="icon">
+					<svg-icon key="plus"></svg-icon>
+				</span>
+				<span class="text">دادۀ نمونه</span>
+			</div>
 
-	<div id="draggable"><img src="../../../assets/svg/washing_machine.svg"></div>
-	<div id="trash"><img src="../../../assets/svg/cross.svg"></div>
+			<div class="btn" [ngStyle]="theme.default" (click)="toggleEdgesContentType()">
+				<span class="icon">
+					<svg-icon key="edgesContentType"></svg-icon>
+				</span>
+				<span class="text">تغییر نما</span>
+			</div>
 
-	<div #ogmaContainer id="ogma-container" onclick="event.stopPropagation()"></div>
+			<div class="btn" [ngStyle]="theme.default" (click)="runLayout()">
+				<span class="icon">
+					<svg-icon key="layout"></svg-icon>
+				</span>
+				<span class="text">اعمال چیدمان</span>
+			</div>
+
+			<div class="btn" [ngStyle]="theme.default" (click)="saveGraph()">
+				<span class="icon">
+					<svg-icon key="saveGraph"></svg-icon>
+				</span>
+				<span class="text">ذخیرۀ گراف</span>
+			</div>
+
+			<div class="btn" [ngStyle]="theme.default" (click)="loadGraph()">
+				<span class="icon">
+					<svg-icon key="loadGraph"></svg-icon>
+				</span>
+				<span class="text">بارگذاری گراف</span>
+			</div>
+
+			<input [style.display]="'none'" id="upload-file" type="file" name="upload-file" accept=".json"
+				ngf-max-size="2MB" (change)="attachGraphFile($event)">
+		</div>
+
+		<div class="left">
+			<div class="btn" [ngStyle]="theme.default" (click)="clickedOnSearchNodesButton()">
+				<span class="icon">
+					<svg-icon key="search"></svg-icon>
+				</span>
+				<span class="text">جستجو</span>
+			</div>
+		</div>
+
+		<!-- <div class="nodes-count">
+			<span class="label text-default-10">Nodes Count: </span>
+			<span class="value">{{countNodes()}}</span>
+		</div> -->
+	</div>
+
+	<!-- <div id="draggable"><img src="../../../assets/svg/washing_machine.svg"></div>
+	<div id="trash"><img src="../../../assets/svg/cross.svg"></div> -->
+
+	<div #ogmaContainer id="ogma-container" onclick="event.stopPropagation()">
+		<layout-selector></layout-selector>
+	</div>
 </main>
-
-<div *ngIf="devTools" class="dev-tools bg-primary text-default-complement">
-	<span class="title">DevTools</span>
-
-	<div class="nodes-count">
-		<span class="label text-default-10">Nodes Count: </span>
-		<span class="value">{{countNodes()}}</span>
-	</div>
-
-	<div class="buttons">
-		<button class="btn text-primary" (click)="addSomeNode()">Add Some node</button>
-		<button class="btn text-primary" (click)="toggleEdgesContentType()">Edges Content Type</button>
-		<button class="btn text-primary" (click)="runLayout()">Run Layout</button>
-		<button class="btn text-primary" (click)="saveGraph()">Save Graph</button>
-		<button class="btn text-primary" (click)="loadGraph()">Load Graph</button>
-
-		<input [style.display]="'none'" id="upload-file" type="file" name="upload-file" accept=".json"
-			ngf-max-size="2MB" (change)="attachGraphFile($event)">
-	</div>
-
-	<div class="layouts">
-		<span class="label text-default-10">Layout</span>
-		<div class="value">
-			<div *ngFor="let layout of layouts">
-				<input [id]="layout" type="radio" name="layout" [(ngModel)]="currentLayout" [value]="layout"
-					(change)="runLayout()" />
-				<label [attr.for]="layout">{{layout | titlecase}}</label>
-			</div>
-		</div>
-	</div>
-
-	<div class="layout-directions">
-		<span class="label text-default-10">Direction</span>
-		<div class="value">
-			<div class="direction" *ngFor="let direction of directions">
-				<input id={{direction}} type="radio" [(ngModel)]="currentDirection" value={{direction}}
-					[disabled]="disableDirections()" (change)="runLayout()" />
-				<label for={{direction}}>{{direction}}</label>
-			</div>
-		</div>
-	</div>
-</div>

@@ -45,13 +45,14 @@ $font-default;
 	margin: 0;
 	padding: 0;
 
+	font-family: $font_all;
+
 	&:focus {
 		outline: none;
 	}
 }
 
 html {
-	font-family: $font_all;
 	font-size: 62.5%;
 	font-weight: 300;
 }
@@ -62,6 +63,10 @@ body {
 
 a {
 	text-decoration: none;
+}
+
+svg {
+	display: flex;
 }
 
 *::-webkit-scrollbar {

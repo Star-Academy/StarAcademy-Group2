@@ -12,7 +12,7 @@ import { AuthService } from './auth.service';
 	providedIn: 'root'
 })
 export class TokenInterceptorService implements HttpInterceptor {
-	constructor(private authService: AuthService) {}
+	public constructor(private authService: AuthService) {}
 
 	public intercept(
 		req: HttpRequest<any>,

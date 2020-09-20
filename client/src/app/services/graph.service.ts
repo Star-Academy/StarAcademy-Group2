@@ -9,7 +9,7 @@ import options from './options';
 	providedIn: 'root'
 })
 export class GraphService {
-	constructor(private httpClient: HttpClient) {}
+	public constructor(private httpClient: HttpClient) {}
 
 	public addNode(node: AccountNode) {
 		return this.httpClient.post(

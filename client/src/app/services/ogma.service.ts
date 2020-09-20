@@ -21,12 +21,27 @@ import configs from './ogmaConfigs';
 export class OgmaService {
 	public ogma: Ogma;
 
+	public layouts: Name[] = [
+		new Name('force', 'فورس'),
+		new Name('hierarchical', 'درخت'),
+		new Name('sequential', 'متوالی')
+	];
+	public directions: Name[] = [
+		new Name('TB', 'بالا به پایین'),
+		new Name('BT', 'پایین به بالا'),
+		new Name('LR', 'چپ به راست'),
+		new Name('RL', 'راست به چپ')
+	];
+
+	public currentLayout: Name = this.layouts[2];
+	public currentDirection: Name = this.directions[2];
+
 	private sourceNode: RawNode;
 	private targetNode: RawNode;
 
 	private edgeNormalContentType: boolean;
 
-	constructor(private graphService: GraphService) {}
+	public constructor(private graphService: GraphService) {}
 
 	public initConfig(configuration = {}) {
 		this.ogma = new Ogma(configuration);
@@ -142,13 +157,7 @@ export class OgmaService {
 				res.item1.forEach((node) => this.addNode(node));
 				res.item2.forEach((edge) => this.addEdge(edge));
 
-				// TODO: use layout manager
-				this.ogma.layouts.hierarchical({
-					direction: 'LR',
-					duration: 300,
-					nodeDistance: 30,
-					levelDistance: 40
-				});
+				this.runLayout();
 			});
 	}
 
@@ -175,11 +184,11 @@ export class OgmaService {
 		});
 	}
 
-	public runLayout(layout: string, options?: object) {
-		this.ogma.layouts[layout]({
+	public runLayout() {
+		this.ogma.layouts[this.currentLayout.en]({
 			arrangeComponents: 'fit',
 			locate: true,
-			...options
+			direction: this.currentDirection.en
 		});
 	}
 
@@ -246,4 +255,8 @@ export class OgmaService {
 
 		this.ogma.clearGraph();
 	}
+}
+
+class Name {
+	public constructor(public en: string, public fa: string) {}
 }

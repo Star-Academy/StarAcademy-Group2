@@ -9,7 +9,7 @@ import options from './options';
 	providedIn: 'root'
 })
 export class AuthService {
-	constructor(private httpClient: HttpClient) {}
+	public constructor(private httpClient: HttpClient) {}
 
 	public isLoggedIn: boolean = false;
 

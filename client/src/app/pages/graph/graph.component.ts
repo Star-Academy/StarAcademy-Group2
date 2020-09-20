@@ -1,7 +1,6 @@
 import { OnInit, Component, Input, ViewChild, ElementRef } from '@angular/core';
 
-import { saveAs } from 'file-saver';
-
+import { ThemeService } from '../../services/theme.service';
 import { OgmaService } from '../../services/ogma.service';
 import { SearchNodesService } from '../../services/search-nodes.service.js';
 
@@ -25,19 +24,14 @@ export class GraphComponent implements OnInit {
 
 	@ViewChild('snackbar') snackbar: SnackbarComponent;
 
-	public layouts: string[] = [ 'force', 'hierarchical', 'sequential' ];
-	public directions: string[] = [ 'TB', 'BT', 'LR', 'RL' ];
-
-	public currentLayout: string = 'sequential';
-	public currentDirection: string = 'LR';
-
 	public hoveredContent;
 	public hoveredPosition: { x: number; y: number };
 
 	// TODO: remove
 	public devTools: boolean = true;
 
-	constructor(
+	public constructor(
+		public theme: ThemeService,
 		public ogmaService: OgmaService,
 		private searchService: SearchNodesService
 	) {}
@@ -45,10 +39,8 @@ export class GraphComponent implements OnInit {
 	public ngOnInit() {
 		this.ogmaService.initConfig({
 			options: {
-				backgroundColor: '#f2f2f2',
-				directedEdges: true,
-				minimumWidth: '800',
-				minimumHeight: '600'
+				backgroundColor: this.theme.default.background,
+				directedEdges: true
 			}
 		});
 
@@ -142,15 +134,7 @@ export class GraphComponent implements OnInit {
 
 	public stopPropagation = (e: Event) => e.stopPropagation();
 
-	public runLayout() {
-		const options = {
-			direction: this.currentDirection
-		};
-
-		this.ogmaService.runLayout(this.currentLayout, options);
-	}
-
-	public disableDirections = () => this.currentLayout === 'force';
+	public runLayout = () => this.ogmaService.runLayout();
 
 	private setupOgmaEventHandlers() {
 		this.ogmaService.ogma.events.onClick(({ target, button, domEvent }) => {
