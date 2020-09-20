@@ -153,6 +153,24 @@ export class OgmaService {
 		this.ogma.getEdges().setAttributes(attributes);
 	}
 
+	public saveGraph(): Promise<string> {
+		return this.ogma.export.json({
+			download: true,
+			edgeAttributes: 'all',
+			filter: 'all',
+			pretty: true
+		});
+	}
+
+	public loadGraph(data) {
+		this.ogma.parse.json(data).then(({ nodes, edges }) => {
+			this.clearGraph();
+
+			nodes.forEach((node) => this.addNode(node.data));
+			edges.forEach((edge) => this.addEdge(edge.data));
+		});
+	}
+
 	public runLayout(layout: string, options?: object) {
 		this.ogma.layouts[layout]({
 			arrangeComponents: 'fit',
@@ -212,5 +230,11 @@ export class OgmaService {
 			);
 	}
 
-	private clearGraph = () => this.ogma.removeNodes(this.ogma.getNodes('raw'));
+	private clearGraph() {
+		// TODO: wrap this in one request
+		for (const node of this.ogma.getNodes().toArray())
+			this.removeNode(node.getId());
+
+		this.ogma.clearGraph();
+	}
 }

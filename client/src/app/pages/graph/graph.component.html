@@ -40,14 +40,20 @@
 		<span class="label text-default-10">Nodes Count: </span>
 		<span class="value">{{countNodes()}}</span>
 	</div>
+
 	<div class="buttons">
-		<button class="btn text-primary" (click)="addNode()">Add Some nodes</button>
+		<button class="btn text-primary" (click)="addSomeNode()">Add Some node</button>
 		<button class="btn text-primary" (click)="toggleEdgeContentType()">Edges Content Type</button>
 		<button class="btn text-primary" (click)="runLayout()">Run Layout</button>
+		<button class="btn text-primary" (click)="saveGraph()">Save Graph</button>
+		<button class="btn text-primary" (click)="loadGraph()">Load Graph</button>
+
+		<input [style.display]="'none'" id="upload-file" type="file" name="upload-file" accept=".json"
+			ngf-max-size="2MB" (change)="attachGraphFile($event)">
 	</div>
 
 	<div class="layouts">
-		<span class="label text-default-10">Layouts</span>
+		<span class="label text-default-10">Layout</span>
 		<div class="value">
 			<div *ngFor="let layout of layouts">
 				<input [id]="layout" type="radio" name="layout" [(ngModel)]="currentLayout" [value]="layout"
@@ -58,7 +64,7 @@
 	</div>
 
 	<div class="layout-directions">
-		<span class="label text-default-10">Layout Directions</span>
+		<span class="label text-default-10">Direction</span>
 		<div class="value">
 			<div class="direction" *ngFor="let direction of directions">
 				<input id={{direction}} type="radio" [(ngModel)]="currentDirection" value={{direction}}

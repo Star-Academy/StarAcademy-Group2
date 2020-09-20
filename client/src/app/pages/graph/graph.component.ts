@@ -1,6 +1,6 @@
 import { OnInit, Component, Input, ViewChild, ElementRef } from '@angular/core';
 
-import { HoverEvent } from '../../../dependencies/ogma.min.js';
+import { saveAs } from 'file-saver';
 
 import { OgmaService } from '../../services/ogma.service';
 import { SearchNodesService } from '../../services/search-nodes.service.js';
@@ -60,7 +60,7 @@ export class GraphComponent implements OnInit {
 	}
 
 	// TODO: Remove
-	public addNode() {
+	public addSomeNode() {
 		this.searchService
 			.search('OwnerName', 'ارژنگ')
 			.subscribe((res) => this.clickedOnAddNodeButton({ node: res[0] }));
@@ -107,6 +107,15 @@ export class GraphComponent implements OnInit {
 
 	public toggleEdgeContentType = () =>
 		this.ogmaService.toggleEdgeContentType();
+
+	public saveGraph = () => this.ogmaService.saveGraph();
+	public loadGraph = () => document.getElementById('upload-file').click();
+
+	public attachGraphFile($event) {
+		$event.target.files[0]
+			.text()
+			.then((content) => this.ogmaService.loadGraph(content));
+	}
 
 	dragMove(e) {
 		document.getElementById('trash').style.zIndex = '20';
