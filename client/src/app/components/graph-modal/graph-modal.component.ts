@@ -22,12 +22,11 @@ export class GraphModalComponent {
 	@Output() dragMoveCallback = new EventEmitter();
 	@Output() dragEndCallback = new EventEmitter();
 
-	public containerClassName: string;
-
 	public activeNode: AccountNode;
 
 	public state: number;
 	public title: string;
+	public dragging: boolean;
 	public results: AccountNode[];
 
 	private nodeIds: string[];
@@ -36,11 +35,14 @@ export class GraphModalComponent {
 		public ogmaService: OgmaService,
 		private searchService: SearchNodesService
 	) {
-		this.containerClassName = '';
+		this.dragging = false;
+
 		this.setState(0);
 	}
 
 	public get modalStateStatus() {
+		if (this.dragging) return 'closed';
+
 		switch (this.state) {
 			case 1:
 			case 4:
@@ -56,7 +58,7 @@ export class GraphModalComponent {
 	}
 
 	public get overlayStateStatus() {
-		return this.state === 0 ? 'closed' : 'open';
+		return this.state === 0 || this.dragging ? 'closed' : 'open';
 	}
 
 	private setState(state: number, title?: string) {
@@ -120,12 +122,13 @@ export class GraphModalComponent {
 		this.activeNode = e.node;
 	}
 
-	public dragStart = () => (this.containerClassName = 'closed');
-
+	public dragStart = () => (this.dragging = true);
 	public dragMove = (e) => this.emit(this.dragMoveCallback, e);
 
 	public dragEnd(e) {
 		this.emit(this.dragEndCallback, e);
+
+		this.dragging = false;
 		this.close();
 	}
 

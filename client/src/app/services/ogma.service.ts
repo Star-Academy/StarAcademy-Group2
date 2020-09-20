@@ -43,7 +43,15 @@ export class OgmaService {
 				});
 
 		data['totalDeposit'] = 0;
-		return this.ogma.addNode({ data, attributes, id: data.AccountID });
+		const node = this.ogma.addNode({
+			data,
+			attributes,
+			id: data.AccountID
+		});
+
+		if (this.ogma.getNodes().size === 1) node.locate({ duration: 1000 });
+
+		return node;
 	}
 
 	public removeNode = (nodeId: NodeId) => this.ogma.removeNodes(nodeId);
@@ -157,8 +165,7 @@ export class OgmaService {
 		return this.ogma.export.json({
 			download: true,
 			edgeAttributes: 'all',
-			filter: 'all',
-			pretty: true
+			filter: 'all'
 		});
 	}
 
