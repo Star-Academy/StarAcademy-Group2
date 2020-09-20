@@ -6,8 +6,9 @@ namespace SourceReaderLib
 {
     public class CsvToJson
     {
-        public static string Convert(string[] csvLines)
+        public static string Convert(string csv)
         {
+            var csvLines = csv.Split('\n');
             var memberNames = csvLines[0].Split(',');
             var myObj = csvLines.Skip(1)
                                 .Select((x) => x
