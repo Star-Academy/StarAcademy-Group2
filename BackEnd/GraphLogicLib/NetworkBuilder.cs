@@ -175,86 +175,94 @@ namespace GraphLogicLib
             }
             return output;
         }
-        public void Dfs(Node last, Node source, int pathLength, HashSet<string> visited)
+        public void Dfs(string last, string source, int pathLength, HashSet<string> visited)
         {
-            if (source.AccountId.Equals(Destination))
+            if (source.Equals(Destination))
             {
                 if (CopyMaker)
                 {
-                    SimpleGraph[source.AccountId] = new HashSet<SimpleEdge>();
-                    if(last != null){
-                        SimpleGraph[source.AccountId].UnionWith(
-                            from edge in SimpleGraph[last.AccountId]
-                            where edge.DestinationAccount == source.AccountId
-                            select edge
-                        );
-                        SimpleGraph[source.AccountId].UnionWith(
-                            from edge in SimpleGraph[last.AccountId]
-                            where edge.SourceAccount == source.AccountId
-                            select edge
-                        );
-                    }
+                    SimpleGraph[source] = new HashSet<SimpleEdge>();
+                    SimpleGraph[source].UnionWith(
+                        from edge in SimpleGraph[last]
+                        where edge.DestinationAccount.Equals(source)
+                        select edge
+                    );
+                    SimpleGraph[source].UnionWith(
+                        from edge in SimpleGraph[last]
+                        where edge.SourceAccount.Equals(source)
+                        select edge
+                    );
                 }
                 return;
             }
-            visited.Add(source.AccountId);
-            var neighbours =
-                from node in GetNeighbours(source.AccountId)
-                where !visited.Contains(node.AccountId) //???????????????????????
-                where Levels.ContainsKey(node.AccountId)
-                where Levels[node.AccountId] <= Levels[source.AccountId]
-                where pathLength + Levels[node.AccountId] < PathMaximumLength
-                select node;
+            visited.Add(source);
 
+            var incomingEdgesSuperset = NeighbourIncomingEdges[source];
+
+            var outcomingEdgesSuperset = NeighbourOutcomingEdges[source];
+
+            var neighboursSuperset = new HashSet<string>();
+            neighboursSuperset.UnionWith(
+                from edge in incomingEdgesSuperset
+                select edge.SourceAccount
+            );
+            neighboursSuperset.UnionWith(
+                from edge in outcomingEdgesSuperset
+                select edge.DestinationAccount
+            );
+
+            var neighbours =
+                from neighbour in neighboursSuperset
+                where !visited.Contains(neighbour)
+                where Levels[neighbour] <= Levels[source]
+                where pathLength + Levels[neighbour] < PathMaximumLength
+                select neighbour;
+            
             foreach (var neighbour in neighbours)
             {
-                var incomingEdges = new HashSet<Edge>(
-                    ElasticService.Search<Edge>(
-                        new EdgeSearchQuery()
-                        {
-                            SourceAccount = neighbour.AccountId,
-                            DestinationAccount = source.AccountId
-                        }
-                    )
-                );
-                var outcomingEdges = new HashSet<Edge>(
-                    ElasticService.Search<Edge>(
-                        new EdgeSearchQuery()
-                        {
-                            SourceAccount = source.AccountId,
-                            DestinationAccount = neighbour.AccountId
-                        }
-                    )
-                );
+                var incomingEdges = 
+                    from edge in incomingEdgesSuperset
+                    where edge.SourceAccount.Equals(neighbour)
+                    select edge;
+
+                var outcomingEdges = 
+                    from edge in outcomingEdgesSuperset
+                    where edge.DestinationAccount.Equals(neighbour)
+                    select edge;
+
                 if (CopyMaker)
                 {
-                    SimpleGraph[source.AccountId] = SimplifyingEdges(incomingEdges, outcomingEdges);
+                    if(!SimpleGraph.ContainsKey(source)){
+                        SimpleGraph[source] = new HashSet<SimpleEdge>();
+                    }
+                    SimpleGraph[source].UnionWith(SimplifyingEdges((HashSet<Edge>) incomingEdges, (HashSet<Edge>) outcomingEdges));
                     if(last != null){
-                        SimpleGraph[source.AccountId].UnionWith(
-                            from edge in SimpleGraph[last.AccountId]
-                            where edge.DestinationAccount == source.AccountId
+                        SimpleGraph[source].UnionWith(
+                            from edge in SimpleGraph[last]
+                            where edge.DestinationAccount.Equals(source)
                             select edge
                         );
-                        SimpleGraph[source.AccountId].UnionWith(
-                            from edge in SimpleGraph[last.AccountId]
-                            where edge.SourceAccount == source.AccountId
+                        SimpleGraph[source].UnionWith(
+                            from edge in SimpleGraph[last]
+                            where edge.SourceAccount.Equals(source)
                             select edge
                         );
                     }
                 }
-                Nodes.Add(source);
-                Edges.UnionWith(incomingEdges); //can be improved
+                Nodes.Add(SupersetGrapgh[source]);
+                Edges.UnionWith(incomingEdges);
                 Edges.UnionWith(outcomingEdges);
                 Dfs(source, neighbour, pathLength + 1, visited);
             }
-
-            visited.Remove(source.AccountId);
+            visited.Remove(source);
         }
         public void Build()
         {
-            BfsOnDestination();
-            if(Levels.ContainsKey(Destination)){
-                Dfs(null, ElasticService.Search<Node>(new NodeSearchQuery() {AccountId = Source}).First<Node>(), 0, new HashSet<string>());
+            if(!Destination.Equals(Source)){
+                BfsOnDestination();
+                if(Levels.ContainsKey(Destination)){
+                    Dfs(null, Source, 0, new HashSet<string>());
+                }
             }
         }
     }
