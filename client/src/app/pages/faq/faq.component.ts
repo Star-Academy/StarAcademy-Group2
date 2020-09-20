@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import * as FileSaver from 'file-saver';
-import { saveAs } from 'file-saver';
+
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
 	selector: 'app-faq',
@@ -8,13 +8,13 @@ import { saveAs } from 'file-saver';
 	styleUrls: [ './faq.component.scss' ]
 })
 export class FaqComponent {
-	public categoryIndex: number = 0;
+	public selectedCategory: Category;
 
 	public categories: Category[] = [
 		new Category(
 			'شروع کار',
 			'این وبسایت امکان رهگیری موارد تخلف مالیاتی و پولشویی را برای شما فراهم می‌کند.',
-			'gettingStarted',
+			'faqGettingStarted',
 			[
 				new Item(
 					'چگونه وارد اکانتمان شویم؟',
@@ -41,7 +41,7 @@ export class FaqComponent {
 		new Category(
 			'گراف',
 			'برای کار با حساب مشتریان می‌بایست آن ها را وارد صفحه گراف کنید. وبسایت ما قابلیت تشخیص تحلفات را از روی گراف به شما می‌دهد.',
-			'nodes',
+			'faqGraph',
 			[
 				new Item(
 					'با اکانت‌های (رئوس) داخل گراف چگونه کار کنم؟',
@@ -61,7 +61,7 @@ export class FaqComponent {
 				),
 				new Item(
 					'چگونه امکان تخلف را بررسی کنیم؟',
-					'پس از انتخاب مبدا و مقصد، زبانه‌ای که بالای صفحه برای شما باز می‌شود را انتخاب کنید. حال حداکثر طول مسیر تراکنشی بین دو حساب را وارد نمایید. این مقدار بیش از ۷ نمی‌تواند باشد زیرا در صورت بیشتر شدن مسیر از عدد ۷ امکان تخلف به شدت کاهش می‌یابد. حال با انتخاب دکمه محاسبه، کلیه مسیر های مورد نظر بین دو حساب وارد گراف می‌شوند و گراف اصلی حذف می‌شود. و در نهایت میزان جریان مالی نیز نمایش داده می‌شود که با کمک آن می‌توانید امکان رخ دادن تخلف را بررسی کنید.'
+					'پس از انتخاب مبدا و مقصد، زبانه‌ای که بالای صفحه برای شما باز می‌شود را انتخاب کنید. حال حداکثر طول مسیر تراکنشی بین دو حساب را وارد نمایید. این مقدار بیش از 5 نمی‌تواند باشد زیرا در صورت بیشتر شدن مسیر از عدد 5 امکان تخلف به شدت کاهش می‌یابد. حال با انتخاب دکمه محاسبه، کلیه مسیر های مورد نظر بین دو حساب وارد گراف می‌شوند و گراف اصلی حذف می‌شود. و در نهایت میزان جریان مالی نیز نمایش داده می‌شود که با کمک آن می‌توانید امکان رخ دادن تخلف را بررسی کنید.'
 				),
 				new Item(
 					'قفل کردن راس به چه معناست؟',
@@ -71,7 +71,12 @@ export class FaqComponent {
 		)
 	];
 
-	public click = (index: number) => (this.categoryIndex = index);
+	public constructor(public theme: ThemeService) {
+		this.selectedCategory = this.categories[0];
+	}
+
+	public changeCategory = (index: number) =>
+		(this.selectedCategory = this.categories[index]);
 }
 
 class Category {
@@ -79,7 +84,8 @@ class Category {
 		public title: string,
 		public subtitle: string,
 		public icon: string,
-		public items: Item[]
+		public items: Item[],
+		public hovered: boolean = false
 	) {}
 }
 
@@ -87,6 +93,7 @@ class Item {
 	public constructor(
 		public question: string,
 		public answer: string,
-		public show: boolean = false
+		public show: boolean = false,
+		public hovered: boolean = false
 	) {}
 }

@@ -11,9 +11,12 @@ export class ThemeService {
 	public danger: Color = new Color(Color.RED_FLAMINGO, Color.GRAY_95);
 	public warning: Color = new Color(Color.ORANGE_SUPERNOVA, Color.GRAY_10);
 	public info: Color = new Color(Color.GREEN_CARIBBEAN, Color.GRAY_95);
+
 	public light: Color = new Color(Color.GRAY_95, Color.GRAY_10);
 	public dark: Color = new Color(Color.GRAY_10, Color.GRAY_95);
+
 	public label: Color = new Color(Color.INHERIT, Color.GRAY_60);
+	public disabled: Color = new Color(Color.GRAY_90, Color.GRAY_60);
 
 	//TODO: load initial data from localStorage
 }
@@ -27,6 +30,8 @@ class Color {
 	public static readonly RED_FLAMINGO = '#e64e4e';
 	public static readonly WHITE = '#ffffff';
 	public static readonly GRAY_95 = '#f2f2f2';
+	public static readonly GRAY_90 = '#e6e6e6';
+	public static readonly GRAY_75 = '#bfbfbf';
 	public static readonly GRAY_60 = '#999999';
 	public static readonly GRAY_10 = '#1a1a1a';
 
