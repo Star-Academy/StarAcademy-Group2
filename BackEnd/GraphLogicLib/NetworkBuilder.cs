@@ -33,42 +33,42 @@ namespace GraphLogicLib
         }
         public HashSet<Node> GetNeighbours(string nodes)
         {
-            var output = new HashSet<Node>();
-            foreach (var edge in ElasticService.Search<Edge>(
+            var incomingEdges =
+            from edge in ElasticService.Search<Edge>(
                 new EdgeSearchQuery()
                 {
                     DestinationAccount = nodes
                 }
-            ))
-            {
-                output.UnionWith(
-                    from acc in ElasticService.Search<Node>(
-                        new NodeSearchQuery()
-                        {
-                            AccountId = edge.SourceAccount
-                        }
-                    )
-                    select acc
-                );
-            }
-            foreach (var edge in ElasticService.Search<Edge>(
+            )
+            where !Levels.ContainsKey(edge.SourceAccount)
+            select edge;
+
+            var outcomingEdges =
+            from edge in ElasticService.Search<Edge>(
                 new EdgeSearchQuery()
                 {
                     SourceAccount = nodes
                 }
-            ))
-            {
-                output.UnionWith(
-                    from acc in ElasticService.Search<Node>(
-                        new NodeSearchQuery()
-                        {
-                            AccountId = edge.DestinationAccount
-                        }
-                    )
-                    select acc
-                );
-            }
-            return output;
+            )
+            where !Levels.ContainsKey(edge.DestinationAccount)
+            select edge;
+
+            var neighbourNodesId = new HashSet<string>();
+            neighbourNodesId.UnionWith(
+                from edge in incomingEdges
+                select edge.SourceAccount
+            );
+            neighbourNodesId.UnionWith(
+                from edge in outcomingEdges
+                select edge.DestinationAccount
+            );
+
+            return (HashSet<Node>) ElasticService.Search<Node>(
+                new NodeSearchQuery()
+                {
+                    AccountId = String.Join(' ', neighbourNodesId)
+                }
+            );
         }
         public void BfsOnDestination()
         {
