@@ -83,5 +83,19 @@ namespace MyWebApi.Controllers
 
             return Ok();
         }
+
+        [JustAdmin]
+        [HttpGet("getAllUsers")]
+        public IActionResult getAllUsers()
+        {
+            try
+            {
+                return Ok(elasticService.Search<User>(new User()));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
     }
 }
