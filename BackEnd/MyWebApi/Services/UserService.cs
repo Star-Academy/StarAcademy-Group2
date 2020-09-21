@@ -27,6 +27,8 @@ namespace MyWebApi.Services
             new User { Username = "testS", Password = "testP", Type = UserType.Simple }
         };
 
+        private User primaryAdmin = new User {Username = "admin", Password = "admin", Type = UserType.Admin};
+
 
         
 

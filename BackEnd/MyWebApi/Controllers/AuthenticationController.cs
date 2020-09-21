@@ -3,6 +3,12 @@ using MyWebApi.Utils;
 using MyWebApi.Models;
 using MyWebApi.Services;
 using ElasticLib.Models;
+using ElasticLib.Abstraction;
+using System.Linq;
+using System.Text.Json;
+using System.Collections.Generic;
+using ElasticLib.Utils.ValidatorUtils.Exceptions;
+using System;
 
 namespace MyWebApi.Controllers
 {
@@ -10,17 +16,19 @@ namespace MyWebApi.Controllers
     [Route("[controller]")]
     public class AuthenticationController : ControllerBase
     {
-        private IUserService _userService;
+        private IUserService userService;
+        private IElasticService elasticService;
 
-        public AuthenticationController(IUserService userService)
+        public AuthenticationController(IUserService userService, IElasticService elasticService)
         {
-            _userService = userService;
+            this.userService = userService;
+            this.elasticService = elasticService;
         }
 
         [HttpPost("login")]
         public IActionResult Login(AuthenticateRequest model)
         {
-            var response = _userService.Authenticate(model);
+            var response = userService.Authenticate(model);
 
             if (response == null)
                 return BadRequest("Username or password is incorrect");
@@ -38,5 +46,17 @@ namespace MyWebApi.Controllers
         public void IsSimple()
         {/*intentionally blank*/}
 
+        [JustAdmin]
+        [HttpPost("register")]
+        public IActionResult Register(User user)
+        {
+            try{
+            if(elasticService.Search<User>(user).Any())
+                return BadRequest("username already reserved");
+            }
+            catch(IndexNotFoundException e){/*intentionally blank*/}
+            elasticService.ImportDocument<User>(JsonSerializer.Serialize(new List<User>{user}));
+            return Ok();
+        }
     }
 }
