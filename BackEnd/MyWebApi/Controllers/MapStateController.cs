@@ -15,13 +15,12 @@ namespace MyWebApi.Controllers
     public class MapStateController : ControllerBase
     {
 
-        private List<HashSet<string>> map;
+        private List<HashSet<string>> map = new List<HashSet<string>>();
         private IElasticService elasticService;
         private int activeIndex;
-        public MapStateController(IElasticService elasticService, List<HashSet<string>> map)
+        public MapStateController(IElasticService elasticService)
         {
             this.elasticService = elasticService;
-            this.map = map;
         }
 
         [AnyUser]
