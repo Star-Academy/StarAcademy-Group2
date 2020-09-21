@@ -33,6 +33,8 @@ namespace MyWebApi
 
             services.AddSingleton<HashSet<string>>();
 
+            services.AddSingleton<MapStateService>();
+
             services.AddTransient<ISourceReader, LocalSourceReader>();
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
@@ -43,7 +45,7 @@ namespace MyWebApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseAllElasticApm(Configuration);
+            // app.UseAllElasticApm(Configuration);
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

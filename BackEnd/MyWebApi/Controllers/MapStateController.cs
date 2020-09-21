@@ -7,6 +7,8 @@ using ElasticLib.Abstraction;
 using ElasticLib;
 using ElasticLib.QueryModel;
 using MyWebApi.Utils;
+using MyWebApi.Services;
+using System.Linq;
 
 namespace MyWebApi.Controllers
 {
@@ -15,38 +17,40 @@ namespace MyWebApi.Controllers
     public class MapStateController : ControllerBase
     {
 
-        private List<HashSet<string>> map = new List<HashSet<string>>();
         private IElasticService elasticService;
-        private int activeIndex;
-        public MapStateController(IElasticService elasticService)
+
+        private MapStateService mapState;
+        public MapStateController(IElasticService elasticService, MapStateService map)
         {
             this.elasticService = elasticService;
+            this.mapState = map;
         }
 
-        [AnyUser]
+        // [AnyUser]
         [HttpPost]
         [Route("addNode")]
         public ActionResult<List<Edge>> AddNode([FromBody] string idNode)
         {
             //TODO -> refactor
             var edges = new List<Edge>();
-            foreach(var node in map[activeIndex]){
-                var sq = new EdgeSearchQuery() {SourceAccount = idNode , DestinationAccount = node};
+            Console.WriteLine(mapState.map.Count + " " + mapState.activeIndex);
+            foreach (var node in mapState.map[mapState.activeIndex].ToList())
+            {
+                var sq = new EdgeSearchQuery() { SourceAccount = idNode, DestinationAccount = node };
                 edges.AddRange(elasticService.Search<Edge>(sq));
-                sq.SourceAccount = node;
-                sq.DestinationAccount = idNode;
-                edges.AddRange(elasticService.Search<Edge>(sq));
+                var sq1 = new EdgeSearchQuery() { SourceAccount = node, DestinationAccount = idNode };
+                edges.AddRange(elasticService.Search<Edge>(sq1));
             }
-            map[activeIndex].Add(idNode);
+            mapState.map[mapState.activeIndex].Add(idNode);
             return Ok(edges);
         }
 
-        [AnyUser]
+        // [AnyUser]
         [HttpPost]
         [Route("deleteNode")]
         public ActionResult DeleteNode([FromBody] string idNode)
         {
-            map[activeIndex].Remove(idNode);
+            mapState.map[mapState.activeIndex].Remove(idNode);
             return Ok();
         }
 
@@ -54,7 +58,7 @@ namespace MyWebApi.Controllers
         [Route("clearMap")]
         public ActionResult ClearMap()
         {
-            map[activeIndex].Clear();
+            mapState.map[mapState.activeIndex].Clear();
             return Ok();
         }
 
@@ -62,8 +66,9 @@ namespace MyWebApi.Controllers
         [Route("import")]
         public ActionResult Import([FromBody] HashSet<string> idNodes)
         {
-            foreach(var idNode in idNodes){
-                map[activeIndex].Add(idNode);
+            foreach (var idNode in idNodes)
+            {
+                mapState.map[mapState.activeIndex].Add(idNode);
             }
             return Ok();
         }
@@ -72,7 +77,8 @@ namespace MyWebApi.Controllers
         [Route("createMap")]
         public ActionResult CreateMap()
         {
-            map.Add(new HashSet<string>());
+            Console.WriteLine("add");
+            mapState.map.Add(new HashSet<string>());
             return Ok();
         }
 
@@ -80,7 +86,8 @@ namespace MyWebApi.Controllers
         [Route("deleteMap")]
         public ActionResult DeleteMap([FromBody] int index) //after this tell me what index is active
         {
-            map.RemoveAt(index);
+            Console.WriteLine("delete" + index);
+            mapState.map.RemoveAt(index);
             return Ok();
         }
 
@@ -88,7 +95,8 @@ namespace MyWebApi.Controllers
         [Route("switchMap")]
         public ActionResult SwitchMap([FromBody] int index)
         {
-            this.activeIndex = index;
+            Console.WriteLine("switch" + index);
+            mapState.activeIndex = index;
             return Ok();
         }
     }
