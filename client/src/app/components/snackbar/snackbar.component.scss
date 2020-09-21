@@ -1,33 +1,11 @@
-@keyframes animation-snackbar-fade-in {
-	from {
-		bottom: 0;
-		opacity: 0;
-	}
-
-	to {
-		bottom: 5rem;
-		opacity: 1;
-	}
-}
-
-@keyframes animation-snackbar-fade-out {
-	from {
-		bottom: 5rem;
-		opacity: 1;
-	}
-
-	to {
-		bottom: 0;
-		opacity: 0;
-	}
-}
-
 #snackbar {
 	position: fixed;
 	right: 0;
-	bottom: 5rem;
+	bottom: 0;
 	left: 0;
-	z-index: 1000;
+	z-index: 999;
+
+	transform: translateY(150%);
 
 	min-width: 30rem;
 	width: fit-content;
@@ -41,9 +19,9 @@
 	font-size: 2.4rem;
 	text-align: center;
 
-	visibility: visible;
+	transition: transform 0.1s ease-in-out;
 
-	&.hide {
-		visibility: hidden;
+	&.show {
+		transform: translateY(-50%);
 	}
 }

@@ -1,5 +1,5 @@
 <div class="overlays">
-	<app-snackbar #snackbar class="error"></app-snackbar>
+	<snackbar #snackbar></snackbar>
 
 	<graph-modal #nodesModal [snackbar]="snackbar" (addNodeCallback)="clickedOnAddNodeButton($event)"
 		(dragMoveCallback)="dragMove($event)" (dragEndCallback)="dragEnd($event)">

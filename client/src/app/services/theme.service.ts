@@ -13,7 +13,7 @@ export class ThemeService {
 	public info: Color = new Color(Color.GREEN_CARIBBEAN, Color.GRAY_95);
 
 	public light: Color = new Color(Color.GRAY_95, Color.GRAY_10);
-	public dark: Color = new Color(Color.GRAY_10, Color.GRAY_95);
+	public dark: Color = new Color(Color.GRAY_25, Color.GRAY_90);
 
 	public label: Color = new Color(Color.INHERIT, Color.GRAY_60);
 	public disabled: Color = new Color(Color.GRAY_90, Color.GRAY_60);
@@ -21,7 +21,7 @@ export class ThemeService {
 	//TODO: load initial data from localStorage
 }
 
-class Color {
+export class Color {
 	public static readonly INHERIT = 'inherit';
 	public static readonly BLUE_CORNFLOWER = '#6495ed';
 	public static readonly GREEN_EMERALD = '#44d96c';
@@ -33,6 +33,7 @@ class Color {
 	public static readonly GRAY_90 = '#e6e6e6';
 	public static readonly GRAY_75 = '#bfbfbf';
 	public static readonly GRAY_60 = '#999999';
+	public static readonly GRAY_25 = '#3F3F3F';
 	public static readonly GRAY_10 = '#1a1a1a';
 
 	public constructor(public background: string, public color: string) {}

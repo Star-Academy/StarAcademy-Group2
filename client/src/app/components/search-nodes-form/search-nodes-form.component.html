@@ -18,5 +18,5 @@
 	<input class="input-default" ngModel [maxLength]="maxLength" name="query" id="search-query-input" type="text"
 		placeholder="لطفاً عبارت مورد جستجو را وارد کنید ..." required>
 
-	<button class="btn btn-primary" type="submit">نمایش اطلاعات</button>
+	<button class="btn" [ngStyle]="actionStyle" type="submit">نمایش اطلاعات</button>
 </form>

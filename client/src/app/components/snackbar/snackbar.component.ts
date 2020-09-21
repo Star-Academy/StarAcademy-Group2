@@ -1,40 +1,37 @@
 import { Component, ViewChild, ElementRef, Input } from '@angular/core';
 
+import { Color, ThemeService } from '../../services/theme.service';
+
 @Component({
-	selector: 'app-snackbar',
+	selector: 'snackbar',
 	templateUrl: './snackbar.component.html',
 	styleUrls: [ './snackbar.component.scss' ]
 })
 export class SnackbarComponent {
-	@Input() class: string;
-
 	@ViewChild('snackbar') snackbar: ElementRef;
 
 	public state: string;
 	public text: string;
+	public color: Color;
 
 	private timeout: number;
 
-	public constructor() {
-		this.state = 'hide';
+	public constructor(public theme: ThemeService) {
+		this.state = '';
 		this.text = 'اسنک‌بار!';
 	}
 
-	public show(text, duration = 3000) {
-		if (this.state !== 'hide') {
-			clearTimeout(this.timeout);
-			this.hide();
-		}
+	public show(text, color: string = 'dark', duration = 3000) {
+		if (this.state === 'show') clearTimeout(this.timeout);
 
-		this.state = '';
-
+		this.state = 'show';
 		this.text = text;
-		duration -= 500;
+		this.color = this.theme[color];
 
 		this.timeout = setTimeout(() => {
 			this.hide();
 		}, duration);
 	}
 
-	private hide = () => (this.state = 'hide');
+	private hide = () => (this.state = '');
 }

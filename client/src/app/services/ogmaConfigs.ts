@@ -1,3 +1,7 @@
+export let maxTransactionAmount: number = 0;
+export const setMaxTransactionAmount = (value: number) =>
+	(maxTransactionAmount = value);
+
 export default {
 	attributes: {
 		default: {
@@ -35,18 +39,20 @@ export default {
 			},
 			edges: {
 				text: {
-					scale: 1.5,
+					scale: 1,
 					scaling: true
 				},
 				shape: { head: 'arrow' },
 				color: (edge) => {
 					const gb = Math.floor(
-						2.55 * (100 - edge.getData('percent'))
+						255 *
+							(1 - +edge.getData('Amount') / maxTransactionAmount)
 					);
 
 					return `rgb(255, ${gb}, ${gb})`;
 				},
-				width: (edge) => 1 + 0.015 * edge.getData('percent')
+				width: (edge) =>
+					1 + 1.5 * +edge.getData('Amount') / maxTransactionAmount
 			}
 		},
 		edgesAmount: {

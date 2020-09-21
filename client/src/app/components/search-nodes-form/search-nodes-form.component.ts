@@ -1,4 +1,7 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
+
+import { Color } from '../../services/theme.service';
+
 import { SnackbarComponent } from '../snackbar/snackbar.component';
 
 @Component({
@@ -8,8 +11,10 @@ import { SnackbarComponent } from '../snackbar/snackbar.component';
 })
 export class SearchNodesFormComponent {
 	@Input() snackbar: SnackbarComponent;
+	@Input() actionStyle: Color;
 
-	@Output() callback = new EventEmitter();
+	@Output() searchCallback = new EventEmitter();
+	@Output() shakeCallback = new EventEmitter();
 
 	public maxLength: number = 100;
 
@@ -30,8 +35,12 @@ export class SearchNodesFormComponent {
 	public clickedOnSearchButton({ field, query }) {
 		const error = this.validateForm(field, query);
 
-		if (!error) this.callback.emit({ field, query });
-		else this.snackbar.show(error);
+		if (!error) {
+			this.searchCallback.emit({ field, query });
+		} else {
+			this.snackbar.show(error, 'danger');
+			this.shakeCallback.emit();
+		}
 	}
 
 	private validateForm(field: string, query: string): string {

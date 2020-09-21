@@ -13,7 +13,10 @@ import { GraphService } from './graph.service';
 import { AccountNode } from '../models/AccountNode.js';
 import { TransactionEdge } from '../models/TransactionEdge.js';
 
-import configs from './ogmaConfigs';
+import configs, {
+	maxTransactionAmount,
+	setMaxTransactionAmount
+} from './ogmaConfigs';
 
 @Injectable({
 	providedIn: 'root'
@@ -51,13 +54,6 @@ export class OgmaService {
 	}
 
 	public addNode(data: AccountNode, attributes?, register = true) {
-		if (register)
-			this.graphService
-				.addNode(data)
-				.subscribe((edges: TransactionEdge[]) => {
-					for (const edge of edges) this.addEdge(edge);
-				});
-
 		data['totalDeposit'] = 0;
 		const node = this.ogma.addNode({
 			data,
@@ -65,7 +61,15 @@ export class OgmaService {
 			id: data.AccountID
 		});
 
-		if (this.ogma.getNodes().size === 1) node.locate({ duration: 1000 });
+		this.runLayout();
+
+		if (register)
+			this.graphService
+				.addNode(data)
+				.subscribe((edges: TransactionEdge[]) => {
+					for (const edge of edges) this.addEdge(edge);
+					this.runLayout();
+				});
 
 		return node;
 	}
@@ -164,7 +168,7 @@ export class OgmaService {
 	public toggleEdgesContentType() {
 		this.edgeNormalContentType = !this.edgeNormalContentType;
 
-		this.updateEdgesContentType(this.ogma.getEdges());
+		this.updateEdgesContent();
 	}
 
 	public saveGraph(): Promise<string> {
@@ -226,6 +230,13 @@ export class OgmaService {
 		source.setData('totalDeposit', totalDeposit);
 
 		this.setEdgesPercentValue(source, totalDeposit);
+
+		const amount = +result.getData('Amount');
+		if (amount > maxTransactionAmount) {
+			setMaxTransactionAmount(amount);
+		}
+
+		this.updateEdgesContent();
 	}
 
 	private setEdgesPercentValue(node: Node, totalDeposit: number) {
@@ -237,15 +248,18 @@ export class OgmaService {
 				edge.getData('Amount') / totalDeposit * 100
 			);
 
-		this.updateEdgesContentType(edges);
+		this.updateEdgesContent(edges);
 	}
 
-	private updateEdgesContentType(edges: EdgeList) {
+	private updateEdgesContent(edges: EdgeList = this.ogma.getEdges()) {
 		const attributes = this.edgeNormalContentType
 			? configs.attributes.edgesAmount
 			: configs.attributes.edgesPercent;
 
-		edges.setAttributes(attributes);
+		edges.setAttributes({
+			...configs.attributes.default.edges,
+			...attributes
+		});
 	}
 
 	private clearGraph() {

@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
+import { ThemeService } from '../../services/theme.service';
 import { OgmaService } from '../../services/ogma.service';
 import { SearchNodesService } from '../../services/search-nodes.service';
 
@@ -22,16 +23,19 @@ export class GraphModalComponent {
 	@Output() dragMoveCallback = new EventEmitter();
 	@Output() dragEndCallback = new EventEmitter();
 
-	public activeNode: AccountNode;
-
 	public state: number;
 	public title: string;
 	public dragging: boolean;
+	public shaking: boolean;
+
+	public activeNode: AccountNode;
 	public results: AccountNode[];
 
 	private nodeIds: string[];
+	private shakingTimeout: number;
 
 	public constructor(
+		public theme: ThemeService,
 		public ogmaService: OgmaService,
 		private searchService: SearchNodesService
 	) {
@@ -95,15 +99,28 @@ export class GraphModalComponent {
 	public back = () => this.setState(this.state - 1);
 	public close = () => this.setState(0);
 
+	public shake(duration: number = 500) {
+		if (this.shaking) clearTimeout(this.shakingTimeout);
+
+		this.shaking = true;
+
+		this.shakingTimeout = setTimeout(() => {
+			this.shaking = false;
+		}, duration);
+	}
+
 	public clickedOnSearchButton(e) {
 		this.searchService
 			.search(e.field, e.query)
 			.subscribe((res: AccountNode[]) => {
 				this.results = res;
 
-				if (this.results.length === 0)
-					this.snackbar.show('نتیجه‌ای یافت نشد');
-				else this.setState(2);
+				if (this.results.length === 0) {
+					this.snackbar.show('نتیجه‌ای یافت نشد', 'danger');
+					this.shake();
+				} else {
+					this.setState(2);
+				}
 			});
 	}
 

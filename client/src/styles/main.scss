@@ -48,10 +48,10 @@ $font-default;
 	padding: 0;
 
 	font-family: $font_all;
+}
 
-	&:focus {
-		outline: none;
-	}
+*:focus {
+	outline: none;
 }
 
 html {
