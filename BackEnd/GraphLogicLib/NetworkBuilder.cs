@@ -197,9 +197,14 @@ namespace GraphLogicLib
             }
             visited.Add(source);
 
-            var incomingEdgesSuperset = NeighbourIncomingEdges[source];
-
-            var outcomingEdgesSuperset = NeighbourOutcomingEdges[source];
+            var incomingEdgesSuperset = new HashSet<Edge>();
+            var outcomingEdgesSuperset = new HashSet<Edge>();
+            if(NeighbourIncomingEdges.ContainsKey(source)){
+                incomingEdgesSuperset.UnionWith(NeighbourIncomingEdges[source]);
+            }
+            if(NeighbourOutcomingEdges.ContainsKey(source)){
+                outcomingEdgesSuperset.UnionWith(NeighbourOutcomingEdges[source]);
+            }
 
             var neighboursSuperset = new HashSet<string>();
             neighboursSuperset.UnionWith(
@@ -260,7 +265,7 @@ namespace GraphLogicLib
         {
             if(!Destination.Equals(Source)){
                 BfsOnDestination();
-                if(Levels.ContainsKey(Destination)){
+                if(Levels.ContainsKey(Source)){
                     Dfs(null, Source, 0, new HashSet<string>());
                 }
             }
