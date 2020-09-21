@@ -76,7 +76,7 @@ namespace MyWebApi.Controllers
 
         [HttpPost]
         [Route("deleteMap")]
-        public ActionResult DeleteMap([FromBody] int index)
+        public ActionResult DeleteMap([FromBody] int index) //after this tell me what index is active
         {
             map.RemoveAt(index);
             return Ok();
