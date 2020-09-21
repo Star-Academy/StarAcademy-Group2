@@ -22,7 +22,7 @@ namespace MyWebApi.Controllers
             this.elasticService = elasticService;
         }
 
-        [Authorize]
+        [AnyUser]
         [HttpPost]
         [Route("searchNode")]
         public ActionResult<IEnumerable<Node>> NodeSearch([FromBody] NodeSearchQuery nodeSearchQuery)
@@ -42,7 +42,7 @@ namespace MyWebApi.Controllers
             }
         }
 
-        [Authorize]
+        [AnyUser]
         [HttpPost]
         [Route("expand")]
         public ActionResult<List<Tuple<HashSet<Node>, HashSet<Edge>>>> Expand([FromBody] ExpandQuery expandQuery)
@@ -113,7 +113,7 @@ namespace MyWebApi.Controllers
         //     return output;
         // }
 
-        [Authorize]
+        [AnyUser]
         [HttpPost]
         [Route("flow")]
         public ActionResult<long> Flow([FromBody] Tuple<string,string> sourceAndDestinationId)
@@ -123,7 +123,7 @@ namespace MyWebApi.Controllers
             return maxFlowFinder.Find();
         }
 
-        [Authorize]
+        [AnyUser]
         [HttpGet]
         [Route("FindAllPath")]
         public IActionResult FindAllPath(string sourceId, string destinationId, int maxLength=5)

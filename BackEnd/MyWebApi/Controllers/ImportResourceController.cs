@@ -21,7 +21,7 @@ namespace MyWebApi.Controllers
             this.localSourceReader = localSourceReader;
         }
 
-        [Authorize]
+        [AnyUser]
         [HttpPost]
         [Route("importAccounts")]
         public IActionResult ImportAccounts([FromBody] string url)
@@ -38,7 +38,7 @@ namespace MyWebApi.Controllers
             }
         }
 
-        [Authorize]
+        [AnyUser]
         [HttpPost]
         [Route("importTransactions")]
         public IActionResult ImportTransactions([FromBody] string url)

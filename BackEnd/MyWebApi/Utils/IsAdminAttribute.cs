@@ -8,7 +8,7 @@ using System;
 namespace MyWebApi.Utils
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class AuthorizeAttribute : Attribute, IAuthorizationFilter
+    public class IsAdminAttribute : Attribute, IAuthorizationFilter
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
@@ -16,17 +16,15 @@ namespace MyWebApi.Utils
 
             if (user == null)
             {
-                // not logged in
                 context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
             }
-            ////////////////////TODO/////////////
-            else{
-                Console.WriteLine(user.Username);
-                Console.WriteLine(user.Password);
-                Console.WriteLine(user.Type);
+            else if(user.Type.Equals(UserType.Admin))
+            {
+                context.Result = new JsonResult(new { message = "true" }) { StatusCode = StatusCodes.Status200OK };
             }
-
-            /////////////////////////////////////
+            else{
+                context.Result = new JsonResult(new { message = "false" }) { StatusCode = StatusCodes.Status400BadRequest };
+            }
         }
     }
 }

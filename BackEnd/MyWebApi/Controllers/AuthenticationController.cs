@@ -28,20 +28,15 @@ namespace MyWebApi.Controllers
             return Ok(response);
         }
 
-        [Authorize]
-        [HttpPost("simp")]
-        public IActionResult Test()
-        {
-            return Ok(true);
-        }
+        [IsAdmin]
+        [HttpPost("isAdmin")]
+        public void isAdmin()
+        {/*intentionally blank*/}
 
-        // [Authorize(UserType.Admin)]
-        [Authorize]
-        [HttpPost("admin")]
-        public IActionResult Test2()
-        {
-            return Ok(true);
-        }
+        [IsSimpleUser]
+        [HttpPost("isSimpleUser")]
+        public void IsSimple()
+        {/*intentionally blank*/}
 
     }
 }
