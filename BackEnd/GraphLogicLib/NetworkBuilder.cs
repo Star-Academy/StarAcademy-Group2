@@ -60,6 +60,10 @@ namespace GraphLogicLib
                 if(!NeighbourIncomingEdges.ContainsKey(edge.DestinationAccount)){
                     NeighbourIncomingEdges[edge.DestinationAccount] = new HashSet<Edge>();
                 }
+                if(!NeighbourOutcomingEdges.ContainsKey(edge.SourceAccount)){
+                    NeighbourOutcomingEdges[edge.SourceAccount] = new HashSet<Edge>();
+                }
+                NeighbourOutcomingEdges[edge.SourceAccount].Add(edge);
                 NeighbourIncomingEdges[edge.DestinationAccount].Add(edge);
                 neighbourNodesId.Add(edge.SourceAccount);
             }
@@ -79,7 +83,11 @@ namespace GraphLogicLib
                 if(!NeighbourOutcomingEdges.ContainsKey(edge.SourceAccount)){
                     NeighbourOutcomingEdges[edge.SourceAccount] = new HashSet<Edge>();
                 }
+                if(!NeighbourIncomingEdges.ContainsKey(edge.DestinationAccount)){
+                    NeighbourIncomingEdges[edge.DestinationAccount] = new HashSet<Edge>();
+                }
                 NeighbourOutcomingEdges[edge.SourceAccount].Add(edge);
+                NeighbourIncomingEdges[edge.DestinationAccount].Add(edge);
                 neighbourNodesId.Add(edge.DestinationAccount);
             }
 
@@ -219,6 +227,7 @@ namespace GraphLogicLib
             var neighbours =
                 from neighbour in neighboursSuperset
                 where !visited.Contains(neighbour)
+                where Levels.ContainsKey(neighbour)
                 where Levels[neighbour] <= Levels[source]
                 where pathLength + Levels[neighbour] < PathMaximumLength
                 select neighbour;
