@@ -1,3 +1,4 @@
+using ElasticLib.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MyWebApi.Models;
@@ -22,7 +23,7 @@ namespace MyWebApi.Services
         // users hardcoded for simplicity, store in a db with hashed passwords in production applications
         private List<User> _users = new List<User>
         {
-            new User { Username = "testU", Password = "testP" }
+            new User { Username = "testU", Password = "testP", Type = UserType.Admin }
         };
 
 

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using MyWebApi.Utils;
 using MyWebApi.Models;
 using MyWebApi.Services;
+using ElasticLib.Models;
 
 namespace MyWebApi.Controllers
 {
@@ -25,6 +26,21 @@ namespace MyWebApi.Controllers
                 return BadRequest("Username or password is incorrect");
 
             return Ok(response);
+        }
+
+        [Authorize]
+        [HttpPost("simp")]
+        public IActionResult Test()
+        {
+            return Ok(true);
+        }
+
+        // [Authorize(UserType.Admin)]
+        [Authorize]
+        [HttpPost("admin")]
+        public IActionResult Test2()
+        {
+            return Ok(true);
         }
 
     }
