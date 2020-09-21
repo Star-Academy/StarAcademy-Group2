@@ -36,4 +36,8 @@ class Color {
 	public static readonly GRAY_10 = '#1a1a1a';
 
 	public constructor(public background: string, public color: string) {}
+
+	public get reverse(): Color {
+		return new Color(this.color, this.background);
+	}
 }

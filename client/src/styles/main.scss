@@ -39,7 +39,9 @@ $font-default;
 
 /**************** RESET ***************/
 
-* {
+*,
+*:before,
+*:after {
 	box-sizing: border-box;
 
 	margin: 0;
@@ -63,6 +65,13 @@ body {
 
 a {
 	text-decoration: none;
+}
+
+input,
+button {
+	border: none;
+	outline: none;
+	background: none;
 }
 
 svg {

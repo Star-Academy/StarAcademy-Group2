@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 import { UserAccount } from '../../models/UserAccount';
+import { ThemeService } from 'src/app/services/theme.service';
 
 @Component({
 	selector: 'app-login',
@@ -11,25 +12,31 @@ import { UserAccount } from '../../models/UserAccount';
 	styleUrls: [ './login.component.scss' ]
 })
 export class LoginComponent {
-	user = {
+	public status: boolean;
+
+	public user = {
 		username: '',
 		password: ''
 	};
-	admin = {
+
+	public admin = {
 		username: '',
 		password: ''
 	};
 
 	public constructor(
+		public theme: ThemeService,
 		private router: Router,
 		private authService: AuthService
 	) {}
 
-	changeAccess() {
-		document.querySelector('.cont').classList.toggle('s-signup');
+	public get containerClassName(): string {
+		return this.status ? '' : 'right-panel-active';
 	}
 
-	userLogin() {
+	public toggleStatus = () => (this.status = !this.status);
+
+	public userLogin() {
 		this.authService
 			.login(new UserAccount(this.user.username, this.user.password))
 			.subscribe((data) => {
@@ -38,5 +45,5 @@ export class LoginComponent {
 			});
 	}
 
-	adminLogin() {}
+	public adminLogin() {}
 }

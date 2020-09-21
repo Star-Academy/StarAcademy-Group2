@@ -1,57 +1,35 @@
-<div class="cont">
-	<div class="form employee">
-		<div class="input-list">
-			<h2 class="enter">ورود کارمند</h2>
-			<label>
-				<span>نام کاربری</span>
-				<input [(ngModel)]="user.username" type="email" name="email">
-			</label>
-			<label>
-				<span>رمز عبور</span>
-				<input [(ngModel)]="user.password" type="password" name="password">
-			</label>
-			<button class="submit" type="button" (click)="userLogin()">ورود</button>
-		</div>
+<div [ngClass]="['container shadow-narrow', containerClassName]">
+	<div class="form-container employee">
+		<form [ngStyle]="theme.default">
+			<div class="title">ورود کارمند</div>
+			<input [ngStyle]="theme.light" [(ngModel)]="user.username" name="username" type="text"
+				placeholder="نام کاربری" />
+			<input [ngStyle]="theme.light" [(ngModel)]="user.password" name="password" type="password"
+				placeholder="رمز عبور" />
+			<button [ngStyle]="theme.primary" (click)="userLogin()">ورود</button>
+		</form>
 	</div>
-
-	<div class="sub-cont">
-		<div class="img">
-			<div class="img-text m-up">
-				<br><br>
-				<h2>صفحه کارمندان</h2>
-				<p>
-					امکان دسترسی به بخش های:
-					<br><br>مشاهده اطلاعات حساب و تراکنش
-					<br><br>بررسی ارتباط بین حساب های مختلف
-					<br><br>شناسایی موارد مشکوک
-				</p>
+	<div class="form-container manager">
+		<form [ngStyle]="theme.default">
+			<div class="title">ورود مدیر</div>
+			<input [ngStyle]="theme.light" [(ngModel)]="admin.username" name="username" type="text"
+				placeholder="نام کاربری" />
+			<input [ngStyle]="theme.light" [(ngModel)]="admin.password" name="password" type="password"
+				placeholder="رمز عبور" />
+			<button [ngStyle]="theme.primary" (click)="adminLogin()">ورود</button>
+		</form>
+	</div>
+	<div class="overlay-container">
+		<div class="overlay" [ngStyle]="theme.primary">
+			<div class="panel right">
+				<div class="title">سلام، روز بخیر!</div>
+				<p>در صورتی که مدیر هستید لطفاً بر روی دکمۀ پایین کلیک کنید.</p>
+				<button [ngStyle]="theme.primary.reverse" (click)="toggleStatus()">ورود مدیر</button>
 			</div>
-			<div class="img-text m-in">
-				<br><br>
-				<h2>صفحه مدیران</h2>
-				<p>
-					دسترسی های بیشتر برای مدیران:
-					<br><br>بارگذاری پایگاه داده
-					<br><br>مدیریت حساب های کاربری
-				</p>
-			</div>
-			<div class="img-btn" (click)="changeAccess()">
-				<span class="m-up">مدیر هستید؟</span>
-				<span class="m-in">کارمند هستید؟</span>
-			</div>
-		</div>
-		<div class="form manager">
-			<div id="input-list-manager" class="input-list">
-				<h2 class="enter">ورود مدیر</h2>
-				<label>
-					<span>نام کاربری</span>
-					<input [(ngModel)]="admin.username" type="text">
-				</label>
-				<label>
-					<span>رمز عبور</span>
-					<input [(ngModel)]="admin.password" type="password">
-				</label>
-				<button type="button" (click)="adminLogin()" class="submit">ورود</button>
+			<div class="panel left">
+				<div class="title">سلام، روز بخیر!</div>
+				<p>در صورتی که کارمند هستید لطفاً بر روی دکمۀ پایین کلیک کنید.</p>
+				<button [ngStyle]="theme.primary.reverse" (click)="toggleStatus()">ورود کارمند</button>
 			</div>
 		</div>
 	</div>
