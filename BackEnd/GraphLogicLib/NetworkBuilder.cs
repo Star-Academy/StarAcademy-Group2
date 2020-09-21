@@ -190,10 +190,10 @@ namespace GraphLogicLib
                 if (CopyMaker)
                 {
                     foreach(var edge in historySimpleEdge){
-                        if(SimpleGraph.ContainsKey(edge.DestinationAccount)){
+                        if(!SimpleGraph.ContainsKey(edge.DestinationAccount)){
                             SimpleGraph[edge.DestinationAccount] = new HashSet<SimpleEdge>();
                         }
-                        if(SimpleGraph.ContainsKey(edge.SourceAccount)){
+                        if(!SimpleGraph.ContainsKey(edge.SourceAccount)){
                             SimpleGraph[edge.SourceAccount] = new HashSet<SimpleEdge>();
                         }
                         SimpleGraph[edge.DestinationAccount].Add(edge);
@@ -234,19 +234,23 @@ namespace GraphLogicLib
             
             foreach (var neighbour in neighbours)
             {
-                var incomingEdges = 
+                var incomingEdges = new HashSet<Edge>();
+                incomingEdges.UnionWith(
                     from edge in incomingEdgesSuperset
                     where edge.SourceAccount.Equals(neighbour)
-                    select edge;
+                    select edge
+                );
 
-                var outcomingEdges = 
+                var outcomingEdges = new HashSet<Edge>();
+                outcomingEdges.UnionWith(
                     from edge in outcomingEdgesSuperset
                     where edge.DestinationAccount.Equals(neighbour)
-                    select edge;
+                    select edge
+                );
 
                 if (CopyMaker)
                 {
-                    historySimpleEdge.UnionWith(SimplifyingEdges((HashSet<Edge>) incomingEdges, (HashSet<Edge>) outcomingEdges));
+                    historySimpleEdge.UnionWith(SimplifyingEdges(incomingEdges, outcomingEdges));
                 }
                 historyNode.Add(SupersetGrapgh[source]);
                 historyEdge.UnionWith(incomingEdges);
