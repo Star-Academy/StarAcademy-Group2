@@ -37,12 +37,12 @@ namespace MyWebApi.Controllers
         }
 
         [IsAdmin]
-        [HttpPost("isAdmin")]
+        [HttpGet("isAdmin")]
         public void isAdmin()
         {/*intentionally blank*/}
 
         [IsSimpleUser]
-        [HttpPost("isSimpleUser")]
+        [HttpGet("isSimpleUser")]
         public void IsSimple()
         {/*intentionally blank*/}
 

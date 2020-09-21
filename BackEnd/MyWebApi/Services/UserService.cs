@@ -1,4 +1,6 @@
+using ElasticLib.Abstraction;
 using ElasticLib.Models;
+using ElasticLib.Utils.ValidatorUtils.Exceptions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MyWebApi.Models;
@@ -8,6 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using WebApi.Utils;
 
 namespace MyWebApi.Services
@@ -20,31 +23,39 @@ namespace MyWebApi.Services
 
     public class UserService : IUserService
     {
-        // users hardcoded for simplicity, store in a db with hashed passwords in production applications
-        private List<User> _users = new List<User>
-        {
-            new User { Username = "testA", Password = "testP", Type = UserType.Admin },
-            new User { Username = "testS", Password = "testP", Type = UserType.Simple }
-        };
-
-        private User primaryAdmin = new User {Username = "admin", Password = "admin", Type = UserType.Admin};
-
-
-        
+        private User primaryAdmin = new User { Username = "admin", Password = "admin", Type = UserType.Admin };
 
         private readonly AppSettings _appSettings;
+        private IElasticService elasticService;
 
-        public UserService(IOptions<AppSettings> appSettings)
+        public UserService(IOptions<AppSettings> appSettings, IElasticService elastic)
         {
             _appSettings = appSettings.Value;
+            elasticService = elastic;
         }
 
+        ///<summery>
+        /// returns null if user not found
+        ///</summery>
         public AuthenticateResponse Authenticate(AuthenticateRequest model)
         {
-            var user = _users.SingleOrDefault(x => x.Username == model.Username && x.Password == model.Password);
+            User user = null;
+            try
+            {
+                var result = elasticService.Search<User>(new User { Username = model.Username });
+                if(result.Any())
+                    user = result.ElementAt(0);
+                else
+                    return null;
+            }
+            catch (IndexNotFoundException e)
+            {
+                elasticService.ImportDocument<User>(JsonSerializer.Serialize(new List<User> { primaryAdmin }));
+                if(!primaryAdmin.Username.Equals(model.Username) || !primaryAdmin.Password.Equals(model.Password))
+                    return null;
+            }
 
-            // return null if user not found
-            if (user == null) return null;
+            if (user == null || !user.Password.Equals(model.Password)) return null;
 
             // authentication successful so generate jwt token
             var token = generateJwtToken(user);
@@ -54,7 +65,7 @@ namespace MyWebApi.Services
 
         public User GetByUsername(string username)
         {
-            return _users.FirstOrDefault(x => x.Username.Equals(username));
+            return elasticService.Search<User>(new User{Username = username}).ElementAt(0);
         }
 
         private string generateJwtToken(User user)
