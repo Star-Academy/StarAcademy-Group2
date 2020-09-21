@@ -33,7 +33,6 @@ namespace MyWebApi.Controllers
         {
             //TODO -> refactor
             var edges = new List<Edge>();
-            Console.WriteLine(mapState.map.Count + " " + mapState.activeIndex);
             foreach (var node in mapState.map[mapState.activeIndex].ToList())
             {
                 var sq = new EdgeSearchQuery() { SourceAccount = idNode, DestinationAccount = node };
@@ -77,7 +76,6 @@ namespace MyWebApi.Controllers
         [Route("createMap")]
         public ActionResult CreateMap()
         {
-            Console.WriteLine("add");
             mapState.map.Add(new HashSet<string>());
             return Ok();
         }
@@ -86,7 +84,6 @@ namespace MyWebApi.Controllers
         [Route("deleteMap")]
         public ActionResult DeleteMap([FromBody] int index) //after this tell me what index is active
         {
-            Console.WriteLine("delete" + index);
             mapState.map.RemoveAt(index);
             return Ok();
         }
@@ -95,8 +92,15 @@ namespace MyWebApi.Controllers
         [Route("switchMap")]
         public ActionResult SwitchMap([FromBody] int index)
         {
-            Console.WriteLine("switch" + index);
             mapState.activeIndex = index;
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("restartMap")]
+        public ActionResult RestartMap()
+        {
+            mapState.Restart();
             return Ok();
         }
     }
