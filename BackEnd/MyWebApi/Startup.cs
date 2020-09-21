@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Elastic.Apm.NetCoreAll;
 using ElasticLib;
@@ -8,7 +7,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MyWebApi.Services;
+using MyWebApi.Utils;
 using SourceReaderLib.SourceReader;
+using WebApi.Utils;
 
 namespace MyWebApi
 {
@@ -26,9 +28,16 @@ namespace MyWebApi
         {
             services.AddCors();
             services.AddControllers();
+
             services.AddSingleton<IElasticService, ElasticService>();
+
             services.AddSingleton<HashSet<string>>();
+
             services.AddTransient<ISourceReader, LocalSourceReader>();
+
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+
+            services.AddScoped<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +58,8 @@ namespace MyWebApi
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<JwtMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

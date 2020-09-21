@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ElasticLib.Models;
 using SourceReaderLib;
 using SourceReaderLib.SourceReader;
+using MyWebApi.Utils;
 
 namespace MyWebApi.Controllers
 {
@@ -20,6 +21,7 @@ namespace MyWebApi.Controllers
             this.localSourceReader = localSourceReader;
         }
 
+        [AnyUser]
         [HttpPost]
         [Route("importAccounts")]
         public IActionResult ImportAccounts([FromBody] string csv)
@@ -36,6 +38,7 @@ namespace MyWebApi.Controllers
             }
         }
 
+        [AnyUser]
         [HttpPost]
         [Route("importTransactions")]
         public IActionResult ImportTransactions([FromBody] string csv)

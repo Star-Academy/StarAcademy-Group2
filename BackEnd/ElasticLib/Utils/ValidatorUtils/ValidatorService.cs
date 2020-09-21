@@ -12,6 +12,11 @@ namespace ElasticLib.Utils.ValidatorUtils
                 return;
             }
 
+            if(response.ServerError != null && response.ServerError.Error.Type.Equals("index_not_found_exception"))
+            {
+                throw new IndexNotFoundException();
+            }
+
             if (response.ServerError != null)
             {
                 throw new ServerException(response.ServerError.ToString());

@@ -5,8 +5,8 @@ using ElasticLib.Abstraction;
 using ElasticLib.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using GraphLogicLib;
+using MyWebApi.Utils;
 
 namespace MyWebApi.Controllers
 {
@@ -21,6 +21,7 @@ namespace MyWebApi.Controllers
             this.elasticService = elasticService;
         }
 
+        [AnyUser]
         [HttpPost]
         [Route("searchNode")]
         public ActionResult<IEnumerable<Node>> NodeSearch([FromBody] NodeSearchQuery nodeSearchQuery)
@@ -36,6 +37,7 @@ namespace MyWebApi.Controllers
             }
         }
 
+        [AnyUser]
         [HttpPost]
         [Route("expand")]
         public ActionResult<Tuple<HashSet<Node>, HashSet<Edge>>> Expand([FromBody] ExpandQuery expandQuery) //informing front
@@ -76,6 +78,7 @@ namespace MyWebApi.Controllers
             return new Tuple<HashSet<Node>, HashSet<Edge>>(nodes, edges);
         }
 
+        [AnyUser]
         [HttpPost]
         [Route("flow")]
         public ActionResult<long> Flow([FromBody] Tuple<string,string> sourceAndDestinationId)
@@ -85,6 +88,7 @@ namespace MyWebApi.Controllers
             return maxFlowFinder.Find();
         }
 
+        [AnyUser]
         [HttpGet]
         [Route("FindAllPath")]
         public IActionResult FindAllPath(string sourceId, string destinationId, int maxLength=5)
