@@ -58,5 +58,19 @@ namespace MyWebApi.Controllers
             elasticService.ImportDocument<User>(JsonSerializer.Serialize(new List<User>{user}));
             return Ok();
         }
+
+        [JustAdmin]
+        [HttpGet("getAllUsers")]
+        public IActionResult getAllUsers()
+        {
+            try
+            {
+                return Ok(elasticService.Search<User>(new User()));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
     }
 }
