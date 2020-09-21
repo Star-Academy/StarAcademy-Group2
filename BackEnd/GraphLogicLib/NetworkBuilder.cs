@@ -183,24 +183,25 @@ namespace GraphLogicLib
             }
             return output;
         }
-        public void Dfs(string last, string source, int pathLength, HashSet<string> visited)
+        public void Dfs(string source, int pathLength, HashSet<string> visited, HashSet<Node> historyNode, HashSet<Edge> historyEdge, HashSet<SimpleEdge> historySimpleEdge)
         {
             if (source.Equals(Destination))
             {
                 if (CopyMaker)
                 {
-                    SimpleGraph[source] = new HashSet<SimpleEdge>();
-                    SimpleGraph[source].UnionWith(
-                        from edge in SimpleGraph[last]
-                        where edge.DestinationAccount.Equals(source)
-                        select edge
-                    );
-                    SimpleGraph[source].UnionWith(
-                        from edge in SimpleGraph[last]
-                        where edge.SourceAccount.Equals(source)
-                        select edge
-                    );
+                    foreach(var edge in historySimpleEdge){
+                        if(!SimpleGraph.ContainsKey(edge.DestinationAccount)){
+                            SimpleGraph[edge.DestinationAccount] = new HashSet<SimpleEdge>();
+                        }
+                        if(!SimpleGraph.ContainsKey(edge.SourceAccount)){
+                            SimpleGraph[edge.SourceAccount] = new HashSet<SimpleEdge>();
+                        }
+                        SimpleGraph[edge.DestinationAccount].Add(edge);
+                        SimpleGraph[edge.SourceAccount].Add(edge);
+                    }
                 }
+                Nodes.UnionWith(historyNode);
+                Edges.UnionWith(historyEdge);
                 return;
             }
             visited.Add(source);
@@ -228,45 +229,33 @@ namespace GraphLogicLib
                 from neighbour in neighboursSuperset
                 where !visited.Contains(neighbour)
                 where Levels.ContainsKey(neighbour)
-                where Levels[neighbour] <= Levels[source]
                 where pathLength + Levels[neighbour] < PathMaximumLength
                 select neighbour;
             
             foreach (var neighbour in neighbours)
             {
-                var incomingEdges = 
+                var incomingEdges = new HashSet<Edge>();
+                incomingEdges.UnionWith(
                     from edge in incomingEdgesSuperset
                     where edge.SourceAccount.Equals(neighbour)
-                    select edge;
+                    select edge
+                );
 
-                var outcomingEdges = 
+                var outcomingEdges = new HashSet<Edge>();
+                outcomingEdges.UnionWith(
                     from edge in outcomingEdgesSuperset
                     where edge.DestinationAccount.Equals(neighbour)
-                    select edge;
+                    select edge
+                );
 
                 if (CopyMaker)
                 {
-                    if(!SimpleGraph.ContainsKey(source)){
-                        SimpleGraph[source] = new HashSet<SimpleEdge>();
-                    }
-                    SimpleGraph[source].UnionWith(SimplifyingEdges((HashSet<Edge>) incomingEdges, (HashSet<Edge>) outcomingEdges));
-                    if(last != null){
-                        SimpleGraph[source].UnionWith(
-                            from edge in SimpleGraph[last]
-                            where edge.DestinationAccount.Equals(source)
-                            select edge
-                        );
-                        SimpleGraph[source].UnionWith(
-                            from edge in SimpleGraph[last]
-                            where edge.SourceAccount.Equals(source)
-                            select edge
-                        );
-                    }
+                    historySimpleEdge.UnionWith(SimplifyingEdges(incomingEdges, outcomingEdges));
                 }
-                Nodes.Add(SupersetGrapgh[source]);
-                Edges.UnionWith(incomingEdges);
-                Edges.UnionWith(outcomingEdges);
-                Dfs(source, neighbour, pathLength + 1, visited);
+                historyNode.Add(SupersetGrapgh[source]);
+                historyEdge.UnionWith(incomingEdges);
+                historyEdge.UnionWith(outcomingEdges);
+                Dfs(neighbour, pathLength + 1, visited, historyNode, historyEdge, historySimpleEdge);
             }
             visited.Remove(source);
         }
@@ -275,7 +264,7 @@ namespace GraphLogicLib
             if(!Destination.Equals(Source)){
                 BfsOnDestination();
                 if(Levels.ContainsKey(Source)){
-                    Dfs(null, Source, 0, new HashSet<string>());
+                    Dfs(Source, 0, new HashSet<string>(), new HashSet<Node>(), new HashSet<Edge>(), new HashSet<SimpleEdge>());
                 }
             }
         }
