@@ -22,5 +22,10 @@ namespace ElasticLib
         {
             throw new System.NotImplementedException();
         }
+
+        public void DeleteDocument<T>(string field, string value) where T : class
+        {
+            handlerProvider.DeleteHandler.Delete<T>(field, value);
+        }
     }
 }

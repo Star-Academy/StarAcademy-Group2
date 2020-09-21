@@ -39,24 +39,63 @@ namespace MyWebApi.Controllers
         [IsAdmin]
         [HttpGet("isAdmin")]
         public void isAdmin()
-        {/*intentionally blank*/}
+        {
+            /*intentionally blank*/
+        }
 
         [IsSimpleUser]
         [HttpGet("isSimpleUser")]
         public void IsSimple()
-        {/*intentionally blank*/}
+        {
+            /*intentionally blank*/
+        }
 
         [JustAdmin]
         [HttpPost("register")]
         public IActionResult Register(User user)
         {
-            try{
-            if(elasticService.Search<User>(user).Any())
-                return BadRequest("username already reserved");
+            try
+            {
+                if (elasticService.Search<User>(user).Any())
+                    return BadRequest("username already reserved");
             }
-            catch(IndexNotFoundException e){/*intentionally blank*/}
-            elasticService.ImportDocument<User>(JsonSerializer.Serialize(new List<User>{user}));
+            catch (IndexNotFoundException e)
+            {
+                /*intentionally blank*/
+            }
+
+            elasticService.ImportDocument<User>(JsonSerializer.Serialize(new List<User> {user}));
             return Ok();
+        }
+
+        [HttpDelete("deleteUser")]
+        public IActionResult DeleteUser(string username)
+        {
+            try
+            {
+                elasticService.DeleteDocument<User>("username", username);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return (BadRequest(e.Message));
+            }
+
+            return Ok();
+        }
+
+        [JustAdmin]
+        [HttpGet("getAllUsers")]
+        public IActionResult getAllUsers()
+        {
+            try
+            {
+                return Ok(elasticService.Search<User>(new User()));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }
