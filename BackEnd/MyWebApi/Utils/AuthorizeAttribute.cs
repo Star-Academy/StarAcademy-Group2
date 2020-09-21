@@ -19,6 +19,14 @@ namespace MyWebApi.Utils
                 // not logged in
                 context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
             }
+            ////////////////////TODO/////////////
+            else{
+                Console.WriteLine(user.Username);
+                Console.WriteLine(user.Password);
+                Console.WriteLine(user.Type);
+            }
+
+            /////////////////////////////////////
         }
     }
 }

@@ -23,7 +23,8 @@ namespace MyWebApi.Services
         // users hardcoded for simplicity, store in a db with hashed passwords in production applications
         private List<User> _users = new List<User>
         {
-            new User { Username = "testU", Password = "testP", Type = UserType.Admin }
+            new User { Username = "testA", Password = "testP", Type = UserType.Admin },
+            new User { Username = "testS", Password = "testP", Type = UserType.Simple }
         };
 
 
