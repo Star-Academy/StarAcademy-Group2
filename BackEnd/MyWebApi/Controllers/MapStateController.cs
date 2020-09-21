@@ -15,9 +15,10 @@ namespace MyWebApi.Controllers
     public class MapStateController : ControllerBase
     {
 
-        private HashSet<string> map;
+        private List<HashSet<string>> map;
         private IElasticService elasticService;
-        public MapStateController(IElasticService elasticService, HashSet<string> map)
+        private int activeIndex;
+        public MapStateController(IElasticService elasticService, List<HashSet<string>> map)
         {
             this.elasticService = elasticService;
             this.map = map;
@@ -30,14 +31,14 @@ namespace MyWebApi.Controllers
         {
             //TODO -> refactor
             var edges = new List<Edge>();
-            foreach(var node in map){
+            foreach(var node in map[activeIndex]){
                 var sq = new EdgeSearchQuery() {SourceAccount = idNode , DestinationAccount = node};
                 edges.AddRange(elasticService.Search<Edge>(sq));
                 sq.SourceAccount = node;
                 sq.DestinationAccount = idNode;
                 edges.AddRange(elasticService.Search<Edge>(sq));
             }
-            map.Add(idNode);
+            map[activeIndex].Add(idNode);
             return Ok(edges);
         }
 
@@ -46,7 +47,49 @@ namespace MyWebApi.Controllers
         [Route("deleteNode")]
         public ActionResult DeleteNode([FromBody] string idNode)
         {
-            map.Remove(idNode);
+            map[activeIndex].Remove(idNode);
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("clearMap")]
+        public ActionResult ClearMap()
+        {
+            map[activeIndex].Clear();
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("import")]
+        public ActionResult Import([FromBody] HashSet<string> idNodes)
+        {
+            foreach(var idNode in idNodes){
+                map[activeIndex].Add(idNode);
+            }
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("createMap")]
+        public ActionResult CreateMap()
+        {
+            map.Add(new HashSet<string>());
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("deleteMap")]
+        public ActionResult DeleteMap([FromBody] int index) //after this tell me what index is active
+        {
+            map.RemoveAt(index);
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("switchMap")]
+        public ActionResult SwitchMap([FromBody] int index)
+        {
+            this.activeIndex = index;
             return Ok();
         }
     }

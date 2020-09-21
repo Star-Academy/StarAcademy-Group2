@@ -19,7 +19,8 @@ namespace ElasticLib.Handlers
             var query = GenerateQueryDescriptor(filters);
             var response = ElasticClientProvider.GetClient().Search<T>(s => s
                 .Index(indexName)
-                .Query(q => query));
+                .Query(q => query)
+                .Size(5000));
             response.Validate();
             return GetDocuments(response);
         }

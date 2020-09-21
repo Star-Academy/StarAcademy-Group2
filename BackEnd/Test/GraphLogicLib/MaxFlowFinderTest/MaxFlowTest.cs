@@ -6,7 +6,7 @@ using GraphLogicLib.Models;
 using GraphLogicLib;
 
 
-namespace Test.GraphLogicLib
+namespace Test.GraphLogicLib.MaxFlowFinderTest
 {
     public class MaxFlowTest
     {
