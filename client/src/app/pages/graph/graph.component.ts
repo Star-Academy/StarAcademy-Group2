@@ -180,6 +180,8 @@ export class GraphComponent implements OnInit {
 	}
 
 	private updateTooltip(target) {
+		if (this.radialComponent.state !== 0) return;
+
 		let offset = 0;
 		if (target.isNode) offset = target.getAttribute('radius');
 

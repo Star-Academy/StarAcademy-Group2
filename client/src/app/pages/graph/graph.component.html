@@ -4,11 +4,6 @@
 	<graph-modal #nodesModal [snackbar]="snackbar" (addNodeCallback)="clickedOnAddNodeButton($event)"
 		(dragMoveCallback)="dragMove($event)" (dragEndCallback)="dragEnd($event)">
 	</graph-modal>
-	<radial-node-menu #radialComponent [snackbar]="snackbar" (expandCallback)="clickedOnExpandButton($event)">
-	</radial-node-menu>
-
-	<graph-tooltip *ngIf="hoveredContent" [content]="hoveredContent" [position]="hoveredPosition">
-	</graph-tooltip>
 
 	<div #findPathMenu *ngIf="ogmaService.getSourceNode() && ogmaService.getTargetNode()"
 		class="find-path btn btn-primary closed" (click)="toggleFindPathMenu($event)">
@@ -89,6 +84,12 @@
 	<div id="trash"><img src="../../../assets/svg/cross.svg"></div> -->
 
 	<div #ogmaContainer id="ogma-container" onclick="event.stopPropagation()">
+		<radial-node-menu #radialComponent [snackbar]="snackbar" (expandCallback)="clickedOnExpandButton($event)">
+		</radial-node-menu>
+
+		<graph-tooltip *ngIf="hoveredContent" [content]="hoveredContent" [position]="hoveredPosition">
+		</graph-tooltip>
+
 		<layout-selector></layout-selector>
 	</div>
 </main>

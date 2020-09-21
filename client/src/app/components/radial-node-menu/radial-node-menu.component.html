@@ -1,24 +1,8 @@
-<div [class]="menu.class" id="menu" [@menuState]="menuStateStatus"
-	[ngStyle]="{'top': menu.top + 'px', 'left': menu.left + 'px'}" (click)="close()">
-	<span class="menu-item" title="بسط دادن" (click)="expandNodes()">
-		<svg-icon key="expand"></svg-icon>
-	</span>
-	<span class="menu-item" title="حذف" (click)="deleteNodes()">
-		<svg-icon key="garbageBin"></svg-icon>
-	</span>
-	<span class="menu-item" title="قفل‌کردن" (click)="lockNodes()">
-		<svg-icon key="lock"></svg-icon>
-	</span>
-	<span class="menu-item" title="بازکردن قفل" (click)="unlockNodes()">
-		<svg-icon key="unlock"></svg-icon>
-	</span>
-	<span [class]="'menu-item ' + sourceSelectionButton.class" [title]="sourceSelectionButton.title"
-		(click)="selectAsSource()">
-		<svg-icon key="dollar"></svg-icon>
-	</span>
-	<span [class]="'menu-item ' + targetSelectionButton.class" [title]="targetSelectionButton.title"
-		(click)="selectAsTarget()">
-		<svg-icon key="shirt"></svg-icon>
+<div [class]="menu.class" id="menu" [ngStyle]="{'top.px': menu.top, 'left.px': menu.left}" (click)="close()">
+	<span *ngFor="let item of items" class="menu-item"
+		[ngStyle]="item.active || item.hovered ? theme.success : theme.primary" [title]="item.title"
+		(click)="item.callback()" (mouseover)="item.hovered = true" (mouseleave)="item.hovered = false">
+		<svg-icon [key]="item.icon"></svg-icon>
 	</span>
 </div>
 

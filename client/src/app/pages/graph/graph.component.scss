@@ -100,7 +100,7 @@
 				position: absolute;
 				top: 0;
 				right: 0;
-				z-index: 2;
+				z-index: 1;
 
 				width: 20rem;
 				height: 100%;
@@ -109,6 +109,8 @@
 			}
 
 			>div {
+				z-index: 0;
+
 				width: 100% !important;
 				height: 100% !important;
 			}
