@@ -43,19 +43,17 @@ namespace GraphLogicLib
         public void GetNeighbours(string nodes)
         {
             NeighbourNodes.Clear();
-
             var neighbourNodesId = new HashSet<string>();
-            foreach(var edge in ElasticService
-                .Search<Edge>(
-                    new EdgeSearchQuery()
-                    {
-                        DestinationAccount = nodes
-                    }
-                )
-            )
+            var incomingEdges = ElasticService.Search<Edge>(
+                new EdgeSearchQuery()
+                {
+                    DestinationAccount = nodes
+                }
+            );
+            foreach(var edge in incomingEdges)
             {
                 if(Levels.ContainsKey(edge.SourceAccount)){
-                    break;
+                    continue;
                 }
                 if(!NeighbourIncomingEdges.ContainsKey(edge.DestinationAccount)){
                     NeighbourIncomingEdges[edge.DestinationAccount] = new HashSet<Edge>();
@@ -67,18 +65,16 @@ namespace GraphLogicLib
                 NeighbourIncomingEdges[edge.DestinationAccount].Add(edge);
                 neighbourNodesId.Add(edge.SourceAccount);
             }
-
-            foreach(var edge in ElasticService
-                .Search<Edge>(
-                    new EdgeSearchQuery()
-                    {
-                        SourceAccount = nodes
-                    }
-                )
-            )
+            var outcomingEdges = ElasticService.Search<Edge>(
+                new EdgeSearchQuery()
+                {
+                    SourceAccount = nodes
+                }
+            );
+            foreach(var edge in outcomingEdges)
             {
                 if(Levels.ContainsKey(edge.DestinationAccount)){
-                    break;
+                    continue;
                 }
                 if(!NeighbourOutcomingEdges.ContainsKey(edge.SourceAccount)){
                     NeighbourOutcomingEdges[edge.SourceAccount] = new HashSet<Edge>();
@@ -90,15 +86,13 @@ namespace GraphLogicLib
                 NeighbourIncomingEdges[edge.DestinationAccount].Add(edge);
                 neighbourNodesId.Add(edge.DestinationAccount);
             }
-
-            foreach(var node in ElasticService
-                .Search<Node>(
-                    new NodeSearchQuery()
-                    {
-                        AccountId = String.Join(' ', neighbourNodesId)
-                    }
-                )
-            )
+            var neighbourNodes = ElasticService.Search<Node>(
+                new NodeSearchQuery()
+                {
+                    AccountId = String.Join(' ', neighbourNodesId)
+                }
+            );
+            foreach(var node in neighbourNodes)
             {
                 NeighbourNodes.Add(node);
                 if(!SupersetGrapgh.ContainsKey(node.AccountId)){
