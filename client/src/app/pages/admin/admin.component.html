@@ -1,7 +1,59 @@
-<app-header [items]="items" (indexEmitter)="indexEmitted($event)"></app-header>
-<div>{{title}}</div>
-<add-user-subpage *ngIf="index==2"></add-user-subpage>
-<app-settings *ngIf="index==3"></app-settings>
+<snackbar #snackbar></snackbar>
+
+<nav [ngStyle]="theme.primary">
+	<div *ngFor="let item of items; index as i" class="item" [ngStyle]="itemStyle(i)" (mouseover)="item.hovered = true"
+		(mouseleave)="item.hovered = false" (click)="navigate(i)">
+		{{item.title}}
+	</div>
+</nav>
+
+<main [ngStyle]="theme.light">
+	<div class="employees-manager" *ngIf="navSelectedIndex===0">
+		<div [ngClass]="['card', shaking ? 'shake' : '']" [ngStyle]="shaking ? theme.danger : theme.default">
+			<div class="head">افزودن کاربر جدید</div>
+			<div class="body">
+				<form #searchForm="ngForm" (ngSubmit)="addUserSubmit(searchForm.value)">
+					<input [ngStyle]="theme.light" [(ngModel)]="searchForm.value.username" name="username" id="username"
+						type="text" placeholder="نام کاربری" required>
+					<input [ngStyle]="theme.light" [(ngModel)]="searchForm.value.value" name="password" id="password"
+						type="password" placeholder="رمز عبور" required>
+
+					<button [ngStyle]="shaking ? theme.danger.reverse : theme.primary" type="submit">
+						ثبت اطلاعات
+					</button>
+				</form>
+			</div>
+		</div>
+
+		<div class="card" [ngStyle]="theme.default">
+			<div class="head">مشخصات کاربران</div>
+			<div class="body">
+				<div class="table">
+					<div class="row header" [ngStyle]="theme.primary">
+						<div class="cell">ردیف</div>
+						<div class="cell">نام کاربری</div>
+						<div class="cell">مدیر / کارمند</div>
+						<div class="cell">حذف</div>
+					</div>
+					<div *ngFor="let user of users; index as i" class="row" [ngStyle]="rowStyle(i)"
+						(mouseover)="hoveredRowIndex = i" (mouseleave)="hoveredRowIndex = -1">
+						<div class="cell">{{i + 1}}</div>
+						<div class="cell right">{{user.username}}</div>
+						<div class="cell icon" [ngStyle]="userTypeStyle(user)">{{user.type ? 'ادمین' : 'کارمند'}}</div>
+						<div class="cell icon clickable" (click)="removeAccount(user)">
+							<span [ngStyle]="theme.danger">
+								<svg-icon key="garbageBin"></svg-icon>
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<app-settings *ngIf="navSelectedIndex===1"></app-settings>
+</main>
+
 
 <input [style.display]="'none'" id="import-accounts" type="file" name="import-accounts" accept=".csv" ngf-max-size="2MB"
 	(change)="importAccountsCSV($event)">

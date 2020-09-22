@@ -33,7 +33,6 @@ import { GraphTooltipComponent } from './components/graph-tooltip/graph-tooltip.
 import { NavigationComponent } from './components/navigation/navigation.component';
 import { LayoutSelectorComponent } from './components/layout-selector/layout-selector.component';
 import { AdminComponent } from './pages/admin/admin.component';
-import { AddUserSubpageComponent } from './components/add-user-subpage/add-user-subpage.component';
 import { SettingsComponent } from './components/settings/settings.component';
 
 @NgModule({
@@ -58,7 +57,6 @@ import { SettingsComponent } from './components/settings/settings.component';
 		NotFoundComponent,
 		LayoutSelectorComponent,
 		AdminComponent,
-		AddUserSubpageComponent,
 		SettingsComponent
 	],
 	imports: [

@@ -38,7 +38,49 @@ export class Color {
 
 	public constructor(public background: string, public color: string) {}
 
+	public get selected(): Color {
+		return new Color(Color.brighter(this.background), this.color);
+	}
+
+	public get hovered(): Color {
+		return new Color(Color.darker(this.background), this.color);
+	}
+
 	public get reverse(): Color {
 		return new Color(this.color, this.background);
+	}
+
+	public static brighter(color: string): string {
+		return this.luminance(color, 0.1);
+	}
+
+	public static darker(color: string): string {
+		return this.luminance(color, -0.1);
+	}
+
+	private static luminance(color: string, offset: number): string {
+		color = this.normalized(color);
+
+		let result = '#';
+		for (let i = 0; i < 3; i++) {
+			let n: number = parseInt(color.substr(2 * i, 2), 16);
+			let c: string = Math.round(
+				Math.min(255, Math.max(0, (1 + offset) * n))
+			).toString(16);
+
+			result += ('00' + c).substr(c.length);
+		}
+
+		return result;
+	}
+
+	private static normalized(color: string): string {
+		color = String(color).replace(/[^0-9a-f]/gi, '');
+
+		if (color.length < 6)
+			color =
+				color[0] + color[0] + color[1] + color[1] + color[2] + color[2];
+
+		return color;
 	}
 }
