@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
 
-import { Color } from '../../services/theme.service';
+import { Color, ThemeService } from '../../services/theme.service';
 
 import { SnackbarComponent } from '../snackbar/snackbar.component';
 
@@ -17,6 +17,22 @@ export class SearchNodesFormComponent {
 	@Output() shakeCallback = new EventEmitter();
 
 	public maxLength: number = 100;
+	public fieldSelectOpen: boolean = false;
+
+	public options: Option[] = [
+		new Option('BranchName', 'نام شعبه'),
+		new Option('BranchTelephone', 'شماره تلفن شعبه'),
+		new Option('OwnerID', 'شناسه صاحب حساب'),
+		new Option('OwnerName', 'نام صاحب حساب'),
+		new Option('OwnerFamilyName', 'نام خانوادگی صاحب حساب'),
+		new Option('AccountType', 'نوع حساب'),
+		new Option('AccountID', 'شماره حساب'),
+		new Option('CardID', 'شماره کارت'),
+		new Option('Sheba', 'شماره شبا'),
+		new Option('BranchAddress', 'آدرس شعبه')
+	];
+
+	public selectedOption: Option = this.options[0];
 
 	private validators = {
 		BranchTelephone: new Validator(PATTERNS.numberPattern, 8),
@@ -26,13 +42,16 @@ export class SearchNodesFormComponent {
 		Sheba: new Validator(PATTERNS.shebaPattern, 23)
 	};
 
+	public constructor(public theme: ThemeService) {}
+
 	public updateMaxLength(field: string) {
 		this.maxLength = this.validators[field]
 			? this.validators[field].length
 			: 256;
 	}
 
-	public clickedOnSearchButton({ field, query }) {
+	public clickedOnSearchButton({ query }) {
+		const field = this.selectedOption.en;
 		const error = this.validateForm(field, query);
 
 		if (!error) {
@@ -44,8 +63,7 @@ export class SearchNodesFormComponent {
 	}
 
 	private validateForm(field: string, query: string): string {
-		if (!field || !query)
-			return 'لطفاً ابتدا تمام موارد خواسته‌شده را ثبت کنید';
+		if (!query) return 'لطفاً ابتدا تمام موارد خواسته‌شده را ثبت کنید';
 
 		const validator = this.validators[field];
 
@@ -54,22 +72,21 @@ export class SearchNodesFormComponent {
 			: null;
 	}
 
-	private validQuery(query: string, validator: Validator): boolean {
-		return (
-			query.length === validator.length &&
-			query.match(validator.pattern).length > 0
-		);
-	}
+	private validQuery = (query: string, validator: Validator): boolean =>
+		query.length === validator.length && validator.pattern.test(query);
 }
 
 class Validator {
-	public pattern: RegExp;
-	public length: number;
+	public constructor(public pattern: RegExp, public length: number) {}
+}
 
-	public constructor(pattern: RegExp, length: number) {
-		this.pattern = pattern;
-		this.length = length;
-	}
+class Option {
+	public constructor(
+		public en: string,
+		public fa: string,
+		public selected: boolean = false,
+		public hovered: boolean = false
+	) {}
 }
 
 const PATTERNS = {

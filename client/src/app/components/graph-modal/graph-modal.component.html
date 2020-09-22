@@ -1,9 +1,10 @@
 <div [class]="'container ' + (state === 0 ? 'closed' : '')">
-	<div class="overlay" [@overlayState]="overlayStateStatus" (click)="close()">
+	<div class="overlay" (click)="close()">
 		<round-button btnClass="btn-fade" icon="cross" iconSize="6"></round-button>
 	</div>
 
-	<div [ngClass]="['modal bg-default', shaking ? 'shake' : '']" [@modalState]="modalStateStatus">
+	<div [ngClass]="['modal', opening ? 'open' : shaking ? 'shake' : slidingToRight ? 'slide-right' : slidingToLeft ? 'slide-left' : '']"
+		[ngStyle]="theme.default">
 		<div class="head" [ngStyle]="shaking ? theme.danger : theme.primary">
 			<span (click)="back()">
 				<svg-icon *ngIf="state > 1 && this.results.length > 0" key="arrowBack"></svg-icon>

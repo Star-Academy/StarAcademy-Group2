@@ -1,21 +1,21 @@
 <form #searchForm="ngForm" (ngSubmit)="clickedOnSearchButton(searchForm.value)">
 	<label class="text-default-25" for="search-field-input">جستجو در</label>
-	<select class="input-default" #field ngModel name="field" id="search-field-input"
-		(change)="updateMaxLength(field.value)" required>
-		<option value="BranchName" selected>نام شعبه</option>
-		<option value="BranchTelephone">شماره تلفن شعبه</option>
-		<option value="OwnerID">شناسه صاحب حساب</option>
-		<option value="OwnerName">نام صاحب حساب</option>
-		<option value="OwnerFamilyName">نام خانوادگی صاحب حساب</option>
-		<option value="AccountType">نوع حساب</option>
-		<option value="AccountID">شماره حساب</option>
-		<option value="CardID">شماره کارت</option>
-		<option value="Sheba">شماره شبا</option>
-		<option value="BranchAddress">آدرس شعبه</option>
-	</select>
+	<div class="field-select-wrapper" (click)="fieldSelectOpen = !fieldSelectOpen">
+		<div [ngClass]="['select', fieldSelectOpen ? 'open' : '']">
+			<div class="trigger" [ngStyle]="theme.light"><span>{{selectedOption.fa}}</span>
+				<div class="arrow"></div>
+			</div>
+			<div class="options">
+				<span *ngFor="let option of options" [ngClass]="selectedOption === option ? 'selected' : ''"
+					[ngStyle]="selectedOption === option || option.hovered ? theme.primary : theme.light"
+					(mouseover)="option.hovered = true" (mouseleave)="option.hovered = false"
+					(click)="selectedOption = option; updateMaxLength(option.en)">{{option.fa}}</span>
+			</div>
+		</div>
+	</div>
 
 	<label class="text-default-25" for="search-query-input">عبارت مورد نظر</label>
-	<input class="input-default" ngModel [maxLength]="maxLength" name="query" id="search-query-input" type="text"
+	<input [ngStyle]="theme.light" ngModel name="query" [maxLength]="maxLength" id="search-query-input" type="text"
 		placeholder="لطفاً عبارت مورد جستجو را وارد کنید ..." required>
 
 	<button class="btn" [ngStyle]="actionStyle" type="submit">نمایش اطلاعات</button>
