@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ElasticLib.Models;
 using SourceReaderLib;
 using SourceReaderLib.SourceReader;
+using MyWebApi.Utils;
 
 namespace MyWebApi.Controllers
 {
@@ -20,13 +21,14 @@ namespace MyWebApi.Controllers
             this.localSourceReader = localSourceReader;
         }
 
+        [AnyUser]
         [HttpPost]
         [Route("importAccounts")]
-        public IActionResult ImportAccounts([FromBody] string url)
+        public IActionResult ImportAccounts([FromBody] string csv)
         {
             try
             {
-                elasticService.ImportDocument<Node>(CsvToJson.Convert(localSourceReader.Read(url)));
+                elasticService.ImportDocument<Node>(CsvToJson.Convert(csv));
                 return Ok();
             }
             catch (Exception e)
@@ -36,13 +38,14 @@ namespace MyWebApi.Controllers
             }
         }
 
+        [AnyUser]
         [HttpPost]
         [Route("importTransactions")]
-        public IActionResult ImportTransactions([FromBody] string url)
+        public IActionResult ImportTransactions([FromBody] string csv)
         {
             try
             {
-                elasticService.ImportDocument<Edge>(CsvToJson.Convert(localSourceReader.Read(url)));
+                elasticService.ImportDocument<Edge>(CsvToJson.Convert(csv));
                 return Ok();
             }
             catch (Exception e)

@@ -8,5 +8,6 @@ namespace ElasticLib.Abstraction
         void ImportDocument<T>(string source) where T : class;
         IEnumerable<T> Search<T>(IFilterable filterable) where T : class;
         IEnumerable<string> AutoComplete();
+        void DeleteDocument<T>(string field, string value) where T : class;
     }
 }

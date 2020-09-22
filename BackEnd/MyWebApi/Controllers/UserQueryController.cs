@@ -5,8 +5,8 @@ using ElasticLib.Abstraction;
 using ElasticLib.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using GraphLogicLib;
+using MyWebApi.Utils;
 
 namespace MyWebApi.Controllers
 {
@@ -21,95 +21,64 @@ namespace MyWebApi.Controllers
             this.elasticService = elasticService;
         }
 
+        // [AnyUser]
         [HttpPost]
         [Route("searchNode")]
         public ActionResult<IEnumerable<Node>> NodeSearch([FromBody] NodeSearchQuery nodeSearchQuery)
         {
-            // Console.WriteLine(nodeSearchQuery);
-            // var nodeSearchQuery = JsonSerializer.Deserialize<NodeSearchQuery>(json);
             try
             {
                 var result = elasticService.Search<Node>(nodeSearchQuery);
                 return Ok(result);
             }
-            //TODO
-            //dummy code
             catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
         }
 
+        // [AnyUser]
         [HttpPost]
         [Route("expand")]
-        public ActionResult<List<Tuple<HashSet<Node>, HashSet<Edge>>>> Expand([FromBody] ExpandQuery expandQuery)
+        public ActionResult<Tuple<HashSet<Node>, HashSet<Edge>>> Expand([FromBody] ExpandQuery expandQuery) //informing front
         {
-            // var expandQuery = JsonSerializer.Deserialize<ExpandQuery>(json);
             var output = new List<Tuple<HashSet<Node>, HashSet<Edge>>>();
-
-            foreach (var acc in expandQuery.Accounts)
+            var nodes = new HashSet<Node>();
+            var edges = new HashSet<Edge>();
+            var accs = String.Join(' ',expandQuery.Accounts);
+            var incomingEdgeSearchQuery = new EdgeSearchQuery()
             {
-                var nodes = new HashSet<Node>();
-                var edges = new HashSet<Edge>();
-                var incomingEdgeSearchQuery = new EdgeSearchQuery()
-                {
-                    DestinationAccount = acc
-                };
-                var outcomingEdgeSearchQuery = new EdgeSearchQuery()
-                {
-                    SourceAccount = acc
-                };
-                incomingEdgeSearchQuery.SetFiltersFrom(expandQuery);
-                outcomingEdgeSearchQuery.SetFiltersFrom(expandQuery);
-                foreach (var edge in elasticService.Search<Edge>(incomingEdgeSearchQuery))
-                {
-                    var ns = new NodeSearchQuery()
-                    {
-                        AccountId = edge.SourceAccount
-                    };
-                    nodes.UnionWith(elasticService.Search<Node>(ns));
-                    edges.Add(edge);
-                }
-                foreach (var edge in elasticService.Search<Edge>(outcomingEdgeSearchQuery))
-                {
-                    var ns = new NodeSearchQuery()
-                    {
-                        AccountId = edge.DestinationAccount
-                    };
-                    nodes.UnionWith(elasticService.Search<Node>(ns));
-                    edges.Add(edge);
-                }
-                output.Add(new Tuple<HashSet<Node>, HashSet<Edge>>(nodes, edges));
+                DestinationAccount = accs
+            };
+            var outcomingEdgeSearchQuery = new EdgeSearchQuery()
+            {
+                SourceAccount = accs
+            };
+            incomingEdgeSearchQuery.SetFiltersFrom(expandQuery);
+            outcomingEdgeSearchQuery.SetFiltersFrom(expandQuery);
+            var nodesId = new HashSet<string>();
+            foreach (var edge in elasticService.Search<Edge>(incomingEdgeSearchQuery))
+            {
+                nodesId.Add(edge.SourceAccount);
+                edges.Add(edge);
             }
-            return output;
+            foreach (var edge in elasticService.Search<Edge>(outcomingEdgeSearchQuery))
+            {
+                nodesId.Add(edge.DestinationAccount);
+                edges.Add(edge);
+            }
+            nodes.UnionWith(elasticService
+                .Search<Node>(
+                    new NodeSearchQuery()
+                    {
+                        AccountId = String.Join(' ', nodesId)
+                    }
+                )
+            );
+            return new Tuple<HashSet<Node>, HashSet<Edge>>(nodes, edges);
         }
 
-
-        // To improve expand
-
-
-
-        // [HttpPost]
-        // [Route("testnewexpand")]
-        // public ActionResult<List<Tuple<HashSet<Node>, HashSet<Edge>>>> Sth(/*[FromBody] string json*/)
-        // {
-        //     // var expandQuery = JsonSerializer.Deserialize<ExpandQuery>(json);
-        //     var output = new List<Tuple<HashSet<Node>, HashSet<Edge>>>();
-        //     var a = String.Join(' ',new List<string>(){
-        //         "6039548046",
-        //         "9862369812"
-        //     });
-        //     var outcomingEdgeSearchQuery = new EdgeSearchQuery()
-        //         {
-        //             SourceAccount = a
-        //         };
-        //     var b = elasticService.Search<Edge>(outcomingEdgeSearchQuery);
-        //     var g = from p in b
-        //             group p by p.SourceAccount into something
-        //             select new {Source = something.Key , Edges = something.ToList() };
-        //     return output;
-        // }
-
+        // [AnyUser]
         [HttpPost]
         [Route("flow")]
         public ActionResult<long> Flow([FromBody] Tuple<string,string> sourceAndDestinationId)
@@ -119,6 +88,7 @@ namespace MyWebApi.Controllers
             return maxFlowFinder.Find();
         }
 
+        // [AnyUser]
         [HttpGet]
         [Route("FindAllPath")]
         public IActionResult FindAllPath(string sourceId, string destinationId, int maxLength=5)

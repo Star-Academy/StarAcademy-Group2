@@ -15,7 +15,7 @@ namespace GraphLogicLib
         public Dictionary<string, int> Levels { get; set; } // <id, lvl>
         private string sourceId;
         private string destinationId;
-        private const int DefaultMaxLength = 5;
+        private const int DefaultMaxLength = 8;
 
         /// <summary>
         /// Don't forget to call initGraph() after contructing (in the API)
