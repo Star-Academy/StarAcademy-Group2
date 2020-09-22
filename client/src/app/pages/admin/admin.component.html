@@ -8,7 +8,7 @@
 </nav>
 
 <main [ngStyle]="theme.light">
-	<div class="employees-manager" *ngIf="navSelectedIndex===0">
+	<div class="employees-management" *ngIf="navSelectedIndex === 0">
 		<div [ngClass]="['card', shaking ? 'shake' : '']" [ngStyle]="shaking ? theme.danger : theme.default">
 			<div class="head">افزودن کاربر جدید</div>
 			<div class="body">
@@ -51,7 +51,12 @@
 		</div>
 	</div>
 
-	<app-settings *ngIf="navSelectedIndex===1"></app-settings>
+	<div *ngIf="navSelectedIndex === 1" class="settings card" [ngStyle]="theme.default">
+		<div class="head">تنظیمات قالب سایت</div>
+		<div class="body">
+			<theme-settings></theme-settings>
+		</div>
+	</div>
 </main>
 
 

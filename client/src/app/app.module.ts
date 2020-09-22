@@ -33,7 +33,7 @@ import { GraphTooltipComponent } from './components/graph-tooltip/graph-tooltip.
 import { NavigationComponent } from './components/navigation/navigation.component';
 import { LayoutSelectorComponent } from './components/layout-selector/layout-selector.component';
 import { AdminComponent } from './pages/admin/admin.component';
-import { SettingsComponent } from './components/settings/settings.component';
+import { ThemeSettingsComponent } from './components/theme-settings/theme-settings.component';
 
 @NgModule({
 	declarations: [
@@ -57,7 +57,7 @@ import { SettingsComponent } from './components/settings/settings.component';
 		NotFoundComponent,
 		LayoutSelectorComponent,
 		AdminComponent,
-		SettingsComponent
+		ThemeSettingsComponent
 	],
 	imports: [
 		BrowserModule,

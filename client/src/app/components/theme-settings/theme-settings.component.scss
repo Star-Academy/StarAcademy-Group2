@@ -1,0 +1,39 @@
+:host {
+	.table {
+		font-size: 1.8rem;
+
+		.row {
+			display: grid;
+			grid-template-columns: 1fr 1fr 1fr;
+			grid-template-rows: 1fr;
+			column-gap: 2rem;
+			justify-content: center;
+			align-items: center;
+
+			padding: 1rem;
+
+			&:nth-child(1) {
+				border-radius: 0.5rem 0.5rem 0 0;
+			}
+
+			&:last-child {
+				border-radius: 0 0 0.5rem 0.5rem;
+			}
+
+			&.header {
+				font-weight: 500;
+			}
+
+			.cell {
+				height: 100%;
+
+				text-align: center;
+
+				input {
+					width: 6rem;
+					height: 4rem;
+				}
+			}
+		}
+	}
+}
