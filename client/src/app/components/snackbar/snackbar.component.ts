@@ -1,40 +1,37 @@
-import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
+import { Component, ViewChild, ElementRef, Input } from '@angular/core';
+
+import { Color, ThemeService } from '../../services/theme.service';
 
 @Component({
-	selector: 'app-snackbar',
+	selector: 'snackbar',
 	templateUrl: './snackbar.component.html',
 	styleUrls: [ './snackbar.component.scss' ]
 })
-export class SnackbarComponent implements OnInit {
-	@Input() class: string = '';
-
+export class SnackbarComponent {
 	@ViewChild('snackbar') snackbar: ElementRef;
 
-	text: string = 'اسنک‌بار!';
-	duration: number = 0.0;
+	public state: string;
+	public text: string;
+	public color: Color;
 
-	timeout;
+	private timeout: number;
 
-	constructor() {}
+	public constructor(public theme: ThemeService) {
+		this.state = '';
+		this.text = 'اسنک‌بار!';
+	}
 
-	ngOnInit(): void {}
+	public show(text, color: string = 'dark', duration = 3000) {
+		if (this.state === 'show') clearTimeout(this.timeout);
 
-	public show(text, duration = 3000) {
-		if (!this.snackbar.nativeElement.classList.contains('hide')) {
-			clearTimeout(this.timeout);
-			this.hide();
-		}
-
+		this.state = 'show';
 		this.text = text;
-		this.duration = duration - 500;
-		this.snackbar.nativeElement.classList.remove('hide');
+		this.color = this.theme[color];
 
 		this.timeout = setTimeout(() => {
 			this.hide();
-		}, this.duration);
+		}, duration);
 	}
 
-	private hide() {
-		this.snackbar.nativeElement.classList.add('hide');
-	}
+	private hide = () => (this.state = '');
 }

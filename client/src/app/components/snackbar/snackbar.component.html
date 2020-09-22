@@ -1,5 +1,3 @@
-<div #snackbar id="snackbar" [class]="'hide ' + class">
+<div #snackbar id="snackbar" [class]="state" [ngStyle]="color">
 	{{text}}
 </div>
-
-<!-- [ngStyle]="{animation: 'animation-snackbar-fade-in 0.5s, animation-snackbar-fade-out 0.5s '+duration+'ms'}" -->

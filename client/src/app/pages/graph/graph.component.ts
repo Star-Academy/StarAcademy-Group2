@@ -1,12 +1,12 @@
 import { OnInit, Component, Input, ViewChild, ElementRef } from '@angular/core';
 
-import { NodeId, HoverEvent } from '../../../dependencies/ogma.min.js';
-
+import { ThemeService } from '../../services/theme.service';
 import { OgmaService } from '../../services/ogma.service';
-
-import { SearchNodesModalComponent } from '../../components/search-nodes-modal/search-nodes-modal.component.js';
-import { RadialNodeMenuComponent } from '../../components/radial-node-menu/radial-node-menu.component.js';
 import { SearchNodesService } from '../../services/search-nodes.service.js';
+
+import { GraphModalComponent } from '../../components/graph-modal/graph-modal.component.js';
+import { RadialNodeMenuComponent } from '../../components/radial-node-menu/radial-node-menu.component.js';
+import { SnackbarComponent } from '../../components/snackbar/snackbar.component.js';
 
 @Component({
 	selector: 'app-graph',
@@ -17,144 +17,210 @@ export class GraphComponent implements OnInit {
 	@ViewChild('ogmaContainer', { static: true })
 	private container;
 
-	@ViewChild('searchNodesModal') searchNodesModal: SearchNodesModalComponent;
+	@ViewChild('nodesModal') nodesModal: GraphModalComponent;
 	@ViewChild('radialComponent') radialComponent: RadialNodeMenuComponent;
 	@ViewChild('findPathMenu') findPathMenu: ElementRef;
+	@ViewChild('pathMaxLength') pathMaxLength: ElementRef;
 
-	// TODO: Remove
-	@Input() currentLayout: string = 'force';
+	@ViewChild('snackbar') snackbar: SnackbarComponent;
 
-	// TODO: Remove
-	layouts: string[] = [ 'force', 'hierarchical' ];
+	public hoveredContent;
+	public hoveredPosition: { x: number; y: number };
 
-	hoveredContent: { branchName: string; ownerId: string; ownerName: string };
-	hoveredPosition: { x: number; y: number };
+	// TODO: remove
+	public devTools: boolean = true;
 
-	devTools: boolean = true;
-	isMenuOn = false;
-
-	constructor(
-		private ogmaService: OgmaService,
-		private searchNodesService: SearchNodesService
+	public constructor(
+		public theme: ThemeService,
+		public ogmaService: OgmaService,
+		private searchService: SearchNodesService
 	) {}
 
-	ngOnInit() {
-		this.ogmaService.initConfig({
-			options: {
-				backgroundColor: '#f2f2f2',
-				directedEdges: true,
-				minimumWidth: '800',
-				minimumHeight: '600'
+	public ngOnInit() {
+		this.ogmaService.initConfig();
+		this.ogmaService.restartTabs();
+		this.setupOgmaEventHandlers();
+	}
+
+	public ngAfterContentInit() {
+		this.setOgmaContainer();
+	}
+
+	public setOgmaContainer() {
+		this.ogmaService.ogma.setContainer(this.container.nativeElement);
+	}
+
+	// TODO: Remove
+	public addSomeNode() {
+		this.searchService
+			.search('OwnerName', 'ارژنگ')
+			.subscribe((res) => this.clickedOnAddNodeButton({ node: res[0] }));
+
+		this.searchService
+			.search('OwnerName', 'دریا')
+			.subscribe((res) => this.clickedOnAddNodeButton({ node: res[0] }));
+
+		this.searchService
+			.search('OwnerName', 'افسر')
+			.subscribe((res) => this.clickedOnAddNodeButton({ node: res[0] }));
+
+		this.searchService
+			.search('OwnerName', 'ژیلا')
+			.subscribe((res) => this.clickedOnAddNodeButton({ node: res[0] }));
+
+		setTimeout(() => this.runLayout(), 500);
+	}
+
+	// TODO: use this
+	public countNodes = (): number => this.ogmaService.ogma.getNodes().size;
+
+	public clickedOnSearchNodesButton = () => this.nodesModal.open();
+
+	public clickedOnAddNodeButton = ({ node, attributes = null }) =>
+		this.ogmaService.addNode(node, attributes);
+
+	public clickedOnExpandButton = ({ nodeIds }) =>
+		this.nodesModal.open(null, 4, nodeIds);
+
+	public clickedOnFindPathButton() {
+		this.ogmaService.findPath(this.pathMaxLength.nativeElement.value);
+
+		// TODO: check if path was found
+		this.toggleFindPathMenu();
+		this.runLayout();
+	}
+
+	public toggleFindPathMenu = () =>
+		this.findPathMenu.nativeElement.classList.toggle('closed');
+
+	public lockNodes = (nodes) => this.ogmaService.lockNodes(nodes);
+	public unlockNodes = (nodes) => this.ogmaService.unlockNodes(nodes);
+
+	public toggleEdgesContentType = () =>
+		this.ogmaService.toggleEdgesContentType();
+
+	public saveGraph = () => this.ogmaService.saveGraph();
+	public loadGraph = () => document.getElementById('upload-file').click();
+
+	public attachGraphFile($event) {
+		$event.target.files[0]
+			.text()
+			.then((content) => this.ogmaService.loadGraph(content));
+	}
+
+	dragMove(e) {
+		document.getElementById('trash').style.zIndex = '20';
+		let draggable = document.getElementById('draggable');
+		draggable.style.zIndex = '20';
+		draggable.style.left = `${e.position.x}px`;
+		draggable.style.top = `${e.position.y}px`;
+	}
+
+	dragEnd(e) {
+		let trash = document.getElementById('trash');
+		trash.style.zIndex = '-1';
+		document.getElementById('draggable').style.zIndex = '-1';
+		const ogmaCoordinates = this.ogmaService.ogma.view.screenToGraphCoordinates(
+			{
+				x: e.position.x,
+				y: e.position.y
 			}
-		});
+		);
+		if (!trash.onmouseover) {
+			this.ogmaService.addNode(e.node, ogmaCoordinates);
+		}
+	}
 
-		this.ogmaService.addNode(this.searchNodesService.search('', '')[0]);
+	onTabChange(event) {
+		this.ogmaService.tabChange(event.index, this.container.nativeElement);
+	}
 
+	onTabAdd(event) {
+		this.ogmaService.tabAdd(event.index, this.container.nativeElement);
+		this.setOgmaContainer();
+		this.setupOgmaEventHandlers();
+	}
+
+	onTabDelete(event) {
+		this.ogmaService.tabDelete(event.index, this.container.nativeElement);
+	}
+
+	public stopPropagation = (e: Event) => e.stopPropagation();
+
+	public runLayout = () => this.ogmaService.runLayout();
+
+	private setupOgmaEventHandlers() {
 		this.ogmaService.ogma.events.onClick(({ target, button, domEvent }) => {
-			this.isMenuOn = this.radialComponent.close();
+			this.radialComponent.close();
 
 			if (target && target.isNode) {
 				this.hoveredContent = null;
 
 				if (button === 'right')
-					this.isMenuOn = this.radialComponent.expandMenu(target);
+					this.radialComponent.expandMenu(
+						this.ogmaService.ogma
+							.getSelectedNodes()
+							.concat(target)
+							.dedupe(),
+						target.getPosition()
+					);
 				else if (button === 'left' && domEvent.shiftKey)
-					this.searchNodesModal.open(target.getData());
-				else this.isMenuOn = this.radialComponent.close();
+					this.nodesModal.open(target.getData());
 			}
 		});
 
-		this.ogmaService.ogma.events.onMouseButtonDown((e) => {
-			if (this.isMenuOn) this.isMenuOn = this.radialComponent.close();
-		});
-
-		this.ogmaService.ogma.events.onDoubleClick(({ target }) => {
-			if (target && target.isNode) {
+		this.ogmaService.ogma.events.onDoubleClick(({ target, button }) => {
+			if (target && target.isNode && button === 'left')
 				this.ogmaService.toggleNodeLockStatus(target);
-			}
 		});
+
+		this.ogmaService.ogma.events.onMouseButtonDown(() =>
+			this.radialComponent.close()
+		);
 
 		this.ogmaService.ogma.events.onZoomProgress(() => {
-			if (this.isMenuOn) {
-				this.isMenuOn = this.radialComponent.close();
-			}
+			this.radialComponent.close();
+			this.hoveredContent = null;
 		});
 
-		this.ogmaService.ogma.events.onHover(({ x, y, target }: HoverEvent) => {
-			if (target.isNode) {
-				target.setAttributes({ outerStroke: { color: 'green' } });
+		this.ogmaService.ogma.events.onHover(({ target }) =>
+			this.updateTooltip(target)
+		);
 
-				this.hoveredPosition = {
-					x,
-					y: y + 20
-				};
+		this.ogmaService.ogma.events.onUnhover(
+			() => (this.hoveredContent = null)
+		);
+	}
 
-				this.hoveredContent = {
-					branchName: target.getData('branchName'),
-					ownerId: target.getData('ownerId'),
-					ownerName:
-						target.getData('ownerName') +
+	private updateTooltip(target) {
+		if (this.radialComponent.state !== 0) return;
+
+		let offset = 0;
+		if (target.isNode) offset = target.getAttribute('radius');
+
+		const position = target.getBoundingBox();
+		this.hoveredPosition = this.ogmaService.ogma.view.graphToScreenCoordinates(
+			{
+				x: position.cx,
+				y: position.cy - offset
+			}
+		);
+
+		if (target.isNode) {
+			this.hoveredContent = [
+				[ 'شعبه', target.getData('BranchName') ],
+				[ 'شناسه صاحب حساب', target.getData('OwnerID') ],
+				[
+					'نام صاحب حساب',
+					target.getData('OwnerName') +
 						' ' +
-						target.getData('ownerFamilyName')
-				};
-			}
-		});
-
-		this.ogmaService.ogma.events.onUnhover(({ target }: HoverEvent) => {
-			if (target.isNode) {
-				target.setAttributes({ outerStroke: null });
-
-				this.hoveredContent = null;
-			}
-		});
-	}
-
-	ngAfterContentInit() {
-		this.ogmaService.ogma.setContainer(this.container.nativeElement);
-		return this.runLayout();
-	}
-
-	// TODO: Remove
-	addNode() {
-		this.ogmaService.addNode(this.searchNodesService.search('', '')[0]);
-
-		this.isMenuOn = this.radialComponent.close();
-
-		this.runLayout();
-	}
-
-	runLayout() {
-		this.ogmaService.runLayout(this.currentLayout);
-	}
-
-	countNodes(): number {
-		return this.ogmaService.ogma.getNodes().size;
-	}
-
-	clickedOnSearchNodesButton(e) {
-		this.searchNodesModal.open();
-	}
-
-	clickedOnAddNodeButton(e) {
-		if (e.attributes) this.ogmaService.addNode(e.node, e.attributes);
-		else this.ogmaService.addNode(e.node);
-	}
-
-	clickedOnFindPathButton(e) {
-		e.stopPropagation();
-
-		// TODO: Request for path
-	}
-
-	toggleFindPathMenu(e: Event) {
-		this.findPathMenu.nativeElement.classList.toggle('closed');
-	}
-
-	lockNodes(nodes) {
-		this.ogmaService.lockNodes(nodes);
-	}
-
-	unlockNodes(nodes) {
-		this.ogmaService.unlockNodes(nodes);
+						target.getData('OwnerFamilyName')
+				]
+			];
+		} else {
+			this.hoveredContent = [
+				[ 'حجم تراکنش', target.getData('Amount') ]
+			];
+		}
 	}
 }

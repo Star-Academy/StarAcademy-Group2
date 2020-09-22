@@ -1,47 +1,67 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+
+import { SvgIconsModule } from '@ngneat/svg-icon';
+import icons from '../assets/svg/svg-icons';
+
+import { TokenInterceptorService } from './services/token-interceptor.service';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { GraphComponent } from './pages/graph/graph.component';
+import { FaqComponent } from './pages/faq/faq.component';
+import { LoginComponent } from './pages/login/login.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
 
-import { TooltipComponent } from './components/tooltip/tooltip.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
-import { SearchNodesModalComponent } from './components/search-nodes-modal/search-nodes-modal.component';
+import { GraphModalComponent } from './components/graph-modal/graph-modal.component';
 import { SearchNodesResultComponent } from './components/search-nodes-result/search-nodes-result.component';
-
-import { SvgIconsModule } from '@ngneat/svg-icon';
-import icons from '../assets/svg/svg-icons';
 import { RadialNodeMenuComponent } from './components/radial-node-menu/radial-node-menu.component';
 import { SearchNodesFormComponent } from './components/search-nodes-form/search-nodes-form.component';
 import { SearchNodesDetailsComponent } from './components/search-nodes-details/search-nodes-details.component';
 import { RoundButtonComponent } from './components/round-button/round-button.component';
-import { NodeTooltipComponent } from './components/node-tooltip/node-tooltip.component';
-import { EdgeTooltipComponent } from './components/edge-tooltip/edge-tooltip.component';
 import { SnackbarComponent } from './components/snackbar/snackbar.component';
+import { SearchEdgesFormComponent } from './components/search-edges-form/search-edges-form.component';
+import { SearchEdgesDetailsComponent } from './components/search-edges-details/search-edges-details.component';
+import { GraphTooltipComponent } from './components/graph-tooltip/graph-tooltip.component';
+import { NavigationComponent } from './components/navigation/navigation.component';
+import { LayoutSelectorComponent } from './components/layout-selector/layout-selector.component';
+import { AdminComponent } from './pages/admin/admin.component';
+import { ThemeSettingsComponent } from './components/theme-settings/theme-settings.component';
+import { TabComponent } from './components/tab/tab.component';
+import { TabGroupComponent } from './components/tab-group/tab-group.component';
 
 @NgModule({
 	declarations: [
 		AppComponent,
 		GraphComponent,
-		TooltipComponent,
 		HeaderComponent,
 		FooterComponent,
-		SearchNodesModalComponent,
+		GraphModalComponent,
 		SearchNodesResultComponent,
 		RadialNodeMenuComponent,
 		SearchNodesFormComponent,
 		SearchNodesDetailsComponent,
 		RoundButtonComponent,
-		NodeTooltipComponent,
-		EdgeTooltipComponent,
-		SnackbarComponent
+		SnackbarComponent,
+		SearchEdgesFormComponent,
+		SearchEdgesDetailsComponent,
+		GraphTooltipComponent,
+		NavigationComponent,
+		FaqComponent,
+		LoginComponent,
+		NotFoundComponent,
+		LayoutSelectorComponent,
+		AdminComponent,
+		ThemeSettingsComponent,
+		TabComponent,
+		TabGroupComponent
 	],
 	imports: [
 		BrowserModule,
@@ -54,7 +74,13 @@ import { SnackbarComponent } from './components/snackbar/snackbar.component';
 			icons
 		})
 	],
-	providers: [],
+	providers: [
+		{
+			provide: HTTP_INTERCEPTORS,
+			useClass: TokenInterceptorService,
+			multi: true
+		}
+	],
 	bootstrap: [ AppComponent ]
 })
 export class AppModule {}

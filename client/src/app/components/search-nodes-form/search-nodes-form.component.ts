@@ -1,5 +1,7 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
-import { PatternValidator, Form, NgForm } from '@angular/forms';
+import { Component, Output, EventEmitter, Input } from '@angular/core';
+
+import { Color, ThemeService } from '../../services/theme.service';
+
 import { SnackbarComponent } from '../snackbar/snackbar.component';
 
 @Component({
@@ -7,61 +9,88 @@ import { SnackbarComponent } from '../snackbar/snackbar.component';
 	templateUrl: './search-nodes-form.component.html',
 	styleUrls: [ './search-nodes-form.component.scss' ]
 })
-export class SearchNodesFormComponent implements OnInit {
+export class SearchNodesFormComponent {
 	@Input() snackbar: SnackbarComponent;
+	@Input() actionStyle: Color;
 
-	@Output() callback = new EventEmitter();
+	@Output() searchCallback = new EventEmitter();
+	@Output() shakeCallback = new EventEmitter();
 
-	numberPattern = /^\d+$/;
-	shebaPattern = /^IR(\d)+$/;
-	nonNumericalPattern = /^\D+$/;
+	public maxLength: number = 100;
+	public fieldSelectOpen: boolean = false;
 
-	patterns = {
-		branchTelephone: { pattern: this.numberPattern, length: 8 },
-		ownerId: { pattern: this.numberPattern, length: 10 },
-		ownerName: { pattern: this.nonNumericalPattern, length: 20 },
-		ownerFamilyName: { pattern: this.nonNumericalPattern, length: 40 },
-		accountType: { pattern: this.nonNumericalPattern, length: 20 },
-		accountId: { pattern: this.numberPattern, length: 10 },
-		cardId: { pattern: this.numberPattern, length: 16 },
-		sheba: { pattern: this.shebaPattern, length: 23 }
+	public options: Option[] = [
+		new Option('BranchName', 'نام شعبه'),
+		new Option('BranchTelephone', 'شماره تلفن شعبه'),
+		new Option('OwnerID', 'شناسه صاحب حساب'),
+		new Option('OwnerName', 'نام صاحب حساب'),
+		new Option('OwnerFamilyName', 'نام خانوادگی صاحب حساب'),
+		new Option('AccountType', 'نوع حساب'),
+		new Option('AccountID', 'شماره حساب'),
+		new Option('CardID', 'شماره کارت'),
+		new Option('Sheba', 'شماره شبا'),
+		new Option('BranchAddress', 'آدرس شعبه')
+	];
+
+	public selectedOption: Option = this.options[0];
+
+	private validators = {
+		BranchTelephone: new Validator(PATTERNS.numberPattern, 8),
+		OwnerID: new Validator(PATTERNS.numberPattern, 10),
+		AccountID: new Validator(PATTERNS.numberPattern, 10),
+		CardID: new Validator(PATTERNS.numberPattern, 16),
+		Sheba: new Validator(PATTERNS.shebaPattern, 23)
 	};
 
-	maxLength: number = 100;
+	public constructor(public theme: ThemeService) {}
 
-	constructor() {}
-
-	ngOnInit(): void {}
-
-	onFieldChanged(field: string) {
-		if (this.patterns[field]) this.maxLength = this.patterns[field].length;
-		else this.maxLength = 256;
+	public updateMaxLength(field: string) {
+		this.maxLength = this.validators[field]
+			? this.validators[field].length
+			: 256;
 	}
 
-	clickedOnSearchButton(form: any) {
-		const error = this.validateForm(form);
+	public clickedOnSearchButton({ query }) {
+		const field = this.selectedOption.en;
+		const error = this.validateForm(field, query);
 
 		if (!error) {
-			this.callback.emit({
-				field: form.field,
-				query: form.query
-			});
+			this.searchCallback.emit({ field, query });
 		} else {
-			this.snackbar.show(error, 3000);
+			this.snackbar.show(error, 'danger');
+			this.shakeCallback.emit();
 		}
 	}
 
-	validateForm(form: any) {
-		if (!form.field || !form.query)
-			return 'لطفاً ابتدا تمام موارد خواسته‌شده را ثبت کنید';
+	private validateForm(field: string, query: string): string {
+		if (!query) return 'لطفاً ابتدا تمام موارد خواسته‌شده را ثبت کنید';
 
-		if (
-			!this.patterns[form.field] ||
-			(form.query.length === this.patterns[form.field].length &&
-				form.query.match(this.patterns[form.field].pattern))
-		)
-			return null;
+		const validator = this.validators[field];
 
-		return 'فرمت واردشده صحیح نمی‌باشد';
+		return validator && !this.validQuery(query, validator)
+			? 'فرمت واردشده صحیح نمی‌باشد'
+			: null;
 	}
+
+	private validQuery = (query: string, validator: Validator): boolean =>
+		query.length === validator.length && validator.pattern.test(query);
 }
+
+class Validator {
+	public constructor(public pattern: RegExp, public length: number) {}
+}
+
+class Option {
+	public constructor(
+		public en: string,
+		public fa: string,
+		public selected: boolean = false,
+		public hovered: boolean = false
+	) {}
+}
+
+const PATTERNS = {
+	numberPattern: /^\d+$/,
+	shebaPattern: /^IR(\d)+$/,
+	nonNumericalPattern: /^\D+$/
+};

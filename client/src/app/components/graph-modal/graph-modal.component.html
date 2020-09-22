@@ -1,0 +1,34 @@
+<div [class]="'container ' + (state === 0 ? 'closed' : '')">
+	<div class="overlay" (click)="close()">
+		<round-button btnClass="btn-fade" icon="cross" iconSize="6"></round-button>
+	</div>
+
+	<div [ngClass]="['modal', opening ? 'open' : shaking ? 'shake' : slidingToRight ? 'slide-right' : slidingToLeft ? 'slide-left' : '']"
+		[ngStyle]="theme.default">
+		<div class="head" [ngStyle]="shaking ? theme.danger : theme.primary">
+			<span (click)="back()">
+				<svg-icon *ngIf="state > 1 && this.results.length > 0" key="arrowBack"></svg-icon>
+			</span>
+			<div>{{title}}</div>
+		</div>
+		<div class="body">
+			<search-nodes-form *ngIf="state === 1" [snackbar]="snackbar"
+				[actionStyle]="shaking ? theme.danger : theme.primary" (searchCallback)="clickedOnSearchButton($event)"
+				(shakeCallback)="shake($event)">
+			</search-nodes-form>
+
+			<search-nodes-result *ngIf="state === 2" [results]="results"
+				(addNodeCallback)="clickedOnAddNodeButton($event)" (detailsCallback)="clickedOnDetailsButton($event)"
+				(dragStartCallback)="dragStart($event)" (dragMoveCallback)="dragMove($event)"
+				(dragEndCallback)="dragEnd($event)">
+			</search-nodes-result>
+
+			<search-nodes-details *ngIf="state === 3" [node]="activeNode" [searching]="this.results.length > 0"
+				(callback)="clickedOnAddNodeButton($event)">
+			</search-nodes-details>
+
+			<search-edges-form *ngIf="state === 4" [snackbar]="snackbar" (callback)="clickedOnExpandButton($event)">
+			</search-edges-form>
+		</div>
+	</div>
+</div>

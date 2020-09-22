@@ -1,25 +1,30 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
 import { AccountNode } from '../models/AccountNode';
+
+import options from './options';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class SearchNodesService {
-	constructor() {}
+	public constructor(private httpClient: HttpClient) {}
 
-	public search(field: string, query: string): Array<AccountNode> {
-		let sample = new AccountNode();
-		sample.branchName = 'گلوبندک';
-		sample.branchTelephone = '55638667';
-		sample.ownerId = '1227114110';
-		sample.ownerName = 'افسر';
-		sample.ownerFamilyName = 'طباطبایی';
-		sample.accountType = 'پس‌انداز';
-		sample.accountId = '6534454617';
-		sample.cardId = '6104335000000190';
-		sample.sheba = 'IR120778801496000000198';
-		sample.branchAddress = 'تهران-خیابان خیام-بالاتر از چهارراه گلوبندک';
+	// TODO: update this after server changed format
+	camelize(str) {
+		return str
+			.replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {
+				return index === 0 ? word.toLowerCase() : word.toUpperCase();
+			})
+			.replace(/\s+/g, '');
+	}
 
-		return [ sample ];
+	public search(field: string, query: string) {
+		return this.httpClient.post(
+			'https://localhost:5001/userQuery/searchNode',
+			`{ "${this.camelize(field)}" : "${query}" }`,
+			options
+		);
 	}
 }

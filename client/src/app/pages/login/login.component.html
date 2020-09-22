@@ -1,0 +1,38 @@
+<snackbar #snackbar></snackbar>
+
+<div [ngClass]="['container shadow-narrow', containerClassName]">
+	<div class="form-container employee">
+		<form [ngStyle]="theme.default">
+			<div class="title">ورود کارمند</div>
+			<input [ngStyle]="theme.light" [(ngModel)]="user.username" name="username" type="text"
+				placeholder="نام کاربری" />
+			<input [ngStyle]="theme.light" [(ngModel)]="user.password" name="password" type="password"
+				placeholder="رمز عبور" />
+			<button [ngStyle]="theme.primary" (click)="userLogin()">ورود</button>
+		</form>
+	</div>
+	<div class="form-container admin">
+		<form [ngStyle]="theme.default">
+			<div class="title">ورود مدیر</div>
+			<input [ngStyle]="theme.light" [(ngModel)]="admin.username" name="username" type="text"
+				placeholder="نام کاربری" />
+			<input [ngStyle]="theme.light" [(ngModel)]="admin.password" name="password" type="password"
+				placeholder="رمز عبور" />
+			<button [ngStyle]="theme.primary" (click)="adminLogin()">ورود</button>
+		</form>
+	</div>
+	<div class="overlay-container">
+		<div class="overlay" [ngStyle]="theme.primary">
+			<div class="panel right">
+				<div class="title">سلام، روز بخیر!</div>
+				<p>در صورتی که مدیر هستید لطفاً بر روی دکمۀ پایین کلیک کنید.</p>
+				<button [ngStyle]="theme.primary.reverse" (click)="toggleStatus()">ورود مدیر</button>
+			</div>
+			<div class="panel left">
+				<div class="title">سلام، روز بخیر!</div>
+				<p>در صورتی که کارمند هستید لطفاً بر روی دکمۀ پایین کلیک کنید.</p>
+				<button [ngStyle]="theme.primary.reverse" (click)="toggleStatus()">ورود کارمند</button>
+			</div>
+		</div>
+	</div>
+</div>

@@ -39,19 +39,22 @@ $font-default;
 
 /**************** RESET ***************/
 
-* {
+*,
+*:before,
+*:after {
 	box-sizing: border-box;
 
 	margin: 0;
 	padding: 0;
 
-	&:focus {
-		outline: none;
-	}
+	font-family: $font_all;
+}
+
+*:focus {
+	outline: none;
 }
 
 html {
-	font-family: $font_all;
 	font-size: 62.5%;
 	font-weight: 300;
 }
@@ -62,6 +65,17 @@ body {
 
 a {
 	text-decoration: none;
+}
+
+input,
+button {
+	border: none;
+	outline: none;
+	background: none;
+}
+
+svg {
+	display: flex;
 }
 
 *::-webkit-scrollbar {

@@ -1,38 +1,38 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { AccountNode } from '../../models/AccountNode';
-import { OgmaService } from 'src/app/services/ogma.service';
-import { GraphService } from 'src/app/services/graph.service';
 
 @Component({
 	selector: 'search-nodes-result',
 	templateUrl: './search-nodes-result.component.html',
 	styleUrls: [ './search-nodes-result.component.scss' ]
 })
-export class SearchNodesResultComponent implements OnInit {
-	@Input() results: Array<AccountNode>;
+export class SearchNodesResultComponent {
+	@Input() results: AccountNode[];
 
 	@Output() addNodeCallback = new EventEmitter();
 	@Output() detailsCallback = new EventEmitter();
+	@Output() dragStartCallback = new EventEmitter();
+	@Output() dragMoveCallback = new EventEmitter();
+	@Output() dragEndCallback = new EventEmitter();
 
-	constructor(private ogmaService: OgmaService) {}
-
-	ngOnInit(): void {}
-
-	addNodeToGraph(e, node: AccountNode) {
-		this.addNodeCallback.emit({
-			node,
-			attributes: {
-				x: e.source.getFreeDragPosition().x,
-				y: e.source.getFreeDragPosition().y
-			}
-		});
-	}
-
-	clickedOnAddNodeButton(node: AccountNode) {
+	public clickedOnAddNodeButton = (node: AccountNode) =>
 		this.addNodeCallback.emit({ node });
-	}
 
-	clickedOnDetailsButton(node: AccountNode) {
+	public clickedOnDetailsButton = (node: AccountNode) =>
 		this.detailsCallback.emit({ node });
-	}
+
+	dragStart = () => this.dragStartCallback.emit();
+
+	dragProgress = (event, node) =>
+		this.dragMoveCallback.emit({
+			node,
+			position: event.pointerPosition
+		});
+
+	dragEnd = (event, node) =>
+		this.dragEndCallback.emit({
+			node,
+			position:
+				event.source._dragRef._pointerPositionAtLastDirectionChange
+		});
 }

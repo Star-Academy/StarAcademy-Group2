@@ -1,259 +1,164 @@
-import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { OgmaService } from '../../services/ogma.service';
 import {
-	trigger,
-	state,
-	style,
-	transition,
-	animate,
-	keyframes
-} from '@angular/animations';
+	Component,
+	ViewChild,
+	Input,
+	EventEmitter,
+	Output
+} from '@angular/core';
+import { ThemeService } from 'src/app/services/theme.service.js';
+
+import { NodeList } from '../../../dependencies/ogma.min.js';
+
+import { OgmaService } from '../../services/ogma.service';
+
+import { SnackbarComponent } from '../snackbar/snackbar.component';
 
 @Component({
 	selector: 'radial-node-menu',
 	templateUrl: './radial-node-menu.component.html',
-	styleUrls: [ './radial-node-menu.component.scss' ],
-	animations: [
-		trigger('menuState', [
-			state(
-				'closed',
-				style({
-					display: 'none'
-				})
-			),
-			state(
-				'open',
-				style({
-					display: 'block'
-				})
-			),
-			transition(
-				'closed => open',
-				animate(
-					'300ms',
-					keyframes([
-						style({ display: 'none' }),
-						style({ display: 'block' })
-					])
-				)
-			),
-			transition(
-				'open => closed',
-				animate(
-					'300ms',
-					keyframes([
-						style({ display: 'block' }),
-						style({ display: 'none' })
-					])
-				)
-			)
-		])
-	]
+	styleUrls: [ './radial-node-menu.component.scss' ]
 })
-export class RadialNodeMenuComponent implements AfterViewInit {
-	@ViewChild('menu') menuElement: ElementRef;
+export class RadialNodeMenuComponent {
+	@Input() snackbar: SnackbarComponent;
 
-	menu;
-	status: number = 0;
+	@Output() expandCallback = new EventEmitter();
 
-	menuOffset = { x: 0, y: 0 };
+	public menu: {
+		class: string;
+		left: number;
+		top: number;
+	};
+	public items: Item[];
+	public state: number;
 
-	node;
-	sourceFlag = false;
-	targetFlag = false;
+	private nodes: NodeList;
+	private location: { x: number; y: number };
+	private menuOffset: { x: number; y: number };
+	private sourceFlag: boolean;
+	private targetFlag: boolean;
 
-	constructor(private ogmaService: OgmaService) {}
+	public constructor(
+		public theme: ThemeService,
+		public ogmaService: OgmaService
+	) {
+		this.menu = {
+			class: '',
+			left: 0,
+			top: 0
+		};
 
-	ngAfterViewInit(): void {
-		this.menu = this.menuElement.nativeElement;
+		this.setState(0);
+		this.menuOffset = { x: 40, y: 40 };
+
+		this.items = [
+			new Item('بسط دادن', 'expand', () => this.expandNodes()),
+			new Item('حذف', 'garbageBin', () => this.deleteNodes()),
+			new Item('قفل‌کردن', 'lock', () => this.lockNodes()),
+			new Item('بازکردن قفل', 'unlock', () => this.unlockNodes()),
+			new Item('', 'dollar', () => this.selectAsSource()),
+			new Item('', 'shirt', () => this.selectAsTarget())
+		];
 	}
 
-	get menuStateStatus() {
-		switch (this.status) {
-			case 0:
-				return 'closed';
-			case 1:
-				return 'open';
-		}
+	private setState(state: number) {
+		this.state = state;
+		this.menu.class = state === 1 ? 'open' : '';
 	}
 
-	expandMenu(node) {
-		this.node = node;
+	public expandMenu(nodes: NodeList, location: { x: number; y: number }) {
+		this.setState(1);
+		this.nodes = nodes;
+		this.location = this.ogmaService.ogma.view.graphToScreenCoordinates(
+			location
+		);
 
-		let pos = this.ogmaService.ogma.view.graphToScreenCoordinates({
-			x: node.getAttribute('x'),
-			y: node.getAttribute('y')
-		});
-
-		this.status = 1;
-		this.menu.classList.add('open');
-		this.menu.style.left = `${pos.x + this.menuOffset.x + 40}px`;
-		this.menu.style.top = `${pos.y + this.menuOffset.y + 40}px`;
-		this.menu.style.transform = 'scale(2)';
-		this.menu.addEventListener('click', (e) => {
-			this.close();
-		});
+		this.menu = {
+			...this.menu,
+			left: (this.location.x + this.menuOffset.x) | 0,
+			top: (this.location.y + this.menuOffset.y) | 0
+		};
 
 		this.setSourceState();
 		this.setTargetState();
-
-		return true;
 	}
 
-	changeOnZooming() {
-		let pos = this.ogmaService.ogma.view.graphToScreenCoordinates({
-			x: this.node.getAttribute('x'),
-			y: this.node.getAttribute('y')
-		});
-		this.menu.style.left = `${pos.x + this.menuOffset.x}px`;
-		this.menu.style.top = `${pos.y + this.menuOffset.y}px`;
-	}
+	public close = () => this.setState(0);
+	public lockNodes = () => this.ogmaService.lockNodes(this.nodes);
+	public unlockNodes = () => this.ogmaService.unlockNodes(this.nodes);
+	public deleteNodes = () => this.ogmaService.removeNode(this.nodes.getId());
 
-	close() {
-		this.status = 0;
-		this.menu.classList.remove('open');
-		this.menu.style.transform = 'scale(0)';
+	public expandNodes = () =>
+		this.expandCallback.emit({ nodeIds: this.nodes.getId() });
 
-		return false;
-	}
-
-	lockNode() {
-		this.ogmaService.lockNodes(this.node);
-		this.close();
-	}
-
-	unlockNode() {
-		this.ogmaService.unlockNodes(this.node);
-		this.close();
-	}
-
-	expandNode() {
-		this.ogmaService.expandNode(this.node.getId());
-		this.close();
-	}
-
-	deleteNode() {
-		this.ogmaService.removeNode(this.node.getId());
-		this.close();
-	}
-
-	selectAsSource() {
-		if (this.sourceFlag) {
+	public selectAsSource() {
+		if (this.nodes.size > 1) {
+			this.snackbar.show('فقط یک حساب میتواند به عنوان مبدأ تعیین شود');
+		} else if (this.sourceFlag) {
 			this.ogmaService.removeSource();
-			this.close();
 		} else {
-			this.ogmaService.setSource(this.node);
-			this.close();
+			if (this.targetFlag) this.ogmaService.removeTarget();
+			this.ogmaService.setSource(this.nodes.get(0));
 		}
 	}
 
-	selectAsTarget() {
-		if (this.targetFlag) {
+	public selectAsTarget() {
+		if (this.nodes.size > 1) {
+			this.snackbar.show('فقط یک حساب میتواند به عنوان مقصد تعیین شود');
+		} else if (this.targetFlag) {
 			this.ogmaService.removeTarget();
-			this.close();
 		} else {
-			this.ogmaService.setTarget(this.node);
-			this.close();
+			if (this.sourceFlag) this.ogmaService.removeSource();
+			this.ogmaService.setTarget(this.nodes.get(0));
 		}
 	}
 
-	setSourceFlag() {
-		if (
-			this.ogmaService.getSourceNode() &&
-			this.ogmaService.getSourceNode().getId() === this.node.getId()
-		) {
-			this.sourceFlag = true;
-		} else {
-			this.sourceFlag = false;
-		}
-	}
-
-	setTargetFlag() {
-		if (
-			this.ogmaService.getTargetNode() &&
-			this.ogmaService.getTargetNode().getId() === this.node.getId()
-		) {
-			this.targetFlag = true;
-		} else {
-			this.targetFlag = false;
-		}
-	}
-
-	setSourceState() {
+	private setSourceState() {
 		this.setSourceFlag();
-		if (this.sourceFlag) {
-			this.deselectSource();
+
+		if (!this.sourceFlag) {
+			this.items[4].title = 'انتخاب به عنوان مبدأ';
+			this.items[4].active = false;
 		} else {
-			this.sourceButton();
+			this.items[4].title = 'لغو انتخاب';
+			this.items[4].active = true;
 		}
 	}
 
-	setTargetState() {
+	private setTargetState() {
 		this.setTargetFlag();
-		if (this.targetFlag) {
-			this.deselectTarget();
+
+		if (!this.targetFlag) {
+			this.items[5].title = 'انتخاب به عنوان مقصد';
+			this.items[5].active = false;
 		} else {
-			this.targetButton();
+			this.items[5].title = 'لغو انتخاب';
+			this.items[5].active = true;
 		}
 	}
 
-	sourceButton() {
-		let button = document.getElementById('source-select');
-		button.title = 'select as source';
-		button.style.background = '#ffb726';
-		button.addEventListener('mouseover', (e) => {
-			button.style.color = '#ffb726';
-			button.style.background = 'white';
-		});
-
-		button.addEventListener('mouseleave', (e) => {
-			button.style.background = '#ffb726';
-			button.style.color = 'white';
-		});
+	private setSourceFlag() {
+		this.sourceFlag =
+			this.nodes.size === 1 &&
+			this.ogmaService.getSourceNode() &&
+			this.ogmaService.getSourceNode().getId() ===
+				this.nodes.get(0).getId();
 	}
 
-	targetButton() {
-		let button = document.getElementById('target-select');
-		button.title = 'select as target';
-		button.style.background = '#ffb726';
-		button.addEventListener('mouseover', (e) => {
-			button.style.color = '#ffb726';
-			button.style.background = 'white';
-		});
-
-		button.addEventListener('mouseleave', (e) => {
-			button.style.background = '#ffb726';
-			button.style.color = 'white';
-		});
+	private setTargetFlag() {
+		this.targetFlag =
+			this.nodes.size === 1 &&
+			this.ogmaService.getTargetNode() &&
+			this.ogmaService.getTargetNode().getId() ===
+				this.nodes.get(0).getId();
 	}
+}
 
-	deselectSource() {
-		let button = document.getElementById('source-select');
-		button.title = 'deselct';
-		button.style.background = 'cornflowerblue';
-		button.addEventListener('mouseover', (e) => {
-			button.style.color = 'cornflowerblue';
-			button.style.background = 'white';
-		});
-
-		button.addEventListener('mouseleave', (e) => {
-			button.style.background = 'cornflowerblue';
-			button.style.color = 'white';
-		});
-	}
-
-	deselectTarget() {
-		let button = document.getElementById('target-select');
-		button.title = 'deselct';
-		button.style.background = 'cornflowerblue';
-		button.addEventListener('mouseover', (e) => {
-			button.style.color = 'cornflowerblue';
-			button.style.background = 'white';
-		});
-
-		button.addEventListener('mouseleave', (e) => {
-			button.style.background = 'cornflowerblue';
-			button.style.color = 'white';
-		});
-	}
+class Item {
+	public constructor(
+		public title: any,
+		public icon: string,
+		public callback: any,
+		public active: boolean = false,
+		public hovered: boolean = false
+	) {}
 }

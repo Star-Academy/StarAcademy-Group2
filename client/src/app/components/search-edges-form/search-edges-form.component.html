@@ -1,0 +1,39 @@
+<form #searchForm="ngForm" (ngSubmit)="clickedOnSearchButton(searchForm.value)">
+	<div class="item">
+		<label class="text-default-25" for="transaction-amount-floor-input">از مبلغ</label>
+		<input class="input-default" ngModel name="amountFloor" id="transaction-amount-floor-input" type="number"
+			placeholder="مثال: 100000000">
+	</div>
+
+	<div class="item">
+		<label class="text-default-25" for="transaction-amount-ceiling-input">تا مبلغ</label>
+		<input class="input-default" ngModel name="amountCeiling" id="transaction-amount-ceiling-input" type="number"
+			placeholder="مثال: 999999999">
+	</div>
+
+	<div class="item">
+		<label class="text-default-25" for="transaction-date-floor-input">از تاریخ</label>
+		<input class="input-default" ngModel name="dateFloor" id="transaction-date-floor-input" type="date"
+			placeholder="مثال: 1390-12-30">
+	</div>
+
+	<div class="item">
+		<label class="text-default-25" for="transaction-date-ceiling-input">تا تاریخ</label>
+		<input class="input-default" ngModel name="dateCeiling" id="transaction-date-ceiling-input" type="date"
+			placeholder="مثال: 1399-12-30">
+	</div>
+
+	<div class="item">
+		<label class="text-default-25" for="transaction-id-input">شناسه</label>
+		<input class="input-default" ngModel name="transactionId" id="transaction-id-input" type="text"
+			placeholder="مثال: 153348811341">
+	</div>
+
+	<div class="item">
+		<label class="text-default-25" for="transaction-type-input">نوع</label>
+		<input class="input-default" ngModel name="transactionType" id="transaction-type-input" type="text"
+			placeholder="مثال: پایا">
+	</div>
+
+	<button class="btn btn-primary" type="submit">بسط دادن گراف</button>
+</form>

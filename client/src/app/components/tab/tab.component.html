@@ -1,0 +1,9 @@
+<div class="tab" [ngClass]="{'active': isActive}">
+	<span (click)="clickOnTab($event)">
+		<label (dblclick)="onDoubleClick($event)">{{label}}</label>
+	</span>
+	<span class="icons">
+		<round-button btnClass="btn-secondary btn-secondary-success" icon="cross" iconSize="3"
+			(callback)="clickedOnCloseTab($event)"></round-button>
+	</span>
+</div>

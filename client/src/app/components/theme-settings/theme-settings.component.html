@@ -1,0 +1,27 @@
+<div class="table">
+	<div class="row header" [ngStyle]="theme.primary">
+		<div class="cell">نمونه</div>
+		<div class="cell">رنگ پس‌زمینه</div>
+		<div class="cell">رنگ نوشته</div>
+		<div class="cell">بازنشانی</div>
+	</div>
+	<div *ngFor="let item of items; index as i" class="row" [ngStyle]="rowStyle(i)" (mouseover)="hoveredRowIndex = i"
+		(mouseleave)="hoveredRowIndex = -1">
+		<div class="cell" [ngStyle]="theme[item.name]">
+			<span class="title">{{item.title}}</span>
+		</div>
+		<div class="cell">
+			<input type="color" [value]="theme[item.name].background" (input)="changedColor($event, true, i)">
+		</div>
+		<div class="cell">
+			<input type="color" [value]="theme[item.name].color" (input)="changedColor($event, false, i)">
+		</div>
+		<div class="cell icon clickable" [ngStyle]="theme.warning" (click)="revertChanges(i)">
+			<span>
+				<svg-icon key="reload"></svg-icon>
+			</span>
+		</div>
+	</div>
+</div>
+
+<div class="save-button" [ngStyle]="theme.primary" (click)="saveChanges()">ثبت تغییرات</div>

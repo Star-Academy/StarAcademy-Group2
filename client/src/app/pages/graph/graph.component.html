@@ -1,62 +1,100 @@
-<search-nodes-modal #searchNodesModal (callback)="clickedOnAddNodeButton($event)"></search-nodes-modal>
-<radial-node-menu #radialComponent></radial-node-menu>
-<node-tooltip *ngIf="hoveredContent" [content]="hoveredContent" [position]="hoveredPosition"></node-tooltip>
-<div #findPathMenu class="find-path btn btn-primary closed" (click)="toggleFindPathMenu($event)">
-	<span class="title">محاسبه مسیر</span>
-	<div class="form">
-		<span class="label">حداکثر طول:</span>
-		<input type="number" min="1" max="7" value="1">
+<div class="overlays">
+	<snackbar #snackbar></snackbar>
+
+	<graph-modal #nodesModal [snackbar]="snackbar" (addNodeCallback)="clickedOnAddNodeButton($event)"
+		(dragMoveCallback)="dragMove($event)" (dragEndCallback)="dragEnd($event)">
+	</graph-modal>
+
+	<div #findPathMenu *ngIf="ogmaService.getSourceNode() && ogmaService.getTargetNode()"
+		class="find-path btn btn-primary closed" (click)="toggleFindPathMenu($event)">
+		<span class="title">محاسبه مسیر</span>
+		<div class="form-container" (click)="stopPropagation($event)">
+			<div class="form">
+				<span class="label">حداکثر طول:</span>
+				<input #pathMaxLength type="number" min="1" max="5" value="1">
+			</div>
+			<div class="btn btn-primary-reverse" (click)="clickedOnFindPathButton($event)">پردازش</div>
+		</div>
 	</div>
-	<div class="btn btn-primary-reverse" (click)="clickedOnFindPathButton($event)">پردازش</div>
 </div>
 
-<!-- *ngIf="ogmaService.sourceNode && ogmaService.targetNode" -->
+<header>
+	<div class="logo">TODO: logo</div>
+</header>
 
-<nav class="bg-primary text-default-05">
-	<a class="logo text-default-05" href="/">لوگو</a>
-	<ul>
-		<div class="top">
-			<li class="button-primary">
-				<svg-icon key="nodes"></svg-icon>
-				<span>گراف</span>
-			</li>
-			<li class="button-primary">
-				<svg-icon key="settings"></svg-icon>
-				<span>تنظیمات</span>
-			</li>
-		</div>
-		<div class="bottom">
-			<li class="button-primary">
-				<svg-icon key="logout"></svg-icon>
-				<span>خروج</span>
-			</li>
-		</div>
-	</ul>
+<nav>
+	<graph-tab-group class="tab" (onTabChange)="onTabChange($event)" (onTabAdd)="onTabAdd($event)"
+		(onTabDelete)="onTabDelete($event)">
+	</graph-tab-group>
 </nav>
 
-<main>
-	<round-button btnClass="btn-secondary" icon="search" iconSize="6" (callback)="clickedOnSearchNodesButton($event)">
-	</round-button>
-	<div #ogmaContainer id="ogma-container"></div>
-</main>
+<main cdkDropList>
+	<div class="toolbar" [ngStyle]="theme.light">
+		<div class="right">
+			<div class="btn" [ngStyle]="theme.default" (click)="addSomeNode()">
+				<span class="icon">
+					<svg-icon key="plus"></svg-icon>
+				</span>
+				<span class="text">دادۀ نمونه</span>
+			</div>
 
-<div *ngIf="devTools" class="dev-tools bg-primary text-default-complement">
-	<span class="title">DevTools</span>
-	<div class="nodes-count">
-		<span class="label text-default-10">Nodes Count: </span>
-		<span class="value">{{countNodes()}}</span>
-	</div>
-	<div class="add-node">
-		<button class="btn text-primary" (click)="addNode()">Add a node</button>
-	</div>
-	<div class="layouts">
-		<span class="label text-default-10">Layouts</span>
-		<div class="value">
-			<div *ngFor="let layout of layouts">
-				<input [id]="layout" type="radio" name="layout" [(ngModel)]="currentLayout" [value]="layout"
-					(change)="runLayout()" />
-				<label [attr.for]="layout">{{layout | titlecase}}</label>
+			<div class="btn" [ngStyle]="theme.default" (click)="toggleEdgesContentType()">
+				<span class="icon">
+					<svg-icon key="edgesContentType"></svg-icon>
+				</span>
+				<span class="text">تغییر نما</span>
+			</div>
+
+			<div class="btn" [ngStyle]="theme.default" (click)="runLayout()">
+				<span class="icon">
+					<svg-icon key="layout"></svg-icon>
+				</span>
+				<span class="text">اعمال چیدمان</span>
+			</div>
+
+			<div class="btn" [ngStyle]="theme.default" (click)="saveGraph()">
+				<span class="icon">
+					<svg-icon key="saveGraph"></svg-icon>
+				</span>
+				<span class="text">ذخیرۀ گراف</span>
+			</div>
+
+			<div class="btn" [ngStyle]="theme.default" (click)="loadGraph()">
+				<span class="icon">
+					<svg-icon key="loadGraph"></svg-icon>
+				</span>
+				<span class="text">بارگذاری گراف</span>
+			</div>
+
+			<input [style.display]="'none'" id="upload-file" type="file" name="upload-file" accept=".json"
+				ngf-max-size="2MB" (change)="attachGraphFile($event)">
+		</div>
+
+		<div class="left">
+			<div class="btn" [ngStyle]="theme.default" (click)="clickedOnSearchNodesButton()">
+				<span class="icon">
+					<svg-icon key="search"></svg-icon>
+				</span>
+				<span class="text">جستجو</span>
 			</div>
 		</div>
+
+		<!-- <div class="nodes-count">
+			<span class="label text-default-10">Nodes Count: </span>
+			<span class="value">{{countNodes()}}</span>
+		</div> -->
 	</div>
-</div>
+
+	<!-- <div id="draggable"><img src="../../../assets/svg/washing_machine.svg"></div>
+	<div id="trash"><img src="../../../assets/svg/cross.svg"></div> -->
+
+	<div #ogmaContainer id="ogma-container" onclick="event.stopPropagation()">
+		<radial-node-menu #radialComponent [snackbar]="snackbar" (expandCallback)="clickedOnExpandButton($event)">
+		</radial-node-menu>
+
+		<graph-tooltip *ngIf="hoveredContent" [content]="hoveredContent" [position]="hoveredPosition">
+		</graph-tooltip>
+
+		<layout-selector></layout-selector>
+	</div>
+</main>

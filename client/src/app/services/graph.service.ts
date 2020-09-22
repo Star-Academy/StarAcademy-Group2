@@ -2,22 +2,89 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { AccountNode } from '../models/AccountNode';
-import { TransactionEdge } from '../models/TransactionEdge';
+
+import options from './options';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class GraphService {
-	constructor(private httpClient: HttpClient) {}
+	public constructor(private httpClient: HttpClient) {}
 
 	public addNode(node: AccountNode) {
 		return this.httpClient.post(
 			'https://localhost:5001/mapState/addNode',
-			node.accountId
+			`"${node.AccountID}"`,
+			options
 		);
 	}
 
-	public expandRequest(nodeIds, response) {
-		this.httpClient.post('https://localhost:5001/search/', nodeIds);
+	public expand(payload) {
+		return this.httpClient.post(
+			'https://localhost:5001/UserQuery/expand',
+			payload,
+			options
+		);
+	}
+
+	public deleteNode(nodeId) {
+		return this.httpClient.post(
+			'https://localhost:5001/MapState/deleteNode',
+			`"${nodeId}"`,
+			options
+		);
+	}
+
+	public restartTabs() {
+		return this.httpClient.post(
+			'https://localhost:5001/MapState/createMap',
+			options
+		);
+	}
+
+	public addTab() {
+		return this.httpClient.post(
+			'https://localhost:5001/MapState/createMap',
+			options
+		);
+	}
+
+	public changeTab(index) {
+		return this.httpClient.post(
+			'https://localhost:5001/MapState/switchMap',
+			index,
+			options
+		);
+	}
+
+	public deleteTab(index) {
+		return this.httpClient.post(
+			'https://localhost:5001/MapState/deleteMap',
+			index,
+			options
+		);
+	}
+
+	public findPath(sourceId, destinationId, maxLength) {
+		maxLength = Math.max(1, Math.min(5, maxLength));
+
+		return this.httpClient.get(
+			'https://localhost:5001/UserQuery/FindAllPath',
+			{
+				params: {
+					sourceId,
+					destinationId,
+					maxLength
+				}
+			}
+		);
+	}
+
+	public findMaxFlow(source, target) {
+		return this.httpClient.post(
+			'https://localhost:5001/UserQuery/flow',
+			{ item1: source, item2: target },
+			options
+		);
 	}
 }
