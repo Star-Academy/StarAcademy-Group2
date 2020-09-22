@@ -34,6 +34,8 @@ import { NavigationComponent } from './components/navigation/navigation.componen
 import { LayoutSelectorComponent } from './components/layout-selector/layout-selector.component';
 import { AdminComponent } from './pages/admin/admin.component';
 import { ThemeSettingsComponent } from './components/theme-settings/theme-settings.component';
+import { TabComponent } from './components/tab/tab.component';
+import { TabGroupComponent } from './components/tab-group/tab-group.component';
 
 @NgModule({
 	declarations: [
@@ -57,7 +59,9 @@ import { ThemeSettingsComponent } from './components/theme-settings/theme-settin
 		NotFoundComponent,
 		LayoutSelectorComponent,
 		AdminComponent,
-		ThemeSettingsComponent
+		ThemeSettingsComponent,
+		TabComponent,
+		TabGroupComponent
 	],
 	imports: [
 		BrowserModule,

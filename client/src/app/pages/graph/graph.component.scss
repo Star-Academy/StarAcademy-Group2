@@ -25,6 +25,12 @@
 		z-index: 2;
 
 		min-height: 4rem;
+
+		.tab {
+			display: block;
+			position: relative;
+			border: 5px solid red;
+		}
 	}
 
 	main {

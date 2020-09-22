@@ -44,10 +44,8 @@ export default {
 				},
 				shape: { head: 'arrow' },
 				color: (edge) => {
-					const gb = Math.floor(
-						255 *
-							(1 - +edge.getData('Amount') / maxTransactionAmount)
-					);
+					let gb = 1 - +edge.getData('Amount') / maxTransactionAmount;
+					gb = Math.max(60, Math.min(200, Math.floor(255 * gb)));
 
 					return `rgb(255, ${gb}, ${gb})`;
 				},

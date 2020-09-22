@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 import { ThemeService } from '../../services/theme.service';
@@ -29,7 +29,7 @@ export class AdminComponent implements OnInit {
 		new Item('بارگذاری تراکنش‌های بانکی'),
 		new Item('خروج')
 	];
-	public navSelectedIndex: number = 1;
+	public navSelectedIndex: number = 0;
 
 	public users: UserAccount[] = [];
 
@@ -68,7 +68,7 @@ export class AdminComponent implements OnInit {
 			.then((content) =>
 				this.sendCSV(
 					content,
-					'https://localhost:5001/ImportResource/importAccounts'
+					'https://localhost:5001/ImportResource/importAccounts/'
 				)
 			);
 	}
@@ -85,7 +85,10 @@ export class AdminComponent implements OnInit {
 	}
 
 	public sendCSV(content: string, url: string) {
-		this.httpClient.post(url, content, options).subscribe(
+		// const headers = new HttpHeaders().set('Content-Type', 'text/plain');
+		console.log(content);
+
+		this.httpClient.post(url, `${content}`, options).subscribe(
 			(_) => {
 				this.snackbar.show(
 					'درخواست بارگذاری اطلاعات به درستی انجام شد',

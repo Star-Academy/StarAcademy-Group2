@@ -22,7 +22,14 @@ import configs, {
 	providedIn: 'root'
 })
 export class OgmaService {
+	public ogmaArray = [];
 	public ogma: Ogma;
+	public tabIndex;
+
+	private sourceNode: RawNode[] = [];
+	private targetNode: RawNode[] = [];
+
+	private edgeNormalContentType: boolean[] = [];
 
 	public layouts: Name[] = [
 		new Name('force', 'فورس'),
@@ -39,22 +46,74 @@ export class OgmaService {
 	public currentLayout: Name = this.layouts[2];
 	public currentDirection: Name = this.directions[2];
 
-	private sourceNode: RawNode;
-	private targetNode: RawNode;
-
-	private edgeNormalContentType: boolean;
+	public configuration = {
+		options: {
+			backgroundColor: '#ffffff',
+			directedEdges: true,
+			minimumWidth: '800',
+			minimumHeight: '600'
+		}
+	};
 
 	public constructor(private graphService: GraphService) {}
 
-	public initConfig(configuration = {}) {
-		this.ogma = new Ogma(configuration);
-		this.edgeNormalContentType = true;
+	public initConfig() {
+		this.ogma = new Ogma(this.configuration);
+		this.setInitialStyles(this.ogma);
+		this.edgeNormalContentType.push(true);
+		this.sourceNode.push(null);
+		this.targetNode.push(null);
+		this.tabIndex = 0;
+		this.ogmaArray.push(this.ogma);
+	}
 
-		this.setInitialStyles();
+	tabChange(index, container) {
+		this.tabIndex = index;
+		this.ogma.setContainer(null);
+		this.ogma = this.ogmaArray[this.tabIndex];
+		this.ogma.setContainer(container);
+
+		this.graphService.changeTab(this.tabIndex).subscribe();
+		this.ogma.view.locateGraph();
+	}
+
+	tabAdd(index, container) {
+		this.graphService.addTab().subscribe();
+		let temp = new Ogma(this.configuration);
+		this.setInitialStyles(temp);
+		this.edgeNormalContentType.push(true);
+		this.sourceNode.push(null);
+		this.targetNode.push(null);
+		this.ogmaArray.push(temp);
+		this.tabChange(index, container);
+	}
+
+	tabDelete(index, container) {
+		this.graphService.deleteTab(index).subscribe();
+		this.ogmaArray.splice(index, 1);
+		this.edgeNormalContentType.splice(index, 1);
+		this.sourceNode[this.tabIndex].splice(index, 1);
+		this.targetNode[this.tabIndex].splice(index, 1);
+		if (this.tabIndex == index) {
+			if (this.tabIndex == 0) {
+				this.tabChange(0, container);
+			} else {
+				this.tabChange(index - 1, container);
+			}
+		} else if (this.tabIndex > index) {
+			this.tabIndex -= 1;
+		}
+		this.graphService.changeTab(this.tabIndex);
+	}
+
+	restartTabs() {
+		this.graphService.restartTabs().subscribe();
 	}
 
 	public addNode(data: AccountNode, attributes?, register = true) {
 		data['totalDeposit'] = 0;
+		console.log(data);
+
 		const node = this.ogma.addNode({
 			data,
 			attributes,
@@ -87,54 +146,56 @@ export class OgmaService {
 			? this.lockNodes(node)
 			: this.unlockNodes(node);
 
-	public getSourceNode = () => this.sourceNode;
-	public getTargetNode = () => this.targetNode;
+	public getSourceNode = () => this.sourceNode[this.tabIndex];
+	public getTargetNode = () => this.targetNode[this.tabIndex];
 
 	public setSource(node: Node) {
-		if (this.sourceNode) this.removeSource();
-		this.sourceNode = node;
+		if (this.sourceNode[this.tabIndex]) this.removeSource();
+		this.sourceNode[this.tabIndex] = node;
 
-		this.sourceNode.setAttributes(configs.classes.source);
+		this.sourceNode[this.tabIndex].setAttributes(configs.classes.source);
 	}
 
 	public setTarget(node: RawNode) {
-		if (this.targetNode) this.removeTarget();
-		this.targetNode = node;
+		if (this.targetNode[this.tabIndex]) this.removeTarget();
+		this.targetNode[this.tabIndex] = node;
 
-		this.targetNode.setAttributes(configs.classes.target);
+		this.targetNode[this.tabIndex].setAttributes(configs.classes.target);
 	}
 
 	public removeSource() {
-		this.sourceNode.setAttributes(configs.classes.normal);
-		this.sourceNode = null;
+		this.sourceNode[this.tabIndex].setAttributes(configs.classes.normal);
+		this.sourceNode[this.tabIndex] = null;
 	}
 
 	public removeTarget() {
-		this.targetNode.setAttributes(configs.classes.normal);
-		this.targetNode = null;
+		this.targetNode[this.tabIndex].setAttributes(configs.classes.normal);
+		this.targetNode[this.tabIndex] = null;
 	}
 
 	public expand(nodeIds: string[], filters) {
 		let request = { accounts: nodeIds, ...filters };
 
-		this.graphService.expand(request).subscribe((res: any[]) => {
-			res.forEach(({ item1, item2 }) => {
-				item1.forEach((node) => this.addNode(node));
-				item2.forEach((edge) => this.addEdge(edge));
-			});
+		this.graphService.expand(request).subscribe((res: { item1; item2 }) => {
+			res.item1.forEach((node) => this.addNode(node));
+			res.item2.forEach((edge) => this.addEdge(edge));
 		});
 	}
 
 	public findPath(maxLength: number) {
 		this.ogma.removeNodes(this.ogma.getNodes('raw'));
 
-		this.setSource(this.addNode(this.sourceNode.getData(), null, false));
-		this.setTarget(this.addNode(this.targetNode.getData(), null, false));
+		this.setSource(
+			this.addNode(this.sourceNode[this.tabIndex].getData(), null, false)
+		);
+		this.setTarget(
+			this.addNode(this.targetNode[this.tabIndex].getData(), null, false)
+		);
 
-		const sourceId = this.sourceNode.getId();
-		const targetId = this.targetNode.getId();
+		const sourceId = this.sourceNode[this.tabIndex].getId();
+		const targetId = this.targetNode[this.tabIndex].getId();
 
-		this.graphService.findMaxFlow(sourceId, targetId).subscribe((res) => {
+		/* this.graphService.findMaxFlow(sourceId, targetId).subscribe((res) => {
 			this.ogma.addEdge({
 				id: 'dummy',
 				source: sourceId,
@@ -149,12 +210,12 @@ export class OgmaService {
 				attributes: configs.classes.maxFlow,
 				data: { Amount: res }
 			});
-		});
+		}); */
 
 		this.graphService
 			.findPath(
-				this.sourceNode.getId(),
-				this.targetNode.getId(),
+				this.sourceNode[this.tabIndex].getId(),
+				this.targetNode[this.tabIndex].getId(),
 				maxLength
 			)
 			.subscribe((res: any) => {
@@ -166,7 +227,9 @@ export class OgmaService {
 	}
 
 	public toggleEdgesContentType() {
-		this.edgeNormalContentType = !this.edgeNormalContentType;
+		this.edgeNormalContentType[this.tabIndex] = !this.edgeNormalContentType[
+			this.tabIndex
+		];
 
 		this.updateEdgesContent();
 	}
@@ -192,20 +255,22 @@ export class OgmaService {
 		this.ogma.layouts[this.currentLayout.en]({
 			arrangeComponents: 'fit',
 			locate: true,
-			direction: this.currentDirection.en
+			direction: this.currentDirection.en,
+			nodeDistance: 30,
+			levelDistance: 40
 		});
 	}
 
-	private setInitialStyles() {
-		this.ogma.styles.setSelectedNodeAttributes(
+	private setInitialStyles(ogma) {
+		ogma.styles.setSelectedNodeAttributes(
 			configs.attributes.default.selectedNodes
 		);
 
-		this.ogma.styles.setHoveredNodeAttributes(
+		ogma.styles.setHoveredNodeAttributes(
 			configs.attributes.default.hoveredNodes
 		);
 
-		this.ogma.styles.addRule({
+		ogma.styles.addRule({
 			nodeAttributes: configs.attributes.default.nodes,
 			edgeAttributes: configs.attributes.default.edges
 		});
@@ -252,7 +317,7 @@ export class OgmaService {
 	}
 
 	private updateEdgesContent(edges: EdgeList = this.ogma.getEdges()) {
-		const attributes = this.edgeNormalContentType
+		const attributes = this.edgeNormalContentType[this.tabIndex]
 			? configs.attributes.edgesAmount
 			: configs.attributes.edgesPercent;
 

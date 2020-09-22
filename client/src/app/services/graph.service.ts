@@ -35,6 +35,36 @@ export class GraphService {
 		);
 	}
 
+	public restartTabs() {
+		return this.httpClient.post(
+			'https://localhost:5001/MapState/createMap',
+			options
+		);
+	}
+
+	public addTab() {
+		return this.httpClient.post(
+			'https://localhost:5001/MapState/createMap',
+			options
+		);
+	}
+
+	public changeTab(index) {
+		return this.httpClient.post(
+			'https://localhost:5001/MapState/switchMap',
+			index,
+			options
+		);
+	}
+
+	public deleteTab(index) {
+		return this.httpClient.post(
+			'https://localhost:5001/MapState/deleteMap',
+			index,
+			options
+		);
+	}
+
 	public findPath(sourceId, destinationId, maxLength) {
 		maxLength = Math.max(1, Math.min(5, maxLength));
 

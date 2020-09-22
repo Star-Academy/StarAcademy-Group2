@@ -37,17 +37,16 @@ export class GraphComponent implements OnInit {
 	) {}
 
 	public ngOnInit() {
-		this.ogmaService.initConfig({
-			options: {
-				backgroundColor: this.theme.default.background,
-				directedEdges: true
-			}
-		});
-
+		this.ogmaService.initConfig();
+		this.ogmaService.restartTabs();
 		this.setupOgmaEventHandlers();
 	}
 
 	public ngAfterContentInit() {
+		this.setOgmaContainer();
+	}
+
+	public setOgmaContainer() {
 		this.ogmaService.ogma.setContainer(this.container.nativeElement);
 	}
 
@@ -130,6 +129,20 @@ export class GraphComponent implements OnInit {
 		if (!trash.onmouseover) {
 			this.ogmaService.addNode(e.node, ogmaCoordinates);
 		}
+	}
+
+	onTabChange(event) {
+		this.ogmaService.tabChange(event.index, this.container.nativeElement);
+	}
+
+	onTabAdd(event) {
+		this.ogmaService.tabAdd(event.index, this.container.nativeElement);
+		this.setOgmaContainer();
+		this.setupOgmaEventHandlers();
+	}
+
+	onTabDelete(event) {
+		this.ogmaService.tabDelete(event.index, this.container.nativeElement);
 	}
 
 	public stopPropagation = (e: Event) => e.stopPropagation();

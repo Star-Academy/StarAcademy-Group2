@@ -21,7 +21,12 @@
 <header>
 	<div class="logo">TODO: logo</div>
 </header>
-<nav>TODO: graph tabs</nav>
+
+<nav>
+	<graph-tab-group class="tab" (onTabChange)="onTabChange($event)" (onTabAdd)="onTabAdd($event)"
+		(onTabDelete)="onTabDelete($event)">
+	</graph-tab-group>
+</nav>
 
 <main cdkDropList>
 	<div class="toolbar" [ngStyle]="theme.light">
