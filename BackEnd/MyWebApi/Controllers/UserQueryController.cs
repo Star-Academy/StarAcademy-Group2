@@ -89,13 +89,13 @@ namespace MyWebApi.Controllers
         }
 
         // [AnyUser]
-        [HttpGet]
+        [HttpPost]
         [Route("FindAllPath")]
-        public IActionResult FindAllPath(List<string> sourceId, List<string> destinationId, int maxLength=5)
+        public IActionResult FindAllPath([FromBody] FindAllPathQuery findAllPathQuery)
         {
             try
             {
-                var nb = new NetworkBuilder(sourceId, destinationId, maxLength, false);
+                var nb = new NetworkBuilder(findAllPathQuery.SourceIds, findAllPathQuery.DestinationIds, findAllPathQuery.MaxLength, false);
                 nb.Build();
                 return Ok(new Tuple<HashSet<Node>, HashSet<Edge>>(nb.Nodes, nb.Edges));
             }
