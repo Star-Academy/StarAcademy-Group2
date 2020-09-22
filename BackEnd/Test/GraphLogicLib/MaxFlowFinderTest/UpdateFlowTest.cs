@@ -18,7 +18,7 @@ namespace Test.GraphLogicLib.MaxFlowFinderTest
                          List<SimpleEdge> path,
                          Dictionary<SimpleEdge, long> expectedFlowsOnEdges, long expectedFlow)
         {
-            maxFlowFinder = new MaxFlowFinder("1", "2"); //some dum shit
+            maxFlowFinder = new MaxFlowFinder(); //some dum shit
             maxFlowFinder.Graph = graph; 
 
             var reveresedEdgesToAdd = new HashSet<SimpleEdge>();
@@ -38,44 +38,44 @@ namespace Test.GraphLogicLib.MaxFlowFinderTest
                 {
                     new Dictionary<string, HashSet<SimpleEdge>>()
                     {
-                        {"1",new HashSet<SimpleEdge>()
+                        {"s",new HashSet<SimpleEdge>()
                                 {
-                                    new SimpleEdge() {SourceAccount = "1", DestinationAccount = "2", Capacity = 1} 
+                                    new SimpleEdge() {SourceAccount = "s", DestinationAccount = "t", Capacity = 1} 
                                 }
                         },
-                        {"2",new HashSet<SimpleEdge>()
+                        {"t",new HashSet<SimpleEdge>()
                                 {
-                                    new SimpleEdge() {SourceAccount = "1", DestinationAccount = "2", Capacity = 1},
-                                    new SimpleEdge() {SourceAccount = "3", DestinationAccount = "2", Capacity = 2},
-                                    new SimpleEdge() {SourceAccount = "2", DestinationAccount = "5", Capacity = 5},
-                                    new SimpleEdge() {SourceAccount = "4", DestinationAccount = "2", Capacity = 3}   
+                                    new SimpleEdge() {SourceAccount = "s", DestinationAccount = "t", Capacity = 1},
+                                    new SimpleEdge() {SourceAccount = "3", DestinationAccount = "t", Capacity = 2},
+                                    new SimpleEdge() {SourceAccount = "t", DestinationAccount = "5", Capacity = 5},
+                                    new SimpleEdge() {SourceAccount = "4", DestinationAccount = "t", Capacity = 3}   
                                 }
                         },
                         {"3",new HashSet<SimpleEdge>()
                                 {
-                                    new SimpleEdge() {SourceAccount = "3", DestinationAccount = "2", Capacity = 2}
+                                    new SimpleEdge() {SourceAccount = "3", DestinationAccount = "t", Capacity = 2}
                                 }
                         },
                         {"4",new HashSet<SimpleEdge>()
                                 {
-                                    new SimpleEdge() {SourceAccount = "4", DestinationAccount = "2", Capacity = 3}   
+                                    new SimpleEdge() {SourceAccount = "4", DestinationAccount = "t", Capacity = 3}   
                                 }
                         },
                         {"5",new HashSet<SimpleEdge>()
                                 {
-                                    new SimpleEdge() {SourceAccount = "2", DestinationAccount = "5", Capacity = 5},
+                                    new SimpleEdge() {SourceAccount = "t", DestinationAccount = "5", Capacity = 5},
                                 }
                         },
                     },
                     new List<SimpleEdge>()
                     {
-                        new SimpleEdge() {SourceAccount = "1", DestinationAccount = "2", Capacity = 1} ,
-                        new SimpleEdge() {SourceAccount = "2", DestinationAccount = "5", Capacity = 5}
+                        new SimpleEdge() {SourceAccount = "s", DestinationAccount = "t", Capacity = 1} ,
+                        new SimpleEdge() {SourceAccount = "t", DestinationAccount = "5", Capacity = 5}
                     },
                     new Dictionary<SimpleEdge, long>()
                     {
-                        {new SimpleEdge() {SourceAccount = "1", DestinationAccount = "2"}, 1},
-                        {new SimpleEdge() {SourceAccount = "2", DestinationAccount = "5"}, 1}
+                        {new SimpleEdge() {SourceAccount = "s", DestinationAccount = "t"}, 1},
+                        {new SimpleEdge() {SourceAccount = "t", DestinationAccount = "5"}, 1}
                     },
                     1
                 }

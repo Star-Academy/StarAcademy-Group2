@@ -14,16 +14,15 @@ namespace Test.GraphLogicLib.MaxFlowFinderTest
 
         [Theory]
         [MemberData(nameof(SendFlowTestData))]
-        public void Test(Dictionary<string, HashSet<SimpleEdge>> graph,
-                         string src, string dst, long expectedFlow)
+        public void Test(Dictionary<string, HashSet<SimpleEdge>> graph, long expectedFlow)
         {
-            maxFlowFinder = new MaxFlowFinder(src, dst);
+            maxFlowFinder = new MaxFlowFinder();
             maxFlowFinder.Graph = graph; 
 
             maxFlowFinder.Bfs();
             
             var reveresedEdgesToAdd = new HashSet<SimpleEdge>();
-            Assert.Equal(expectedFlow, maxFlowFinder.SendFlow(src, new List<SimpleEdge>(), ref reveresedEdgesToAdd));
+            Assert.Equal(expectedFlow, maxFlowFinder.SendFlow("s", new List<SimpleEdge>(), ref reveresedEdgesToAdd));
         }
 
         public static IEnumerable<object[]> SendFlowTestData =>
@@ -37,16 +36,16 @@ namespace Test.GraphLogicLib.MaxFlowFinderTest
                 {
                     new Dictionary<string, HashSet<SimpleEdge>>()
                     {
-                        {"1",new HashSet<SimpleEdge>()
+                        {"s",new HashSet<SimpleEdge>()
                                 {
-                                    new SimpleEdge() {SourceAccount = "1", DestinationAccount = "2", Capacity = 1, Flow = 0} 
+                                    new SimpleEdge() {SourceAccount = "s", DestinationAccount = "2", Capacity = 1, Flow = 0} 
                                 }
                         },
                         {"2",new HashSet<SimpleEdge>()
                                 {
-                                    new SimpleEdge() {SourceAccount = "1", DestinationAccount = "2", Capacity = 1, Flow = 0},
+                                    new SimpleEdge() {SourceAccount = "s", DestinationAccount = "2", Capacity = 1, Flow = 0},
                                     new SimpleEdge() {SourceAccount = "3", DestinationAccount = "2", Capacity = 2, Flow = 0},
-                                    new SimpleEdge() {SourceAccount = "2", DestinationAccount = "5", Capacity = 5, Flow = 0},
+                                    new SimpleEdge() {SourceAccount = "2", DestinationAccount = "t", Capacity = 5, Flow = 0},
                                     new SimpleEdge() {SourceAccount = "4", DestinationAccount = "2", Capacity = 3, Flow = 0}   
                                 }
                         },
@@ -60,13 +59,13 @@ namespace Test.GraphLogicLib.MaxFlowFinderTest
                                     new SimpleEdge() {SourceAccount = "4", DestinationAccount = "2", Capacity = 3, Flow = 0}   
                                 }
                         },
-                        {"5",new HashSet<SimpleEdge>()
+                        {"t",new HashSet<SimpleEdge>()
                                 {
-                                    new SimpleEdge() {SourceAccount = "2", DestinationAccount = "5", Capacity = 5, Flow = 0},
+                                    new SimpleEdge() {SourceAccount = "2", DestinationAccount = "t", Capacity = 5, Flow = 0},
                                 }
                         },
                     },
-                    '1', '5', 1
+                    1
                 }
                 // ,
                 // new object[] 

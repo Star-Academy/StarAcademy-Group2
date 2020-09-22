@@ -13,25 +13,49 @@ namespace GraphLogicLib
         */
         public Dictionary<string, HashSet<SimpleEdge>> Graph; // <accountId, edges>
         public Dictionary<string, int> Levels { get; set; } // <id, lvl>
-        private string sourceId;
-        private string destinationId;
+        
+        private const string sourceNode = "s";
+        private const string destinationNode= "t";
         private const int DefaultMaxLength = 8;
 
         /// <summary>
         /// Don't forget to call initGraph() after contructing (in the API)
         /// </summary>
-        public MaxFlowFinder(string sourceId, string destId)
+        public void InitGraph(List<string> sourceList, List<string> destinationList)
         {
-            destinationId = destId;
-            this.sourceId = sourceId;
-        }
-
-        public void InitGraph()
-        {
-            var networkBuilder = new NetworkBuilder(this.sourceId, destinationId, DefaultMaxLength, true);
+            var networkBuilder = new NetworkBuilder(sourceList, destinationList, DefaultMaxLength, true);
             networkBuilder.Build();
             Graph = networkBuilder.SimpleGraph;
+            initSource(sourceList);
+            initDestination(destinationList);
         }
+        private void initSource(List<string> sourceList){
+            Graph[sourceNode] = new HashSet<SimpleEdge>();
+            foreach(var source in sourceList){
+                var edge = new SimpleEdge(){
+                    Capacity = long.MaxValue,
+                    Flow = 0,
+                    SourceAccount = sourceNode,
+                    DestinationAccount = source
+                };
+                Graph[sourceNode].Add(edge);
+                Graph[source].Add(edge);
+            }
+        }
+        private void initDestination(List<string> destinationList){
+            Graph[destinationNode] = new HashSet<SimpleEdge>();
+            foreach(var destination in destinationList){
+                var edge = new SimpleEdge(){
+                    Capacity = long.MaxValue,
+                    Flow = 0,
+                    SourceAccount = destination,
+                    DestinationAccount = destinationNode
+                };
+                Graph[destinationNode].Add(edge);
+                Graph[destination].Add(edge);
+            }
+        }
+
 
         public long Find()
         {
@@ -40,7 +64,7 @@ namespace GraphLogicLib
             while (Bfs())
             {
                 var reveresedEdgesToAdd = new HashSet<SimpleEdge>();
-                result += SendFlow(sourceId, new List<SimpleEdge>(), ref reveresedEdgesToAdd);
+                result += SendFlow(sourceNode, new List<SimpleEdge>(), ref reveresedEdgesToAdd);
                 foreach(var edge in reveresedEdgesToAdd)
                 {
                     Graph[edge.DestinationAccount].Add(edge);
@@ -56,8 +80,8 @@ namespace GraphLogicLib
             Levels = new Dictionary<string, int>();
             var queue = new Queue<string>();
 
-            queue.Enqueue(sourceId);
-            Levels[sourceId] = 0;
+            queue.Enqueue(sourceNode);
+            Levels[sourceNode] = 0;
 
             while (queue.Any())
             {
@@ -82,12 +106,12 @@ namespace GraphLogicLib
                 }
             }
 
-            return Levels.ContainsKey(destinationId);
+            return Levels.ContainsKey(destinationNode);
         }
 
         public long SendFlow(string node, List<SimpleEdge> path, ref HashSet<SimpleEdge> reveresedEdgesToAdd)
         {
-            if (node.Equals(destinationId))
+            if (node.Equals(destinationNode))
             {
                 return UpdateFlow(path, ref reveresedEdgesToAdd);
             }

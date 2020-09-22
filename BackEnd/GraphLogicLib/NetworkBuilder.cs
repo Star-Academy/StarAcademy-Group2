@@ -12,8 +12,8 @@ namespace GraphLogicLib
     public class NetworkBuilder
     {
         private IElasticService ElasticService;
-        private string Source;
-        private string Destination;
+        private List<string> Source;
+        private List<string> Destination;
         private int PathMaximumLength;
         private bool CopyMaker;
         private Dictionary<string, int> Levels;
@@ -24,7 +24,7 @@ namespace GraphLogicLib
         private Dictionary<string, HashSet<Edge>> NeighbourIncomingEdges;
         private Dictionary<string, HashSet<Edge>> NeighbourOutcomingEdges;
         private Dictionary<string, Node> SupersetGrapgh;
-        public NetworkBuilder(string source, string destination, int pathMaximumLength, bool copyMaker = false)
+        public NetworkBuilder(List<string> source, List<string> destination, int pathMaximumLength, bool copyMaker = false)
         {
             this.Source = source;
             this.Destination = destination;
@@ -103,8 +103,10 @@ namespace GraphLogicLib
         public void BfsOnDestination()
         {
             var queue = new HashSet<string>();
-            queue.Add(Destination);
-            Levels.Add(Destination, 0);
+            queue.UnionWith(Destination);
+            foreach(var destinationNode in queue){
+                Levels.Add(destinationNode, 0);
+            }
             for (int i = 0; i < PathMaximumLength; i++)
             {
                 if (queue.Count == 0)
@@ -179,7 +181,7 @@ namespace GraphLogicLib
         }
         public void Dfs(string source, int pathLength, HashSet<string> visited, HashSet<Node> historyNode, HashSet<Edge> historyEdge, HashSet<SimpleEdge> historySimpleEdge)
         {
-            if (source.Equals(Destination))
+            if (Destination.Contains(source))
             {
                 if (CopyMaker)
                 {
@@ -255,12 +257,12 @@ namespace GraphLogicLib
         }
         public void Build()
         {
-            if(!Destination.Equals(Source)){
-                BfsOnDestination();
-                if(Levels.ContainsKey(Source)){
-                    Dfs(Source, 0, new HashSet<string>(), new HashSet<Node>(), new HashSet<Edge>(), new HashSet<SimpleEdge>());
+            BfsOnDestination();
+                foreach(var sourceNode in Source){
+                    if(Levels.ContainsKey(sourceNode)){
+                        Dfs(sourceNode, 0, new HashSet<string>(), new HashSet<Node>(), new HashSet<Edge>(), new HashSet<SimpleEdge>());
                 }
-            }
+            }            
         }
     }
 }

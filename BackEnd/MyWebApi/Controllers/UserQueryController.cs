@@ -81,17 +81,17 @@ namespace MyWebApi.Controllers
         // [AnyUser]
         [HttpPost]
         [Route("flow")]
-        public ActionResult<long> Flow([FromBody] Tuple<string,string> sourceAndDestinationId)
+        public ActionResult<long> Flow([FromBody] Tuple<List<string>, List<string>> sourceAndDestinationId)
         {
-            var maxFlowFinder = new MaxFlowFinder(sourceAndDestinationId.Item1, sourceAndDestinationId.Item2);
-            maxFlowFinder.InitGraph();
+            var maxFlowFinder = new MaxFlowFinder();
+            maxFlowFinder.InitGraph(sourceAndDestinationId.Item1, sourceAndDestinationId.Item2);
             return maxFlowFinder.Find();
         }
 
         // [AnyUser]
         [HttpGet]
         [Route("FindAllPath")]
-        public IActionResult FindAllPath(string sourceId, string destinationId, int maxLength=5)
+        public IActionResult FindAllPath(List<string> sourceId, List<string> destinationId, int maxLength=5)
         {
             try
             {
@@ -105,5 +105,6 @@ namespace MyWebApi.Controllers
                 return BadRequest(e.Message);
             }
         }
+
     }
 }

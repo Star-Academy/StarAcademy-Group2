@@ -14,10 +14,9 @@ namespace Test.GraphLogicLib.MaxFlowFinderTest
 
         [Theory]
         [MemberData(nameof(BfsTestData))]
-        public void Test(Dictionary<string, HashSet<SimpleEdge>> graph
-                            , string src, string dst, Dictionary<string, int> expected)
+        public void Test(Dictionary<string, HashSet<SimpleEdge>> graph, Dictionary<string, int> expected)
         {
-            maxFlowFinder = new MaxFlowFinder(src, dst);
+            maxFlowFinder = new MaxFlowFinder();
             maxFlowFinder.Graph = graph; 
 
             Assert.True(maxFlowFinder.Bfs()); //yeah this could be better
@@ -35,16 +34,16 @@ namespace Test.GraphLogicLib.MaxFlowFinderTest
                 {
                     new Dictionary<string, HashSet<SimpleEdge>>()
                     {
-                        {"1",new HashSet<SimpleEdge>()
+                        {"s",new HashSet<SimpleEdge>()
                                 {
-                                    new SimpleEdge() {SourceAccount = "1", DestinationAccount = "2", Capacity = 1} 
+                                    new SimpleEdge() {SourceAccount = "s", DestinationAccount = "2", Capacity = 1} 
                                 }
                         },
                         {"2",new HashSet<SimpleEdge>()
                                 {
-                                    new SimpleEdge() {SourceAccount = "1", DestinationAccount = "2", Capacity = 1},
+                                    new SimpleEdge() {SourceAccount = "s", DestinationAccount = "2", Capacity = 1},
                                     new SimpleEdge() {SourceAccount = "3", DestinationAccount = "2", Capacity = 2},
-                                    new SimpleEdge() {SourceAccount = "2", DestinationAccount = "5", Capacity = 5},
+                                    new SimpleEdge() {SourceAccount = "2", DestinationAccount = "t", Capacity = 5},
                                     new SimpleEdge() {SourceAccount = "4", DestinationAccount = "2", Capacity = 3}   
                                 }
                         },
@@ -58,18 +57,17 @@ namespace Test.GraphLogicLib.MaxFlowFinderTest
                                     new SimpleEdge() {SourceAccount = "4", DestinationAccount = "2", Capacity = 3}   
                                 }
                         },
-                        {"5",new HashSet<SimpleEdge>()
+                        {"t",new HashSet<SimpleEdge>()
                                 {
-                                    new SimpleEdge() {SourceAccount = "2", DestinationAccount = "5", Capacity = 5},
+                                    new SimpleEdge() {SourceAccount = "2", DestinationAccount = "t", Capacity = 5},
                                 }
                         },
                     },
-                    1, 5,
                     new Dictionary<string, int>()
                     {
-                        {"1", 0},
+                        {"s", 0},
                         {"2", 1},
-                        {"5", 2}
+                        {"t", 2}
                     }
                 }
                 // ,
