@@ -1,0 +1,33 @@
+<form #searchForm="ngForm" (ngSubmit)="addUserSubmit(searchForm.value)">
+	<label for="username">نام کاربری</label>
+	<input ngModel name="username" id="username" type="text" placeholder="username" required>
+	<label for="password">رمز عبور</label>
+	<input ngModel name="password" id="password" type="text" placeholder="password" required>
+	<label for="type">نوع دسترسی</label>
+	<select #field ngModel name="type" id="type-input" required>
+		<option value="user" selected>کاربر</option>
+		<option value="admin">ادمین</option>
+	</select>
+	<button type="submit"> افزودن</button>
+</form>
+
+<div>
+	<table>
+		<tr>
+			<th>نام کاربری</th>
+			<th>نقش</th>
+			<th>حذف کردن</th>
+		</tr>
+		<tr *ngFor="let user of users">
+			<td>
+				{{user.username}}
+			</td>
+			<td>
+				{{user.type==1? 'ادمین': 'کاربر'}}
+			</td>
+			<td (click)="removeAccount(user)">
+				<svg-icon key="cross"></svg-icon>
+			</td>
+		</tr>
+	</table>
+</div>

@@ -1,0 +1,10 @@
+<app-header [items]="items" (indexEmitter)="indexEmitted($event)"></app-header>
+<div>{{title}}</div>
+<add-user-subpage *ngIf="index==2"></add-user-subpage>
+<app-settings *ngIf="index==3"></app-settings>
+
+<input [style.display]="'none'" id="import-accounts" type="file" name="import-accounts" accept=".csv" ngf-max-size="2MB"
+	(change)="importAccountsCSV($event)">
+
+<input [style.display]="'none'" id="import-transactions" type="file" name="import-transactions" accept=".csv"
+	ngf-max-size="2MB" (change)="importTransactionsCSV($event)">

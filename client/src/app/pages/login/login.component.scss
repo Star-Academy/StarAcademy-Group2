@@ -49,7 +49,7 @@
 
 			transition: all 0.5s ease-in-out;
 
-			&.manager {
+			&.admin {
 				right: 0;
 				z-index: 2;
 
@@ -174,7 +174,7 @@
 					animation: animation-show 0.5s;
 				}
 
-				&.manager {
+				&.admin {
 					transform: translateX(-100%);
 				}
 			}

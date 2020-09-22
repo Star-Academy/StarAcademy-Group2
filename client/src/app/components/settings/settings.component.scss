@@ -1,0 +1,89 @@
+button {
+	border: none;
+	color: white;
+	text-align: center;
+	opacity: 0.6;
+	transition: 0.3s;
+	text-decoration: none;
+	cursor: pointer;
+	display: block;
+	margin: 10px 50px 10px 10px;
+	width: 100px;
+	height: 40px;
+	outline: none;
+	border-radius: 6px;
+
+	&:hover {
+		opacity: 1;
+	}
+}
+
+input {
+	height: 40px;
+	margin: 10px;
+	border: 0;
+}
+
+.container {
+	align-content: center;
+	text-align: -webkit-right;
+}
+
+.column {
+	width: 150px;
+	text-align: center;
+}
+
+#title {
+	text-align: center;
+}
+
+#default {
+	background-color: #505f75;
+}
+
+#primary {
+	background-color: #6495ED;
+}
+
+#secondary {
+	background-color: #666666;
+}
+
+#success {
+	background-color: #44d96c;
+}
+
+#danger {
+	background-color: #e64e4e;
+}
+
+#warning {
+	background-color: #ffb726;
+}
+
+#info {
+	background-color: darkturquoise;
+}
+
+#light {
+	background-color: #f2f2f2;
+}
+
+#dark {
+	background-color: #0C0C0C;
+}
+
+#label {
+	background-color: #ff0080;
+}
+
+#disabled {
+	background-color: aqua;
+}
+
+#confirm {
+	background-color: #44d96c;
+	width: 100px;
+	height: 70px;
+}

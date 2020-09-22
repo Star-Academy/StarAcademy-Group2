@@ -32,6 +32,9 @@ import { SearchEdgesDetailsComponent } from './components/search-edges-details/s
 import { GraphTooltipComponent } from './components/graph-tooltip/graph-tooltip.component';
 import { NavigationComponent } from './components/navigation/navigation.component';
 import { LayoutSelectorComponent } from './components/layout-selector/layout-selector.component';
+import { AdminComponent } from './pages/admin/admin.component';
+import { AddUserSubpageComponent } from './components/add-user-subpage/add-user-subpage.component';
+import { SettingsComponent } from './components/settings/settings.component';
 
 @NgModule({
 	declarations: [
@@ -53,7 +56,10 @@ import { LayoutSelectorComponent } from './components/layout-selector/layout-sel
 		FaqComponent,
 		LoginComponent,
 		NotFoundComponent,
-		LayoutSelectorComponent
+		LayoutSelectorComponent,
+		AdminComponent,
+		AddUserSubpageComponent,
+		SettingsComponent
 	],
 	imports: [
 		BrowserModule,

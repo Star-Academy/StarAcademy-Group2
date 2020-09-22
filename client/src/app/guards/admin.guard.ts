@@ -5,18 +5,15 @@ import {
 	RouterStateSnapshot,
 	UrlTree
 } from '@angular/router';
-
 import { Observable } from 'rxjs';
-
 import { AuthService } from '../services/auth.service';
 
 @Injectable({
 	providedIn: 'root'
 })
-export class AuthGuard implements CanActivate {
-	public constructor(private authService: AuthService) {}
-
-	public canActivate(
+export class AdminGuard implements CanActivate {
+	constructor(private authService: AuthService) {}
+	canActivate(
 		next: ActivatedRouteSnapshot,
 		state: RouterStateSnapshot
 	):
@@ -24,6 +21,7 @@ export class AuthGuard implements CanActivate {
 		| Promise<boolean | UrlTree>
 		| boolean
 		| UrlTree {
-		return this.authService.loggedInUser();
+		console.log('a');
+		return this.authService.loggedInAdmin();
 	}
 }
