@@ -54,7 +54,7 @@
 	<div *ngIf="navSelectedIndex === 1" class="settings card" [ngStyle]="theme.default">
 		<div class="head">تنظیمات قالب سایت</div>
 		<div class="body">
-			<theme-settings></theme-settings>
+			<theme-settings [snackbar]="snackbar"></theme-settings>
 		</div>
 	</div>
 </main>

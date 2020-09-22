@@ -21,7 +21,6 @@ export class AdminGuard implements CanActivate {
 		| Promise<boolean | UrlTree>
 		| boolean
 		| UrlTree {
-		console.log('a');
 		return this.authService.loggedInAdmin();
 	}
 }

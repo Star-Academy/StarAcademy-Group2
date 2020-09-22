@@ -4,6 +4,22 @@ import { Injectable } from '@angular/core';
 	providedIn: 'root'
 })
 export class ThemeService {
+	// Default Styles
+	public _default: Color = new Color(Color.WHITE, Color.GRAY_10);
+	public _primary: Color = new Color(Color.BLUE_CORNFLOWER, Color.GRAY_95);
+	public _secondary: Color = new Color(Color.GRAY_60, Color.GRAY_95);
+	public _success: Color = new Color(Color.GREEN_EMERALD, Color.GRAY_95);
+	public _danger: Color = new Color(Color.RED_FLAMINGO, Color.GRAY_95);
+	public _warning: Color = new Color(Color.ORANGE_SUPERNOVA, Color.GRAY_10);
+	public _info: Color = new Color(Color.GREEN_CARIBBEAN, Color.GRAY_95);
+
+	public _light: Color = new Color(Color.GRAY_95, Color.GRAY_10);
+	public _dark: Color = new Color(Color.GRAY_25, Color.GRAY_90);
+
+	public _label: Color = new Color(Color.INHERIT, Color.GRAY_60);
+	public _disabled: Color = new Color(Color.GRAY_90, Color.GRAY_60);
+
+	// Actual Styles
 	public default: Color = new Color(Color.WHITE, Color.GRAY_10);
 	public primary: Color = new Color(Color.BLUE_CORNFLOWER, Color.GRAY_95);
 	public secondary: Color = new Color(Color.GRAY_60, Color.GRAY_95);
@@ -18,7 +34,22 @@ export class ThemeService {
 	public label: Color = new Color(Color.INHERIT, Color.GRAY_60);
 	public disabled: Color = new Color(Color.GRAY_90, Color.GRAY_60);
 
-	//TODO: load initial data from localStorage
+	public constructor() {
+		for (let styleName of Object.keys(this)) {
+			const savedStyle = localStorage.getItem(`theme_${styleName}`);
+
+			if (savedStyle) {
+				const { background, color } = JSON.parse(savedStyle);
+
+				this[styleName]['background'] = background;
+				this[styleName]['color'] = color;
+			}
+		}
+	}
+
+	public resetColor(name: string) {
+		this[name] = this[`_${name}`];
+	}
 }
 
 export class Color {

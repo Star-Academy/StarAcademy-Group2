@@ -45,7 +45,6 @@ export class AuthService {
 			.get<any>('https://localhost:5001/authentication/isAdmin')
 			.pipe(
 				map((response) => {
-					console.log(response);
 					if (response.message == 'true') return true;
 					this.route.navigate([ '/login' ]);
 					return false;
