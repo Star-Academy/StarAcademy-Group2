@@ -25,8 +25,6 @@
 		z-index: 2;
 
 		padding: 1rem 2rem;
-
-		graph-tab-group {}
 	}
 
 	main {
@@ -40,6 +38,8 @@
 		width: 100%;
 
 		.toolbar {
+			z-index: 2;
+
 			display: grid;
 			grid-template-columns: auto auto;
 
@@ -62,7 +62,68 @@
 
 					border-radius: 3rem;
 
-					transition: all 100ms ease-in-out;
+					transition: transform 100ms ease-in-out;
+
+					&.openable {
+						&.open {
+							border-radius: 1.5rem 1.5rem 0 0;
+
+							.menu {
+								display: block;
+							}
+						}
+
+						.menu {
+							position: absolute;
+							top: 100%;
+							right: 0;
+
+							min-width: 15rem;
+							width: fit-content;
+
+							padding: 1rem 1.5rem;
+
+							border-radius: 1.5rem 0 1.5rem 1.5rem;
+
+							font-size: 1.2rem;
+
+							cursor: default;
+
+							display: none;
+
+							.form {
+								display: flex;
+								flex-direction: row;
+								justify-content: space-between;
+								align-items: center;
+
+								margin-bottom: 1rem;
+
+								.label {
+									font-weight: 500;
+								}
+
+								input {
+									margin-right: 1rem;
+
+									border-radius: 0.5rem;
+
+									text-align: center;
+								}
+							}
+
+							.btn-find-path {
+								padding: 0.5rem 1rem;
+
+								border-radius: 2rem;
+
+								font-weight: 500;
+								text-align: center;
+
+								cursor: pointer;
+							}
+						}
+					}
 
 					&:hover {
 						transform: scale(1.1)
@@ -94,7 +155,34 @@
 			}
 		}
 
+		.card {
+			max-width: 80rem;
+
+			margin: 2rem auto;
+			padding: 2rem;
+
+			border-radius: 2rem;
+
+			&.shake {
+				animation: animation-shake 0.5s;
+				animation-iteration-count: infinite;
+			}
+
+			.head {
+				margin-bottom: 2rem;
+
+				font-size: 2.4rem;
+				font-weight: 500;
+			}
+
+			.body {
+				padding: 0 2rem;
+			}
+		}
+
 		#ogma-container::ng-deep {
+			z-index: 1;
+
 			width: 100%;
 			height: 100%;
 

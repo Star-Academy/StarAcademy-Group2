@@ -1,5 +1,6 @@
 import { EventEmitter, Output, Component, OnInit } from '@angular/core';
-import { ThemeService } from 'src/app/services/theme.service';
+
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
 	selector: 'graph-tab-group',
@@ -15,6 +16,8 @@ export class TabGroupComponent implements OnInit {
 	public activeTab = 0;
 
 	public addHovered: boolean = false;
+	public settingsHovered: boolean = false;
+	public isSettingsActive: boolean = false;
 
 	constructor(public theme: ThemeService) {}
 
@@ -23,13 +26,21 @@ export class TabGroupComponent implements OnInit {
 		this.clickedOnAddTab();
 		this.clickedOnAddTab();
 		this.clickedOnAddTab();
-		this.tabChange({ index: 2 });
+		this.tabChange({ index: 1 });
 	}
 
 	public addStyle() {
 		return this.addHovered
 			? this.theme.primary.hovered
 			: this.theme.primary.selected;
+	}
+
+	public settingsStyle() {
+		return this.isSettingsActive
+			? this.theme.primary.selected
+			: this.settingsHovered
+				? this.theme.primary.hovered
+				: this.theme.primary;
 	}
 
 	tabChange(event) {

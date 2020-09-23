@@ -6,3 +6,10 @@
 	(click)="clickedOnAddTab()">
 	<svg-icon key="plus"></svg-icon>
 </span>
+
+<div class="settings" [ngStyle]="settingsStyle()" (mouseover)="settingsHovered = true"
+	(mouseleave)="settingsHovered = false">
+	<span class="body" (click)="tabChange({index: -1})">
+		<span class="label">تنظیمات</span>
+	</span>
+</div>

@@ -4,10 +4,12 @@
 	justify-content: flex-start;
 	align-items: center;
 
+	>* {
+		cursor: pointer;
+	}
+
 	graph-tab {
 		margin-left: 1rem;
-
-		cursor: pointer;
 	}
 
 	.icon {
@@ -22,10 +24,25 @@
 
 		border-radius: 100%;
 
-		cursor: pointer;
-
 		svg-icon {
 			font-size: 1.2rem;
 		}
+	}
+
+	.settings {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+
+		min-width: 10rem;
+
+		margin-right: auto;
+		padding: 0.5rem 1rem;
+
+		border-radius: 0.5rem;
+
+		font-size: 1.4rem;
+		text-align: center;
 	}
 }

@@ -27,8 +27,11 @@ export class GraphComponent implements OnInit {
 	public hoveredContent;
 	public hoveredPosition: { x: number; y: number };
 
-	// TODO: remove
-	public devTools: boolean = true;
+	public hovered = {
+		findPathMenu: false
+	};
+
+	public showingSettings: boolean = false;
 
 	public constructor(
 		public theme: ThemeService,
@@ -70,9 +73,6 @@ export class GraphComponent implements OnInit {
 
 		setTimeout(() => this.runLayout(), 500);
 	}
-
-	// TODO: use this
-	public countNodes = (): number => this.ogmaService.ogma.getNodes().size;
 
 	public clickedOnSearchNodesButton = () => this.nodesModal.open();
 
@@ -132,10 +132,18 @@ export class GraphComponent implements OnInit {
 	}
 
 	onTabChange(event) {
+		if (event.index === -1) {
+			this.showingSettings = true;
+			return;
+		}
+		this.showingSettings = false;
+
 		this.ogmaService.tabChange(event.index, this.container.nativeElement);
 	}
 
 	onTabAdd(event) {
+		this.showingSettings = false;
+
 		this.ogmaService.tabAdd(event.index, this.container.nativeElement);
 		this.setOgmaContainer();
 		this.setupOgmaEventHandlers();
@@ -143,6 +151,20 @@ export class GraphComponent implements OnInit {
 
 	onTabDelete(event) {
 		this.ogmaService.tabDelete(event.index, this.container.nativeElement);
+	}
+
+	public toolbarStyle() {
+		return {
+			...this.theme.light,
+			display: this.showingSettings ? 'none' : 'block'
+		};
+	}
+
+	public settingsStyle() {
+		return {
+			...this.theme.default,
+			display: !this.showingSettings ? 'none' : 'block'
+		};
 	}
 
 	public stopPropagation = (e: Event) => e.stopPropagation();

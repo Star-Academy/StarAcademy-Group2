@@ -1,6 +1,7 @@
-<div class="tab" [ngStyle]="tabStyle()" (mouseover)="hovered = true" (mouseleave)="hovered = false">
-	<span class="body" (click)="clickOnTab($event)">
-		<span class="label" (dblclick)="onDoubleClick($event)">{{label}}</span>
+<div class="tab" [ngStyle]="tabStyle()" (mouseover)="hovered = true" (mouseleave)="hovered = false"
+	(click)="clickOnTab($event)" (dblclick)="onDoubleClick($event)">
+	<span class="body">
+		<span class="label">{{label}}</span>
 	</span>
 	<span [ngClass]="['icon remove', hovered ? 'show' : '']" [ngStyle]="closeStyle()" (mouseover)="closeHovered = true"
 		(mouseleave)="closeHovered = false" (click)="clickedOnCloseTab($event)">
