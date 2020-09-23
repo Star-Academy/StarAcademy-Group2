@@ -117,6 +117,7 @@ namespace GraphLogicLib
                 queue.Clear();
                 queue.UnionWith(
                     from node in NeighbourNodes
+                    where !Levels.ContainsKey(node.AccountId)
                     select node.AccountId
                 );
                 foreach (var node in queue)
