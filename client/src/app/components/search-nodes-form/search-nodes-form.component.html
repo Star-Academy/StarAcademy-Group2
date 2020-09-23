@@ -1,5 +1,5 @@
 <form #searchForm="ngForm" (ngSubmit)="clickedOnSearchButton(searchForm.value)">
-	<label class="text-default-25" for="search-field-input">جستجو در</label>
+	<label [ngStyle]="theme.label" for="search-field-input">جستجو در</label>
 	<div class="field-select-wrapper" (click)="fieldSelectOpen = !fieldSelectOpen">
 		<div [ngClass]="['select', fieldSelectOpen ? 'open' : '']">
 			<div class="trigger" [ngStyle]="theme.light"><span>{{selectedOption.fa}}</span>
@@ -14,7 +14,7 @@
 		</div>
 	</div>
 
-	<label class="text-default-25" for="search-query-input">عبارت مورد نظر</label>
+	<label [ngStyle]="theme.label" for="search-query-input">عبارت مورد نظر</label>
 	<input [ngStyle]="theme.light" ngModel name="query" [maxLength]="maxLength" id="search-query-input" type="text"
 		placeholder="لطفاً عبارت مورد جستجو را وارد کنید ..." required>
 

@@ -7,7 +7,10 @@
 	</div>
 	<div *ngFor="let item of items; index as i" class="row" [ngStyle]="rowStyle(i)" (mouseover)="hoveredRowIndex = i"
 		(mouseleave)="hoveredRowIndex = -1">
-		<div class="cell" [ngStyle]="theme[item.name]">
+		<div class="cell clickable"
+			[ngStyle]="item.selected ? theme[item.name].selected : item.hovered ? theme[item.name].hovered : theme[item.name]"
+			(mouseover)="item.hovered = true" (mouseleave)="item.hovered = false"
+			(click)="item.selected = !item.selected">
 			<span class="title">{{item.title}}</span>
 		</div>
 		<div class="cell">

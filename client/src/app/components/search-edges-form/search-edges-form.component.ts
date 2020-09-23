@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ThemeService } from 'src/app/services/theme.service';
 import { SnackbarComponent } from '../snackbar/snackbar.component';
 
 @Component({
@@ -10,6 +11,8 @@ export class SearchEdgesFormComponent {
 	@Input() snackbar: SnackbarComponent;
 
 	@Output() callback = new EventEmitter();
+
+	public constructor(public theme: ThemeService) {}
 
 	public clickedOnSearchButton = (form: any) =>
 		this.callback.emit(this.createFilters(form));

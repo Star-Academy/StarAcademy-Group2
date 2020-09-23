@@ -8,6 +8,7 @@ import Ogma, {
 	EdgeList
 } from '../../dependencies/ogma.min.js';
 
+import { ThemeService } from './theme.service.js';
 import { GraphService } from './graph.service';
 
 import { AccountNode } from '../models/AccountNode.js';
@@ -48,14 +49,17 @@ export class OgmaService {
 
 	public configuration = {
 		options: {
-			backgroundColor: '#ffffff',
+			backgroundColor: this.theme.default.background,
 			directedEdges: true,
-			minimumWidth: '800',
-			minimumHeight: '600'
+			minimumWidth: '1920',
+			minimumHeight: '826'
 		}
 	};
 
-	public constructor(private graphService: GraphService) {}
+	public constructor(
+		private theme: ThemeService,
+		private graphService: GraphService
+	) {}
 
 	public initConfig() {
 		this.ogma = new Ogma(this.configuration);
@@ -112,7 +116,6 @@ export class OgmaService {
 
 	public addNode(data: AccountNode, attributes?, register = true) {
 		data['totalDeposit'] = 0;
-		console.log(data);
 
 		const node = this.ogma.addNode({
 			data,

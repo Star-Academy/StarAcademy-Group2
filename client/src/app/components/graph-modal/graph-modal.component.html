@@ -1,6 +1,8 @@
 <div [class]="'container ' + (state === 0 ? 'closed' : '')">
 	<div class="overlay" (click)="close()">
-		<round-button btnClass="btn-fade" icon="cross" iconSize="6"></round-button>
+		<span class="icon" [ngStyle]="theme.dark">
+			<svg-icon key="cross"></svg-icon>
+		</span>
 	</div>
 
 	<div [ngClass]="['modal', opening ? 'open' : shaking ? 'shake' : slidingToRight ? 'slide-right' : slidingToLeft ? 'slide-left' : '']"

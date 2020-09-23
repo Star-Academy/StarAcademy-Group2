@@ -29,11 +29,26 @@
 			bottom: 0;
 			left: 0;
 
-			round-button {
+			.icon {
 				position: absolute;
 				top: 4rem;
 				left: 4rem;
 				z-index: 2;
+
+				display: inline-flex;
+				justify-content: center;
+				align-items: center;
+
+				width: 6rem;
+				height: 6rem;
+
+				border-radius: 100%;
+
+				cursor: pointer;
+
+				svg-icon {
+					font-size: 3rem;
+				}
 			}
 		}
 

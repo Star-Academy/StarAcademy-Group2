@@ -156,14 +156,14 @@ export class GraphComponent implements OnInit {
 	public toolbarStyle() {
 		return {
 			...this.theme.light,
-			display: this.showingSettings ? 'none' : 'block'
+			display: this.showingSettings ? 'none' : 'grid'
 		};
 	}
 
 	public settingsStyle() {
 		return {
 			...this.theme.default,
-			display: !this.showingSettings ? 'none' : 'block'
+			display: this.showingSettings ? 'block' : 'none'
 		};
 	}
 

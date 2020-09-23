@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { ThemeService } from 'src/app/services/theme.service';
 import { AccountNode } from '../../models/AccountNode';
 
 @Component({
@@ -14,6 +15,8 @@ export class SearchNodesResultComponent {
 	@Output() dragStartCallback = new EventEmitter();
 	@Output() dragMoveCallback = new EventEmitter();
 	@Output() dragEndCallback = new EventEmitter();
+
+	public constructor(public theme: ThemeService) {}
 
 	public clickedOnAddNodeButton = (node: AccountNode) =>
 		this.addNodeCallback.emit({ node });

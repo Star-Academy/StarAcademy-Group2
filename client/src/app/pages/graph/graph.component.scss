@@ -28,7 +28,6 @@
 	}
 
 	main {
-		background-color: gray;
 		position: relative;
 		z-index: 1;
 
@@ -112,7 +111,7 @@
 								}
 							}
 
-							.btn-find-path {
+							.action {
 								padding: 0.5rem 1rem;
 
 								border-radius: 2rem;
@@ -156,6 +155,8 @@
 		}
 
 		.card {
+			display: none;
+
 			max-width: 80rem;
 
 			margin: 2rem auto;
@@ -200,9 +201,6 @@
 
 			>div {
 				z-index: 0;
-
-				width: 100% !important;
-				height: 100% !important;
 			}
 		}
 	}

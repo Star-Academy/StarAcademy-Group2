@@ -8,8 +8,8 @@
 </span>
 
 <div class="settings" [ngStyle]="settingsStyle()" (mouseover)="settingsHovered = true"
-	(mouseleave)="settingsHovered = false">
-	<span class="body" (click)="tabChange({index: -1})">
+	(mouseleave)="settingsHovered = false" (click)="tabChange({index: -1})">
+	<span class="body">
 		<span class="label">تنظیمات</span>
 	</span>
 </div>

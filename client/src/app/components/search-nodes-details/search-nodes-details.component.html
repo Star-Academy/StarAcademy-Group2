@@ -1,43 +1,44 @@
 <div class="details-container">
 	<div class="item">
-		<span class="label text-default-25">نام شعبه</span>
-		<div class="value bg-default-95 text-default-50">{{node.BranchName}}</div>
+		<span class="label" [ngStyle]="theme.label">نام شعبه</span>
+		<div class="value" [ngStyle]="theme.light">{{node.BranchName}}</div>
 	</div>
 
 	<div class="item right">
-		<span class="label text-default-25">شماره تلفن شعبه</span>
-		<div class="value bg-default-95 text-default-50">{{node.BranchTelephone}}</div>
+		<span class="label" [ngStyle]="theme.label">شماره تلفن شعبه</span>
+		<div class="value" [ngStyle]="theme.light">{{node.BranchTelephone}}</div>
 	</div>
 
 	<div class="item left">
-		<span class="label text-default-25">شناسه صاحب حساب</span>
-		<div class="value bg-default-95 text-default-50">{{node.OwnerID}}</div>
+		<span class="label" [ngStyle]="theme.label">شناسه صاحب حساب</span>
+		<div class="value" [ngStyle]="theme.light">{{node.OwnerID}}</div>
 	</div>
 
 	<div class="item">
-		<span class="label text-default-25">نام صاحب حساب</span>
-		<div class="value bg-default-95 text-default-50">{{node.OwnerName}} {{node.OwnerFamilyName}}</div>
+		<span class="label" [ngStyle]="theme.label">نام صاحب حساب</span>
+		<div class="value" [ngStyle]="theme.light">{{node.OwnerName}} {{node.OwnerFamilyName}}</div>
 	</div>
 
 	<div class="item right">
-		<span class="label text-default-25">نوع حساب</span>
-		<div class="value bg-default-95 text-default-50">{{node.AccountType}}</div>
+		<span class="label" [ngStyle]="theme.label">نوع حساب</span>
+		<div class="value" [ngStyle]="theme.light">{{node.AccountType}}</div>
 	</div>
 
 	<div class="item left">
-		<span class="label text-default-25">شماره کارت</span>
-		<div class="value bg-default-95 text-default-50">{{node.CardID}}</div>
+		<span class="label" [ngStyle]="theme.label">شماره کارت</span>
+		<div class="value" [ngStyle]="theme.light">{{node.CardID}}</div>
 	</div>
 
 	<div class="item">
-		<span class="label text-default-25">شماره شبا</span>
-		<div class="value bg-default-95 text-default-50">{{node.Sheba}}</div>
+		<span class="label" [ngStyle]="theme.label">شماره شبا</span>
+		<div class="value" [ngStyle]="theme.light">{{node.Sheba}}</div>
 	</div>
 
 	<div class="item">
-		<span class="label text-default-25">آدرس شعبه</span>
-		<div class="value bg-default-95 text-default-50">{{node.BranchAddress}}</div>
+		<span class="label" [ngStyle]="theme.label">آدرس شعبه</span>
+		<div class="value" [ngStyle]="theme.light">{{node.BranchAddress}}</div>
 	</div>
 </div>
 
-<div *ngIf="searching" class="btn btn-primary" (click)="clickedOnAddNodeButton(node)">اضافه‌کردن به گراف</div>
+<div *ngIf="searching" class="btn" [ngStyle]="theme.primary" (click)="clickedOnAddNodeButton(node)">اضافه‌کردن به گراف
+</div>
