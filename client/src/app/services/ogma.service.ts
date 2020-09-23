@@ -18,6 +18,7 @@ import configs, {
 	maxTransactionAmount,
 	setMaxTransactionAmount
 } from './ogmaConfigs';
+import { SnackbarComponent } from '../components/snackbar/snackbar.component.js';
 
 @Injectable({
 	providedIn: 'root'
@@ -124,11 +125,14 @@ export class OgmaService {
 			id: data.AccountID
 		});
 
+		if (!node) return node;
+
 		if (data['nodeType'] && data['nodeType'] === 'source') {
 			node.setAttributes(configs.classes.source);
 		} else if (data['nodeType'] && data['nodeType'] === 'target') {
 			node.setAttributes(configs.classes.target);
-		}
+		} else if (data['OwnerName'].startsWith('شرکت'))
+			node.setAttributes(configs.classes.company);
 
 		this.runLayout();
 
@@ -186,7 +190,12 @@ export class OgmaService {
 	}
 
 	public setNormal(nodes) {
-		nodes.setAttributes(configs.classes.normal);
+		nodes.forEach((node) => {
+			if (node.getData('OwnerName').startsWith('شرکت'))
+				node.setAttributes(configs.classes.company);
+			else node.setAttributes(configs.classes.normal);
+		});
+
 		nodes.setData('nodeType', function(node) {
 			return 'normal';
 		});
@@ -201,38 +210,60 @@ export class OgmaService {
 		});
 	}
 
-	public findPath(maxLength: number) {
+	public findPath(maxLength: number, snackbar: SnackbarComponent) {
 		const sources = this.getWithTypes('source');
 		const targets = this.getWithTypes('target');
 
-		this.ogma.removeNodes(this.ogma.getNodes('raw'));
-
-		sources.forEach((node) => {
-			this.addNode(node.getData(), {}, false);
-		});
-		targets.forEach((node) => {
-			this.addNode(node.getData(), {}, false);
-		});
+		if (sources.size === 0)
+			return 'لطفاً ابتدا حداقل یک راس را به عنوان مبدأ انتخاب کنید';
+		if (targets.size === 0)
+			return 'لطفاً ابتدا حداقل یک راس را به عنوان مقصد انتخاب کنید';
 
 		this.graphService
 			.findPath(sources.getId(), targets.getId(), maxLength)
-			.subscribe((res: any) => {
-				res.item1.forEach((node) => this.addNode(node));
-				res.item1.forEach((node) => this.addNode(node, {}, false));
-				res.item2.forEach((edge) => this.addEdge(edge));
+			.subscribe(
+				(res: any) => {
+					this.ogma.removeNodes(this.ogma.getNodes('raw'));
 
-				this.runLayout();
-			});
+					sources.forEach((node) => {
+						this.addNode(node.getData(), {}, false);
+					});
+					targets.forEach((node) => {
+						this.addNode(node.getData(), {}, false);
+					});
+
+					res.item1.forEach((node) => this.addNode(node, {}, false));
+					res.item2.forEach((edge) => this.addEdge(edge));
+
+					this.runLayout();
+				},
+				(_) => {
+					snackbar.show(
+						'درخواست پردازش مسیر با خطا مواجه شد',
+						'danger'
+					);
+				}
+			);
 	}
 
-	findFlow() {
+	findFlow(snackbar: SnackbarComponent) {
 		const sources = this.getWithTypes('source');
 		const targets = this.getWithTypes('target');
+
+		if (sources.size === 0)
+			return 'لطفاً ابتدا حداقل یک راس را به عنوان مبدأ انتخاب کنید';
+		if (targets.size === 0)
+			return 'لطفاً ابتدا حداقل یک راس را به عنوان مقصد انتخاب کنید';
 
 		this.graphService
 			.findMaxFlow(sources.getId(), targets.getId())
 			.subscribe((res) => {
-				alert(res);
+				snackbar.show(
+					`بیشینۀ شار محاسبه‌شده: ${(+res).toLocaleString()}`,
+					'success',
+					0,
+					true
+				);
 			});
 	}
 

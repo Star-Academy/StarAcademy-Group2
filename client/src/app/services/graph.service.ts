@@ -20,6 +20,8 @@ export class GraphService {
 	}
 
 	public expand(payload) {
+		console.log(payload);
+
 		return this.httpClient.post(
 			'https://localhost:5001/UserQuery/expand',
 			payload,
@@ -36,8 +38,10 @@ export class GraphService {
 	}
 
 	public restartTabs() {
+		console.log('RESTART');
+
 		return this.httpClient.post(
-			'https://localhost:5001/MapState/createMap',
+			'https://localhost:5001/MapState/restartMap',
 			options
 		);
 	}

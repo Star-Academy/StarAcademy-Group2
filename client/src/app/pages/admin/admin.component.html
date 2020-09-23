@@ -32,14 +32,14 @@
 					<div class="row header" [ngStyle]="theme.primary">
 						<div class="cell">ردیف</div>
 						<div class="cell">نام کاربری</div>
-						<div class="cell">مدیر / کارمند</div>
+						<div class="cell">مدیر / کاربر</div>
 						<div class="cell">حذف</div>
 					</div>
 					<div *ngFor="let user of users; index as i" class="row" [ngStyle]="rowStyle(i)"
 						(mouseover)="hoveredRowIndex = i" (mouseleave)="hoveredRowIndex = -1">
 						<div class="cell">{{i + 1}}</div>
 						<div class="cell right">{{user.username}}</div>
-						<div class="cell icon" [ngStyle]="userTypeStyle(user)">{{user.type ? 'ادمین' : 'کارمند'}}</div>
+						<div class="cell icon" [ngStyle]="userTypeStyle(user)">{{user.type ? 'ادمین' : 'کاربر'}}</div>
 						<div class="cell icon clickable" (click)="removeAccount(user)">
 							<span [ngStyle]="theme.danger">
 								<svg-icon key="garbageBin"></svg-icon>

@@ -63,6 +63,8 @@
 
 					transition: transform 100ms ease-in-out;
 
+					cursor: pointer;
+
 					&.openable {
 						&.open {
 							border-radius: 1.5rem 1.5rem 0 0;

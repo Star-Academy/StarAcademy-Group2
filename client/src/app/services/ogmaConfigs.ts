@@ -68,6 +68,9 @@ export default {
 		normal: {
 			image: '../../../assets/svg/washing_machine.svg'
 		},
+		company: {
+			image: '../../../assets/svg/company.svg'
+		},
 		source: {
 			image: '../../../assets/svg/money_source.svg'
 		},

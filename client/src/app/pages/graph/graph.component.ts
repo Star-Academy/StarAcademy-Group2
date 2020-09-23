@@ -76,7 +76,63 @@ export class GraphComponent implements OnInit {
 			.search([ { field: 'OwnerName', query: 'ژیلا' } ])
 			.subscribe((res) => this.clickedOnAddNodeButton({ node: res[0] }));
 
+		this.searchService
+			.search([
+				{
+					field: 'AccountID',
+					query: '8000000281'
+				}
+			])
+			.subscribe((res) => {
+				this.clickedOnAddNodeButton({
+					node: res[0]
+				});
+			});
+
 		setTimeout(() => this.runLayout(), 500);
+
+		// this.searchService
+		// 	.search([ { field: 'OwnerName', query: 'ارژنگ' } ])
+		// 	.subscribe((res) => {
+		// 		this.clickedOnAddNodeButton({ node: res[0] });
+
+		// 		this.searchService
+		// 			.search([ { field: 'OwnerName', query: 'دریا' } ])
+		// 			.subscribe((res) => {
+		// 				this.clickedOnAddNodeButton({ node: res[0] });
+
+		// 				this.searchService
+		// 					.search([ { field: 'OwnerName', query: 'افسر' } ])
+		// 					.subscribe((res) => {
+		// 						this.clickedOnAddNodeButton({ node: res[0] });
+
+		// 						this.searchService
+		// 							.search([
+		// 								{ field: 'OwnerName', query: 'ژیلا' }
+		// 							])
+		// 							.subscribe((res) => {
+		// 								this.clickedOnAddNodeButton({
+		// 									node: res[0]
+		// 								});
+
+		// 								this.searchService
+		// 									.search([
+		// 										{
+		// 											field: 'AccountID',
+		// 											query: '8000000281'
+		// 										}
+		// 									])
+		// 									.subscribe((res) => {
+		// 										this.clickedOnAddNodeButton({
+		// 											node: res[0]
+		// 										});
+
+		// 										this.runLayout();
+		// 									});
+		// 							});
+		// 					});
+		// 			});
+		// 	});
 	}
 
 	public clickedOnSearchNodesButton = () => this.nodesModal.open();
@@ -88,9 +144,16 @@ export class GraphComponent implements OnInit {
 		this.nodesModal.open(null, 4, nodeIds);
 
 	public clickedOnFindPathButton() {
-		this.ogmaService.findPath(this.pathMaxLength.nativeElement.value);
+		const error = this.ogmaService.findPath(
+			this.pathMaxLength.nativeElement.value,
+			this.snackbar
+		);
 
-		// TODO: check if path was found
+		if (error) {
+			this.snackbar.show(error, 'danger');
+			return;
+		}
+
 		this.toggleFindPathMenu();
 		this.runLayout();
 	}
@@ -224,9 +287,10 @@ export class GraphComponent implements OnInit {
 			() => (this.hoveredContent = null)
 		);
 
-		this.ogmaService.ogma.events.onDragStart(() =>
-			this.setRectangleSelected()
-		);
+		this.ogmaService.ogma.events.onDragStart(() => {
+			this.hoveredContent = null;
+			this.setRectangleSelected();
+		});
 
 		this.ogmaService.ogma.events.onKeyPress(46, () =>
 			this.ogmaService.removeNode(
@@ -234,11 +298,11 @@ export class GraphComponent implements OnInit {
 			)
 		);
 
-		this.ogmaService.ogma.events.onKeyPress('ctrl c', () =>
+		this.ogmaService.ogma.events.onKeyPress('shift c', () =>
 			this.copyNodesAndEdges()
 		);
 
-		this.ogmaService.ogma.events.onKeyPress('ctrl v', () =>
+		this.ogmaService.ogma.events.onKeyPress('shift v', () =>
 			this.pasteNodesAndEdges()
 		);
 
@@ -271,8 +335,21 @@ export class GraphComponent implements OnInit {
 		);
 
 		this.ogmaService.ogma.events.onKeyPress('shift f', () =>
-			this.ogmaService.findFlow()
+			this.findFlow()
 		);
+
+		this.ogmaService.ogma.events.onKeyPress('shift a', () => {
+			this.ogmaService.ogma.getNodes().setSelected(true);
+		});
+	}
+
+	public findFlow() {
+		const error = this.ogmaService.findFlow(this.snackbar);
+
+		if (error) {
+			this.snackbar.show(error, 'danger');
+			return;
+		}
 	}
 
 	setRectangleSelected() {
@@ -299,7 +376,7 @@ export class GraphComponent implements OnInit {
 
 	private pasteNodesAndEdges() {
 		this.copiedNodes.forEach((node) =>
-			this.ogmaService.addNode(node.getData(), {}, false)
+			this.ogmaService.addNode(node.getData())
 		);
 		this.copiedEdges.forEach((edge) =>
 			this.ogmaService.addEdge(edge.getData())
@@ -322,8 +399,14 @@ export class GraphComponent implements OnInit {
 
 		if (target.isNode) {
 			this.hoveredContent = [
-				[ 'شعبه', target.getData('BranchName') ],
-				[ 'شناسه صاحب حساب', target.getData('OwnerID') ],
+				[
+					'مجموع مبالغ ورودی',
+					(+target.getData('totalIncome')).toLocaleString()
+				],
+				[
+					'مجموع مبالغ خروجی',
+					(+target.getData('totalDeposit')).toLocaleString()
+				],
 				[
 					'نام صاحب حساب',
 					target.getData('OwnerName') +

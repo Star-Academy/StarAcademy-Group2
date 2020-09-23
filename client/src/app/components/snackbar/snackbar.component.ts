@@ -21,17 +21,23 @@ export class SnackbarComponent {
 		this.text = 'اسنک‌بار!';
 	}
 
-	public show(text, color: string = 'dark', duration = 3000) {
+	public show(
+		text,
+		color: string = 'dark',
+		duration = 3000,
+		keepOpen: boolean = false
+	) {
 		if (this.state === 'show') clearTimeout(this.timeout);
 
 		this.state = 'show';
 		this.text = text;
 		this.color = this.theme[color];
 
-		this.timeout = setTimeout(() => {
-			this.hide();
-		}, duration);
+		if (!keepOpen)
+			this.timeout = setTimeout(() => {
+				this.hide();
+			}, duration);
 	}
 
-	private hide = () => (this.state = '');
+	public hide = () => (this.state = '');
 }

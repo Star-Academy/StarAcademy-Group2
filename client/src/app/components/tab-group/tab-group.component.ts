@@ -22,13 +22,7 @@ export class TabGroupComponent implements OnInit {
 
 	constructor(public theme: ThemeService) {}
 
-	ngOnInit(): void {
-		// TODO: remove
-		this.clickedOnAddTab();
-		this.clickedOnAddTab();
-		this.clickedOnAddTab();
-		this.tabChange({ index: 1 });
-	}
+	ngOnInit(): void {}
 
 	public addStyle() {
 		return this.addHovered

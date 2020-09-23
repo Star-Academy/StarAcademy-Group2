@@ -6,9 +6,9 @@
 	</graph-modal>
 </div>
 
-<header [ngStyle]="theme.default">
+<!-- <header [ngStyle]="theme.default">
 	<div class="logo">TODO: logo</div>
-</header>
+</header> -->
 
 <nav [ngStyle]="theme.primary">
 	<graph-tab-group (onTabChange)="onTabChange($event)" (onTabAdd)="onTabAdd($event)"
@@ -72,6 +72,13 @@
 					<div class="action" [ngStyle]="theme.primary" (click)="clickedOnFindPathButton($event)">
 						پردازش</div>
 				</div>
+			</div>
+
+			<div class="btn" [ngStyle]="theme.default" (click)="findFlow()">
+				<span class="icon">
+					<svg-icon key="toolbarFlow"></svg-icon>
+				</span>
+				<span class="text">محاسبۀ بیشینۀ جریان</span>
 			</div>
 
 			<input [style.display]="'none'" id="upload-file" type="file" name="upload-file" accept=".json"

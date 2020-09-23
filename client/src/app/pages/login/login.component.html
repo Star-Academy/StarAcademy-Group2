@@ -3,7 +3,7 @@
 <div [ngClass]="['container shadow-narrow', containerClassName]">
 	<div class="form-container employee">
 		<form [ngStyle]="theme.default">
-			<div class="title">ورود کارمند</div>
+			<div class="title">ورود کاربر</div>
 			<input [ngStyle]="theme.light" [(ngModel)]="user.username" name="username" type="text"
 				placeholder="نام کاربری" />
 			<input [ngStyle]="theme.light" [(ngModel)]="user.password" name="password" type="password"
@@ -30,8 +30,8 @@
 			</div>
 			<div class="panel left">
 				<div class="title">سلام، روز بخیر!</div>
-				<p>در صورتی که کارمند هستید لطفاً بر روی دکمۀ پایین کلیک کنید.</p>
-				<button [ngStyle]="theme.primary.reverse" (click)="toggleStatus()">ورود کارمند</button>
+				<p>در صورتی که کاربر هستید لطفاً بر روی دکمۀ پایین کلیک کنید.</p>
+				<button [ngStyle]="theme.primary.reverse" (click)="toggleStatus()">ورود کاربر</button>
 			</div>
 		</div>
 	</div>
