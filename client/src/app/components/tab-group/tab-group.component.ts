@@ -18,6 +18,7 @@ export class TabGroupComponent implements OnInit {
 	public addHovered: boolean = false;
 	public settingsHovered: boolean = false;
 	public isSettingsActive: boolean = false;
+	public closeHovered: boolean = false;
 
 	constructor(public theme: ThemeService) {}
 
@@ -41,6 +42,12 @@ export class TabGroupComponent implements OnInit {
 			: this.settingsHovered
 				? this.theme.primary.hovered
 				: this.theme.primary;
+	}
+
+	public closeStyle() {
+		return this.closeHovered
+			? this.theme.danger.hovered
+			: this.theme.primary;
 	}
 
 	tabChange(event) {

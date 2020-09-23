@@ -7,9 +7,18 @@
 	<svg-icon key="plus"></svg-icon>
 </span>
 
-<div class="settings" [ngStyle]="settingsStyle()" (mouseover)="settingsHovered = true"
-	(mouseleave)="settingsHovered = false" (click)="tabChange({index: -1})">
-	<span class="body">
-		<span class="label">تنظیمات</span>
-	</span>
+<div class="left">
+	<div class="tab settings" [ngStyle]="settingsStyle()" (mouseover)="settingsHovered = true"
+		(mouseleave)="settingsHovered = false" (click)="tabChange({index: -1})">
+		<span class="body">
+			<span class="label">تنظیمات</span>
+		</span>
+	</div>
+
+	<div class="tab" [ngStyle]="closeStyle()" (mouseover)="closeHovered = true" (mouseleave)="closeHovered = false"
+		(click)="tabChange({index: -2})">
+		<span class="body">
+			<span class="label">خروج</span>
+		</span>
+	</div>
 </div>

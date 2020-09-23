@@ -1,4 +1,5 @@
-import { OnInit, Component, Input, ViewChild, ElementRef } from '@angular/core';
+import { OnInit, Component, ViewChild, ElementRef } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { ThemeService } from '../../services/theme.service';
 import { OgmaService } from '../../services/ogma.service';
@@ -35,6 +36,7 @@ export class GraphComponent implements OnInit {
 
 	public constructor(
 		public theme: ThemeService,
+		private router: Router,
 		public ogmaService: OgmaService,
 		private searchService: SearchNodesService
 	) {}
@@ -56,19 +58,19 @@ export class GraphComponent implements OnInit {
 	// TODO: Remove
 	public addSomeNode() {
 		this.searchService
-			.search('OwnerName', 'ارژنگ')
+			.search([ { field: 'OwnerName', query: 'ارژنگ' } ])
 			.subscribe((res) => this.clickedOnAddNodeButton({ node: res[0] }));
 
 		this.searchService
-			.search('OwnerName', 'دریا')
+			.search([ { field: 'OwnerName', query: 'دریا' } ])
 			.subscribe((res) => this.clickedOnAddNodeButton({ node: res[0] }));
 
 		this.searchService
-			.search('OwnerName', 'افسر')
+			.search([ { field: 'OwnerName', query: 'افسر' } ])
 			.subscribe((res) => this.clickedOnAddNodeButton({ node: res[0] }));
 
 		this.searchService
-			.search('OwnerName', 'ژیلا')
+			.search([ { field: 'OwnerName', query: 'ژیلا' } ])
 			.subscribe((res) => this.clickedOnAddNodeButton({ node: res[0] }));
 
 		setTimeout(() => this.runLayout(), 500);
@@ -132,6 +134,12 @@ export class GraphComponent implements OnInit {
 	}
 
 	onTabChange(event) {
+		if (event.index === -2) {
+			localStorage.removeItem('token');
+			this.router.navigate([ '/login' ]);
+			return;
+		}
+
 		if (event.index === -1) {
 			this.showingSettings = true;
 			return;

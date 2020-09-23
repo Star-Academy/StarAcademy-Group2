@@ -1,22 +1,29 @@
-<form #searchForm="ngForm" (ngSubmit)="clickedOnSearchButton(searchForm.value)">
-	<label [ngStyle]="theme.label" for="search-field-input">جستجو در</label>
-	<div class="field-select-wrapper" (click)="fieldSelectOpen = !fieldSelectOpen">
-		<div [ngClass]="['select', fieldSelectOpen ? 'open' : '']">
-			<div class="trigger" [ngStyle]="theme.light"><span>{{selectedOption.fa}}</span>
-				<div class="arrow"></div>
-			</div>
-			<div class="options">
-				<span *ngFor="let option of options" [ngClass]="selectedOption === option ? 'selected' : ''"
-					[ngStyle]="selectedOption === option || option.hovered ? theme.primary : theme.light"
-					(mouseover)="option.hovered = true" (mouseleave)="option.hovered = false"
-					(click)="selectedOption = option; updateMaxLength(option.en)">{{option.fa}}</span>
+<form (ngSubmit)="clickedOnSearchButton()">
+	<div class="wrapper" *ngFor="let item of items; index as i"
+		[ngStyle]="{'border-bottom': '1px solid ' + theme.light.hovered.background}">
+		<label [ngStyle]="theme.label">جستجو در</label>
+		<div class="field-select-wrapper" (click)="item.fieldSelectOpen = !item.fieldSelectOpen">
+			<div [ngClass]="['select', item.fieldSelectOpen ? 'open' : '']">
+				<div class="trigger" [ngStyle]="theme.light"><span>{{item.options[item.selectedOptionIndex].fa}}</span>
+					<div class="arrow"></div>
+				</div>
+				<div class="options">
+					<span *ngFor="let option of getOptions(i); index as j" [ngClass]="item.a === j ? 'selected' : ''"
+						[ngStyle]="item.a === j || option.hovered ? theme.primary : theme.light"
+						(mouseover)="option.hovered = true" (mouseleave)="option.hovered = false"
+						(click)="updateSelectedField(i, j, option.en)">
+						{{option.fa}}
+					</span>
+				</div>
 			</div>
 		</div>
+
+		<label [ngStyle]="theme.label">عبارت مورد نظر</label>
+		<input [ngStyle]="theme.light" [maxLength]="item.maxLength" type="text"
+			(change)="item.query = $event.target.value" [value]="item.query"
+			placeholder="لطفاً عبارت مورد جستجو را وارد کنید ..." required>
 	</div>
 
-	<label [ngStyle]="theme.label" for="search-query-input">عبارت مورد نظر</label>
-	<input [ngStyle]="theme.light" ngModel name="query" [maxLength]="maxLength" id="search-query-input" type="text"
-		placeholder="لطفاً عبارت مورد جستجو را وارد کنید ..." required>
-
+	<button class="btn first" [ngStyle]="theme.success" type="button" (click)="addNewField()">افزودن فیلد جدید</button>
 	<button class="btn" [ngStyle]="actionStyle" type="submit">نمایش اطلاعات</button>
 </form>
