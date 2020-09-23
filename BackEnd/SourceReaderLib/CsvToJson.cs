@@ -8,7 +8,8 @@ namespace SourceReaderLib
     {
         public static string Convert(string csv)
         {
-            var csvLines = csv.Split('\n');
+            csv = csv.Replace('\r','\n');
+            var csvLines = csv.Split(new char[]{'\n'} , StringSplitOptions.RemoveEmptyEntries);
             var memberNames = csvLines[0].Split(',');
             var myObj = csvLines.Skip(1)
                                 .Select((x) => x
