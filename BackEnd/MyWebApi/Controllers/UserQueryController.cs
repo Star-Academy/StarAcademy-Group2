@@ -21,7 +21,7 @@ namespace MyWebApi.Controllers
             this.elasticService = elasticService;
         }
 
-        // [AnyUser]
+        [AnyUser]
         [HttpPost]
         [Route("searchNode")]
         public ActionResult<IEnumerable<Node>> NodeSearch([FromBody] NodeSearchQuery nodeSearchQuery)
@@ -37,7 +37,7 @@ namespace MyWebApi.Controllers
             }
         }
 
-        // [AnyUser]
+        [AnyUser]
         [HttpPost]
         [Route("expand")]
         public ActionResult<Tuple<HashSet<Node>, HashSet<Edge>>> Expand([FromBody] ExpandQuery expandQuery) //informing front
@@ -78,24 +78,24 @@ namespace MyWebApi.Controllers
             return new Tuple<HashSet<Node>, HashSet<Edge>>(nodes, edges);
         }
 
-        // [AnyUser]
+        [AnyUser]
         [HttpPost]
         [Route("flow")]
-        public ActionResult<long> Flow([FromBody] Tuple<string,string> sourceAndDestinationId)
+        public ActionResult<long> Flow([FromBody] Tuple<List<string>, List<string>> sourceAndDestinationId)
         {
-            var maxFlowFinder = new MaxFlowFinder(sourceAndDestinationId.Item1, sourceAndDestinationId.Item2);
-            maxFlowFinder.InitGraph();
+            var maxFlowFinder = new MaxFlowFinder();
+            maxFlowFinder.InitGraph(sourceAndDestinationId.Item1, sourceAndDestinationId.Item2);
             return maxFlowFinder.Find();
         }
 
-        // [AnyUser]
-        [HttpGet]
+        [AnyUser]
+        [HttpPost]
         [Route("FindAllPath")]
-        public IActionResult FindAllPath(string sourceId, string destinationId, int maxLength=5)
+        public IActionResult FindAllPath([FromBody] FindAllPathQuery findAllPathQuery)
         {
             try
             {
-                var nb = new NetworkBuilder(sourceId, destinationId, maxLength, false);
+                var nb = new NetworkBuilder(findAllPathQuery.SourceIds, findAllPathQuery.DestinationIds, findAllPathQuery.MaxLength, false);
                 nb.Build();
                 return Ok(new Tuple<HashSet<Node>, HashSet<Edge>>(nb.Nodes, nb.Edges));
             }
@@ -105,5 +105,6 @@ namespace MyWebApi.Controllers
                 return BadRequest(e.Message);
             }
         }
+
     }
 }

@@ -14,7 +14,10 @@ namespace Test.GraphLogicLib.NetworkBuilderTest
         [MemberData(nameof(SimplifyingEdgesTestData))]
         public void Test(HashSet<Edge> incomingEdges, HashSet<Edge> outcomingEdges, HashSet<SimpleEdge> expected)
         {
-            networkBuilder = new NetworkBuilder("sth", "sth", 0, false);
+            var bozqales = new List<string>(){
+                "bozqale"
+            };
+            networkBuilder = new NetworkBuilder(bozqales, bozqales, 0, false);
             Assert.Equal(expected, networkBuilder.SimplifyingEdges(incomingEdges, outcomingEdges));
         }
 

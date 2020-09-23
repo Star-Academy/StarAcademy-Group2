@@ -26,7 +26,7 @@ namespace MyWebApi.Controllers
             this.mapState = map;
         }
 
-        // [AnyUser]
+        [AnyUser]
         [HttpPost]
         [Route("addNode")]
         public ActionResult<List<Edge>> AddNode([FromBody] string idNode)
@@ -44,7 +44,7 @@ namespace MyWebApi.Controllers
             return Ok(edges);
         }
 
-        // [AnyUser]
+        [AnyUser]
         [HttpPost]
         [Route("deleteNode")]
         public ActionResult DeleteNode([FromBody] string idNode)
