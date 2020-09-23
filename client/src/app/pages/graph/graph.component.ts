@@ -34,6 +34,9 @@ export class GraphComponent implements OnInit {
 
 	public showingSettings: boolean = false;
 
+	private copiedNodes = [];
+	private copiedEdges = [];
+
 	public constructor(
 		public theme: ThemeService,
 		private router: Router,
@@ -219,6 +222,87 @@ export class GraphComponent implements OnInit {
 
 		this.ogmaService.ogma.events.onUnhover(
 			() => (this.hoveredContent = null)
+		);
+
+		this.ogmaService.ogma.events.onDragStart(() =>
+			this.setRectangleSelected()
+		);
+
+		this.ogmaService.ogma.events.onKeyPress(46, () =>
+			this.ogmaService.removeNode(
+				this.ogmaService.ogma.getSelectedNodes()
+			)
+		);
+
+		this.ogmaService.ogma.events.onKeyPress('ctrl c', () =>
+			this.copyNodesAndEdges()
+		);
+
+		this.ogmaService.ogma.events.onKeyPress('ctrl v', () =>
+			this.pasteNodesAndEdges()
+		);
+
+		this.ogmaService.ogma.events.onKeyPress('shift l', () =>
+			this.ogmaService.lockNodes(this.ogmaService.ogma.getSelectedNodes())
+		);
+
+		this.ogmaService.ogma.events.onKeyPress('shift u', () =>
+			this.ogmaService.unlockNodes(
+				this.ogmaService.ogma.getSelectedNodes()
+			)
+		);
+
+		this.ogmaService.ogma.events.onKeyPress('shift e', () =>
+			this.clickedOnExpandButton({
+				nodeIds: this.ogmaService.ogma.getSelectedNodes().getId()
+			})
+		);
+
+		this.ogmaService.ogma.events.onKeyPress('shift s', () =>
+			this.ogmaService.setSource(this.ogmaService.ogma.getSelectedNodes())
+		);
+
+		this.ogmaService.ogma.events.onKeyPress('shift t', () =>
+			this.ogmaService.setTarget(this.ogmaService.ogma.getSelectedNodes())
+		);
+
+		this.ogmaService.ogma.events.onKeyPress('shift n', () =>
+			this.ogmaService.setNormal(this.ogmaService.ogma.getSelectedNodes())
+		);
+
+		this.ogmaService.ogma.events.onKeyPress('shift f', () =>
+			this.ogmaService.findFlow()
+		);
+	}
+
+	setRectangleSelected() {
+		if (this.ogmaService.ogma.keyboard.isKeyPressed('ctrl')) {
+			if (!this.ogmaService.ogma.keyboard.isKeyPressed('shift')) {
+				this.ogmaService.ogma.getSelectedNodes().setSelected(false);
+				this.ogmaService.ogma.getSelectedEdges().setSelected(false);
+			}
+
+			this.ogmaService.ogma.tools.rectangleSelect.enable({
+				bothExtremities: true,
+				callback({ nodes, edges }) {
+					nodes.setSelected(true);
+					edges.setSelected(true);
+				}
+			});
+		}
+	}
+
+	private copyNodesAndEdges() {
+		this.copiedNodes = this.ogmaService.ogma.getSelectedNodes().dedupe();
+		this.copiedEdges = this.ogmaService.ogma.getSelectedEdges().dedupe();
+	}
+
+	private pasteNodesAndEdges() {
+		this.copiedNodes.forEach((node) =>
+			this.ogmaService.addNode(node.getData(), {}, false)
+		);
+		this.copiedEdges.forEach((edge) =>
+			this.ogmaService.addEdge(edge.getData())
 		);
 	}
 

@@ -29,7 +29,6 @@ export class SearchNodesService {
 				.query}" `;
 		}
 		body += '}';
-		console.log(body);
 
 		return this.httpClient.post(
 			'https://localhost:5001/userQuery/searchNode',

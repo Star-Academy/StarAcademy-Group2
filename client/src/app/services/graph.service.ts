@@ -67,23 +67,27 @@ export class GraphService {
 
 	public findPath(sourceId, destinationId, maxLength) {
 		maxLength = Math.max(1, Math.min(5, maxLength));
+		console.log({
+			sourceIds: sourceId,
+			destinationIds: destinationId,
+			maxLength: maxLength
+		});
 
-		return this.httpClient.get(
+		return this.httpClient.post(
 			'https://localhost:5001/UserQuery/FindAllPath',
 			{
-				params: {
-					sourceId,
-					destinationId,
-					maxLength
-				}
-			}
+				sourceIds: sourceId,
+				destinationIds: destinationId,
+				maxLength: maxLength
+			},
+			options
 		);
 	}
 
-	public findMaxFlow(source, target) {
+	public findMaxFlow(sources, targets) {
 		return this.httpClient.post(
 			'https://localhost:5001/UserQuery/flow',
-			{ item1: source, item2: target },
+			{ item1: sources, item2: targets },
 			options
 		);
 	}
