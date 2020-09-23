@@ -1,13 +1,31 @@
-.tab-container {
-	display: block;
-	text-align: center;
-	float: right;
-}
+:host {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
 
-.tab-item {
-	display: inline-block;
-}
+	graph-tab {
+		margin-left: 1rem;
 
-.icons {
-	display: inline-block;
+		cursor: pointer;
+	}
+
+	.icon {
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+
+		width: 3rem;
+		height: 3rem;
+
+		margin-right: 1rem;
+
+		border-radius: 100%;
+
+		cursor: pointer;
+
+		svg-icon {
+			font-size: 1.2rem;
+		}
+	}
 }

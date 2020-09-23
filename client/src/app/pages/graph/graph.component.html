@@ -22,8 +22,8 @@
 	<div class="logo">TODO: logo</div>
 </header>
 
-<nav>
-	<graph-tab-group class="tab" (onTabChange)="onTabChange($event)" (onTabAdd)="onTabAdd($event)"
+<nav [ngStyle]="theme.primary">
+	<graph-tab-group (onTabChange)="onTabChange($event)" (onTabAdd)="onTabAdd($event)"
 		(onTabDelete)="onTabDelete($event)">
 	</graph-tab-group>
 </nav>
@@ -78,11 +78,6 @@
 				<span class="text">جستجو</span>
 			</div>
 		</div>
-
-		<!-- <div class="nodes-count">
-			<span class="label text-default-10">Nodes Count: </span>
-			<span class="value">{{countNodes()}}</span>
-		</div> -->
 	</div>
 
 	<!-- <div id="draggable"><img src="../../../assets/svg/washing_machine.svg"></div>

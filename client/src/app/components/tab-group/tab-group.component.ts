@@ -1,4 +1,5 @@
 import { EventEmitter, Output, Component, OnInit } from '@angular/core';
+import { ThemeService } from 'src/app/services/theme.service';
 
 @Component({
 	selector: 'graph-tab-group',
@@ -10,12 +11,26 @@ export class TabGroupComponent implements OnInit {
 	@Output() onTabAdd = new EventEmitter();
 	@Output() onTabDelete = new EventEmitter();
 
-	public tabs = [ 'first' ];
+	public tabs = [ 'پیش‌فرض' ];
 	public activeTab = 0;
 
-	constructor() {}
+	public addHovered: boolean = false;
 
-	ngOnInit(): void {}
+	constructor(public theme: ThemeService) {}
+
+	ngOnInit(): void {
+		// TODO: remove
+		this.clickedOnAddTab();
+		this.clickedOnAddTab();
+		this.clickedOnAddTab();
+		this.tabChange({ index: 2 });
+	}
+
+	public addStyle() {
+		return this.addHovered
+			? this.theme.primary.hovered
+			: this.theme.primary.selected;
+	}
 
 	tabChange(event) {
 		this.activeTab = event.index;
@@ -37,7 +52,7 @@ export class TabGroupComponent implements OnInit {
 		}
 	}
 
-	clickedOnAddTab(event) {
+	clickedOnAddTab() {
 		if (this.tabs.length < 10) {
 			this.tabs.push('گراف جدید');
 			this.activeTab = this.tabs.length - 1;

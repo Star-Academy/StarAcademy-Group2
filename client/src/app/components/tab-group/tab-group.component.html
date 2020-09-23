@@ -1,11 +1,8 @@
-<div class="tab-container">
-	<graph-tab class="tab-item" *ngFor="let tab of tabs; let index = index;" [label]="tab" [index]="index"
-		[isActive]="index === activeTab" (onClosedCallback)="deleteTab($event)" (onClickedCallback)="tabChange($event)"
-		(onChangeNameCallback)="onChangeName($event)">
-
-	</graph-tab>
-	<span class="icons">
-		<round-button btnClass="btn-secondary btn-secondary-success" icon="plus" iconSize="3"
-			(callback)="clickedOnAddTab($event)"></round-button>
-	</span>
-</div>
+<graph-tab *ngFor="let tab of tabs; let index = index;" [label]="tab" [index]="index" [isActive]="index === activeTab"
+	(onClosedCallback)="deleteTab($event)" (onClickedCallback)="tabChange($event)"
+	(onChangeNameCallback)="onChangeName($event)">
+</graph-tab>
+<span class="icon add" [ngStyle]="addStyle()" (mouseover)="addHovered = true" (mouseleave)="addHovered = false"
+	(click)="clickedOnAddTab()">
+	<svg-icon key="plus"></svg-icon>
+</span>

@@ -92,8 +92,8 @@ export class OgmaService {
 		this.graphService.deleteTab(index).subscribe();
 		this.ogmaArray.splice(index, 1);
 		this.edgeNormalContentType.splice(index, 1);
-		this.sourceNode[this.tabIndex].splice(index, 1);
-		this.targetNode[this.tabIndex].splice(index, 1);
+		this.sourceNode.splice(index, 1);
+		this.targetNode.splice(index, 1);
 		if (this.tabIndex == index) {
 			if (this.tabIndex == 0) {
 				this.tabChange(0, container);

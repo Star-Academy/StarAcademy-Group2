@@ -1,9 +1,9 @@
-<div class="tab" [ngClass]="{'active': isActive}">
-	<span (click)="clickOnTab($event)">
-		<label (dblclick)="onDoubleClick($event)">{{label}}</label>
+<div class="tab" [ngStyle]="tabStyle()" (mouseover)="hovered = true" (mouseleave)="hovered = false">
+	<span class="body" (click)="clickOnTab($event)">
+		<span class="label" (dblclick)="onDoubleClick($event)">{{label}}</span>
 	</span>
-	<span class="icons">
-		<round-button btnClass="btn-secondary btn-secondary-success" icon="cross" iconSize="3"
-			(callback)="clickedOnCloseTab($event)"></round-button>
+	<span [ngClass]="['icon remove', hovered ? 'show' : '']" [ngStyle]="closeStyle()" (mouseover)="closeHovered = true"
+		(mouseleave)="closeHovered = false" (click)="clickedOnCloseTab($event)">
+		<svg-icon key="cross"></svg-icon>
 	</span>
 </div>

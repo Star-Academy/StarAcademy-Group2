@@ -24,13 +24,9 @@
 	nav {
 		z-index: 2;
 
-		min-height: 4rem;
+		padding: 1rem 2rem;
 
-		.tab {
-			display: block;
-			position: relative;
-			border: 5px solid red;
-		}
+		graph-tab-group {}
 	}
 
 	main {
