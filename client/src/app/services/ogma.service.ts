@@ -8,6 +8,7 @@ import Ogma, {
 	EdgeList
 } from '../../dependencies/ogma.min.js';
 
+import { ThemeService } from './theme.service.js';
 import { GraphService } from './graph.service';
 
 import { AccountNode } from '../models/AccountNode.js';
@@ -17,6 +18,7 @@ import configs, {
 	maxTransactionAmount,
 	setMaxTransactionAmount
 } from './ogmaConfigs';
+import { SnackbarComponent } from '../components/snackbar/snackbar.component.js';
 
 @Injectable({
 	providedIn: 'root'
@@ -26,8 +28,8 @@ export class OgmaService {
 	public ogma: Ogma;
 	public tabIndex;
 
-	private sourceNode: RawNode[] = [];
-	private targetNode: RawNode[] = [];
+	private sourceNode: NodeList[] = [];
+	private targetNode: NodeList[] = [];
 
 	private edgeNormalContentType: boolean[] = [];
 
@@ -48,21 +50,24 @@ export class OgmaService {
 
 	public configuration = {
 		options: {
-			backgroundColor: '#ffffff',
+			backgroundColor: this.theme.default.background,
 			directedEdges: true,
-			minimumWidth: '800',
-			minimumHeight: '600'
+			minimumWidth: '1920',
+			minimumHeight: '826'
 		}
 	};
 
-	public constructor(private graphService: GraphService) {}
+	public constructor(
+		private theme: ThemeService,
+		private graphService: GraphService
+	) {}
 
 	public initConfig() {
 		this.ogma = new Ogma(this.configuration);
 		this.setInitialStyles(this.ogma);
 		this.edgeNormalContentType.push(true);
-		this.sourceNode.push(null);
-		this.targetNode.push(null);
+		this.sourceNode.push(this.ogma.getNodes([]));
+		this.targetNode.push(this.ogma.getNodes([]));
 		this.tabIndex = 0;
 		this.ogmaArray.push(this.ogma);
 	}
@@ -82,8 +87,8 @@ export class OgmaService {
 		let temp = new Ogma(this.configuration);
 		this.setInitialStyles(temp);
 		this.edgeNormalContentType.push(true);
-		this.sourceNode.push(null);
-		this.targetNode.push(null);
+		this.sourceNode.push(this.ogma.getNodes([]));
+		this.targetNode.push(this.ogma.getNodes([]));
 		this.ogmaArray.push(temp);
 		this.tabChange(index, container);
 	}
@@ -92,8 +97,8 @@ export class OgmaService {
 		this.graphService.deleteTab(index).subscribe();
 		this.ogmaArray.splice(index, 1);
 		this.edgeNormalContentType.splice(index, 1);
-		this.sourceNode[this.tabIndex].splice(index, 1);
-		this.targetNode[this.tabIndex].splice(index, 1);
+		this.sourceNode.splice(index, 1);
+		this.targetNode.splice(index, 1);
 		if (this.tabIndex == index) {
 			if (this.tabIndex == 0) {
 				this.tabChange(0, container);
@@ -110,15 +115,24 @@ export class OgmaService {
 		this.graphService.restartTabs().subscribe();
 	}
 
-	public addNode(data: AccountNode, attributes?, register = true) {
+	public addNode(data, attributes?, register = true) {
 		data['totalDeposit'] = 0;
-		console.log(data);
+		data['totalIncome'] = 0;
 
-		const node = this.ogma.addNode({
+		let node = this.ogma.addNode({
 			data,
 			attributes,
 			id: data.AccountID
 		});
+
+		if (!node) return node;
+
+		if (data['nodeType'] && data['nodeType'] === 'source') {
+			node.setAttributes(configs.classes.source);
+		} else if (data['nodeType'] && data['nodeType'] === 'target') {
+			node.setAttributes(configs.classes.target);
+		} else if (data['OwnerName'].startsWith('شرکت'))
+			node.setAttributes(configs.classes.company);
 
 		this.runLayout();
 
@@ -149,28 +163,42 @@ export class OgmaService {
 	public getSourceNode = () => this.sourceNode[this.tabIndex];
 	public getTargetNode = () => this.targetNode[this.tabIndex];
 
-	public setSource(node: Node) {
-		if (this.sourceNode[this.tabIndex]) this.removeSource();
-		this.sourceNode[this.tabIndex] = node;
-
-		this.sourceNode[this.tabIndex].setAttributes(configs.classes.source);
+	public isSourceNode(node) {
+		if (node.getData('nodeType') && node.getData('nodeType') === 'source')
+			return true;
+		return false;
 	}
 
-	public setTarget(node: RawNode) {
-		if (this.targetNode[this.tabIndex]) this.removeTarget();
-		this.targetNode[this.tabIndex] = node;
-
-		this.targetNode[this.tabIndex].setAttributes(configs.classes.target);
+	public isTargetNode(node) {
+		if (node.getData('nodeType') && node.getData('nodeType') === 'target')
+			return true;
+		return false;
 	}
 
-	public removeSource() {
-		this.sourceNode[this.tabIndex].setAttributes(configs.classes.normal);
-		this.sourceNode[this.tabIndex] = null;
+	public setSource(nodes) {
+		nodes.setAttributes(configs.classes.source);
+		nodes.setData('nodeType', function(node) {
+			return 'source';
+		});
 	}
 
-	public removeTarget() {
-		this.targetNode[this.tabIndex].setAttributes(configs.classes.normal);
-		this.targetNode[this.tabIndex] = null;
+	public setTarget(nodes) {
+		nodes.setAttributes(configs.classes.target);
+		nodes.setData('nodeType', function(node) {
+			return 'target';
+		});
+	}
+
+	public setNormal(nodes) {
+		nodes.forEach((node) => {
+			if (node.getData('OwnerName').startsWith('شرکت'))
+				node.setAttributes(configs.classes.company);
+			else node.setAttributes(configs.classes.normal);
+		});
+
+		nodes.setData('nodeType', function(node) {
+			return 'normal';
+		});
 	}
 
 	public expand(nodeIds: string[], filters) {
@@ -182,48 +210,70 @@ export class OgmaService {
 		});
 	}
 
-	public findPath(maxLength: number) {
-		this.ogma.removeNodes(this.ogma.getNodes('raw'));
+	public findPath(maxLength: number, snackbar: SnackbarComponent) {
+		const sources = this.getWithTypes('source');
+		const targets = this.getWithTypes('target');
 
-		this.setSource(
-			this.addNode(this.sourceNode[this.tabIndex].getData(), null, false)
-		);
-		this.setTarget(
-			this.addNode(this.targetNode[this.tabIndex].getData(), null, false)
-		);
-
-		const sourceId = this.sourceNode[this.tabIndex].getId();
-		const targetId = this.targetNode[this.tabIndex].getId();
-
-		/* this.graphService.findMaxFlow(sourceId, targetId).subscribe((res) => {
-			this.ogma.addEdge({
-				id: 'dummy',
-				source: sourceId,
-				target: targetId,
-				attributes: configs.classes.dummy
-			});
-
-			this.ogma.addEdge({
-				id: 'max-flow',
-				source: sourceId,
-				target: targetId,
-				attributes: configs.classes.maxFlow,
-				data: { Amount: res }
-			});
-		}); */
+		if (sources.size === 0)
+			return 'لطفاً ابتدا حداقل یک راس را به عنوان مبدأ انتخاب کنید';
+		if (targets.size === 0)
+			return 'لطفاً ابتدا حداقل یک راس را به عنوان مقصد انتخاب کنید';
 
 		this.graphService
-			.findPath(
-				this.sourceNode[this.tabIndex].getId(),
-				this.targetNode[this.tabIndex].getId(),
-				maxLength
-			)
-			.subscribe((res: any) => {
-				res.item1.forEach((node) => this.addNode(node));
-				res.item2.forEach((edge) => this.addEdge(edge));
+			.findPath(sources.getId(), targets.getId(), maxLength)
+			.subscribe(
+				(res: any) => {
+					this.ogma.removeNodes(this.ogma.getNodes('raw'));
 
-				this.runLayout();
+					sources.forEach((node) => {
+						this.addNode(node.getData(), {}, false);
+					});
+					targets.forEach((node) => {
+						this.addNode(node.getData(), {}, false);
+					});
+
+					res.item1.forEach((node) => this.addNode(node, {}, false));
+					res.item2.forEach((edge) => this.addEdge(edge));
+
+					this.runLayout();
+				},
+				(_) => {
+					snackbar.show(
+						'درخواست پردازش مسیر با خطا مواجه شد',
+						'danger'
+					);
+				}
+			);
+	}
+
+	findFlow(snackbar: SnackbarComponent) {
+		const sources = this.getWithTypes('source');
+		const targets = this.getWithTypes('target');
+
+		if (sources.size === 0)
+			return 'لطفاً ابتدا حداقل یک راس را به عنوان مبدأ انتخاب کنید';
+		if (targets.size === 0)
+			return 'لطفاً ابتدا حداقل یک راس را به عنوان مقصد انتخاب کنید';
+
+		this.graphService
+			.findMaxFlow(sources.getId(), targets.getId())
+			.subscribe((res) => {
+				snackbar.show(
+					`بیشینۀ شار محاسبه‌شده: ${(+res).toLocaleString()}`,
+					'success',
+					0,
+					true
+				);
 			});
+	}
+
+	getWithTypes(type) {
+		return this.ogma.getNodes().filter((node) => {
+			if (node.getData('nodeType') && node.getData('nodeType') === type) {
+				return true;
+			}
+			return false;
+		});
 	}
 
 	public toggleEdgesContentType() {
@@ -276,7 +326,7 @@ export class OgmaService {
 		});
 	}
 
-	private addEdge(data: TransactionEdge) {
+	public addEdge(data: TransactionEdge) {
 		const source = this.ogma.getNode(data.SourceAccount);
 		const target = this.ogma.getNode(data.DestinationAccount);
 
@@ -293,6 +343,9 @@ export class OgmaService {
 
 		const totalDeposit = +source.getData('totalDeposit') + +data.Amount;
 		source.setData('totalDeposit', totalDeposit);
+
+		const totalIncome = +target.getData('totalIncome') + +data.Amount;
+		target.setData('totalIncome', totalIncome);
 
 		this.setEdgesPercentValue(source, totalDeposit);
 

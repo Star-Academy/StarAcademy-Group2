@@ -1,11 +1,24 @@
-<div class="tab-container">
-	<graph-tab class="tab-item" *ngFor="let tab of tabs; let index = index;" [label]="tab" [index]="index"
-		[isActive]="index === activeTab" (onClosedCallback)="deleteTab($event)" (onClickedCallback)="tabChange($event)"
-		(onChangeNameCallback)="onChangeName($event)">
+<graph-tab *ngFor="let tab of tabs; let index = index;" [label]="tab" [index]="index" [isActive]="index === activeTab"
+	(onClosedCallback)="deleteTab($event)" (onClickedCallback)="tabChange($event)"
+	(onChangeNameCallback)="onChangeName($event)">
+</graph-tab>
+<span class="icon add" [ngStyle]="addStyle()" (mouseover)="addHovered = true" (mouseleave)="addHovered = false"
+	(click)="clickedOnAddTab()">
+	<svg-icon key="plus"></svg-icon>
+</span>
 
-	</graph-tab>
-	<span class="icons">
-		<round-button btnClass="btn-secondary btn-secondary-success" icon="plus" iconSize="3"
-			(callback)="clickedOnAddTab($event)"></round-button>
-	</span>
+<div class="left">
+	<div class="tab settings" [ngStyle]="settingsStyle()" (mouseover)="settingsHovered = true"
+		(mouseleave)="settingsHovered = false" (click)="tabChange({index: -1})">
+		<span class="body">
+			<span class="label">تنظیمات</span>
+		</span>
+	</div>
+
+	<div class="tab" [ngStyle]="closeStyle()" (mouseover)="closeHovered = true" (mouseleave)="closeHovered = false"
+		(click)="tabChange({index: -2})">
+		<span class="body">
+			<span class="label">خروج</span>
+		</span>
+	</div>
 </div>

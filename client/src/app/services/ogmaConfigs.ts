@@ -27,14 +27,14 @@ export default {
 				color: false,
 				outline: false,
 				outerStroke: {
-					color: 'blue'
+					color: '#6495ed'
 				}
 			},
 			hoveredNodes: {
 				color: false,
 				outline: false,
 				outerStroke: {
-					color: 'green'
+					color: '#44d96c'
 				}
 			},
 			edges: {
@@ -68,6 +68,9 @@ export default {
 		normal: {
 			image: '../../../assets/svg/washing_machine.svg'
 		},
+		company: {
+			image: '../../../assets/svg/company.svg'
+		},
 		source: {
 			image: '../../../assets/svg/money_source.svg'
 		},
@@ -77,7 +80,7 @@ export default {
 		locked: {
 			badges: {
 				topRight: {
-					color: '#e64e4e',
+					color: '#ffb726',
 					scale: 0.3,
 					image: {
 						scale: 0.5,

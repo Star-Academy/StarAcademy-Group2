@@ -91,24 +91,20 @@ export class RadialNodeMenuComponent {
 		this.expandCallback.emit({ nodeIds: this.nodes.getId() });
 
 	public selectAsSource() {
-		if (this.nodes.size > 1) {
-			this.snackbar.show('فقط یک حساب میتواند به عنوان مبدأ تعیین شود');
-		} else if (this.sourceFlag) {
-			this.ogmaService.removeSource();
+		if (this.sourceFlag) {
+			this.ogmaService.setNormal(this.nodes);
 		} else {
-			if (this.targetFlag) this.ogmaService.removeTarget();
-			this.ogmaService.setSource(this.nodes.get(0));
+			if (this.targetFlag) this.ogmaService.setNormal(this.nodes);
+			this.ogmaService.setSource(this.nodes);
 		}
 	}
 
 	public selectAsTarget() {
-		if (this.nodes.size > 1) {
-			this.snackbar.show('فقط یک حساب میتواند به عنوان مقصد تعیین شود');
-		} else if (this.targetFlag) {
-			this.ogmaService.removeTarget();
+		if (this.targetFlag) {
+			this.ogmaService.setNormal(this.nodes);
 		} else {
-			if (this.sourceFlag) this.ogmaService.removeSource();
-			this.ogmaService.setTarget(this.nodes.get(0));
+			if (this.sourceFlag) this.ogmaService.setNormal(this.nodes);
+			this.ogmaService.setTarget(this.nodes);
 		}
 	}
 
@@ -139,17 +135,13 @@ export class RadialNodeMenuComponent {
 	private setSourceFlag() {
 		this.sourceFlag =
 			this.nodes.size === 1 &&
-			this.ogmaService.getSourceNode() &&
-			this.ogmaService.getSourceNode().getId() ===
-				this.nodes.get(0).getId();
+			this.ogmaService.isSourceNode(this.nodes.get(0));
 	}
 
 	private setTargetFlag() {
 		this.targetFlag =
 			this.nodes.size === 1 &&
-			this.ogmaService.getTargetNode() &&
-			this.ogmaService.getTargetNode().getId() ===
-				this.nodes.get(0).getId();
+			this.ogmaService.isTargetNode(this.nodes.get(0));
 	}
 }
 

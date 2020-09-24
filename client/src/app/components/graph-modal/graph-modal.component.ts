@@ -118,18 +118,16 @@ export class GraphModalComponent {
 	}
 
 	public clickedOnSearchButton(e) {
-		this.searchService
-			.search(e.field, e.query)
-			.subscribe((res: AccountNode[]) => {
-				this.results = res;
+		this.searchService.search(e.filters).subscribe((res: AccountNode[]) => {
+			this.results = res;
 
-				if (this.results.length === 0) {
-					this.snackbar.show('نتیجه‌ای یافت نشد', 'danger');
-					this.shake();
-				} else {
-					this.setState(2);
-				}
-			});
+			if (this.results.length === 0) {
+				this.snackbar.show('نتیجه‌ای یافت نشد', 'danger');
+				this.shake();
+			} else {
+				this.setState(2);
+			}
+		});
 	}
 
 	public clickedOnExpandButton(e) {

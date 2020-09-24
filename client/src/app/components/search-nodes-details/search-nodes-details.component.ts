@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 import { AccountNode } from 'src/app/models/AccountNode';
+import { ThemeService } from 'src/app/services/theme.service';
 
 @Component({
 	selector: 'search-nodes-details',
@@ -12,6 +13,8 @@ export class SearchNodesDetailsComponent {
 	@Input() searching: boolean;
 
 	@Output() callback = new EventEmitter();
+
+	public constructor(public theme: ThemeService) {}
 
 	clickedOnAddNodeButton = (node: AccountNode) =>
 		this.callback.emit({ node });

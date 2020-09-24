@@ -1,4 +1,5 @@
-import { OnInit, Component, Input, ViewChild, ElementRef } from '@angular/core';
+import { OnInit, Component, ViewChild, ElementRef } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { ThemeService } from '../../services/theme.service';
 import { OgmaService } from '../../services/ogma.service';
@@ -27,11 +28,18 @@ export class GraphComponent implements OnInit {
 	public hoveredContent;
 	public hoveredPosition: { x: number; y: number };
 
-	// TODO: remove
-	public devTools: boolean = true;
+	public hovered = {
+		findPathMenu: false
+	};
+
+	public showingSettings: boolean = false;
+
+	private copiedNodes = [];
+	private copiedEdges = [];
 
 	public constructor(
 		public theme: ThemeService,
+		private router: Router,
 		public ogmaService: OgmaService,
 		private searchService: SearchNodesService
 	) {}
@@ -53,26 +61,79 @@ export class GraphComponent implements OnInit {
 	// TODO: Remove
 	public addSomeNode() {
 		this.searchService
-			.search('OwnerName', 'ارژنگ')
+			.search([ { field: 'OwnerName', query: 'ارژنگ' } ])
 			.subscribe((res) => this.clickedOnAddNodeButton({ node: res[0] }));
 
 		this.searchService
-			.search('OwnerName', 'دریا')
+			.search([ { field: 'OwnerName', query: 'دریا' } ])
 			.subscribe((res) => this.clickedOnAddNodeButton({ node: res[0] }));
 
 		this.searchService
-			.search('OwnerName', 'افسر')
+			.search([ { field: 'OwnerName', query: 'افسر' } ])
 			.subscribe((res) => this.clickedOnAddNodeButton({ node: res[0] }));
 
 		this.searchService
-			.search('OwnerName', 'ژیلا')
+			.search([ { field: 'OwnerName', query: 'ژیلا' } ])
 			.subscribe((res) => this.clickedOnAddNodeButton({ node: res[0] }));
+
+		this.searchService
+			.search([
+				{
+					field: 'AccountID',
+					query: '8000000281'
+				}
+			])
+			.subscribe((res) => {
+				this.clickedOnAddNodeButton({
+					node: res[0]
+				});
+			});
 
 		setTimeout(() => this.runLayout(), 500);
-	}
 
-	// TODO: use this
-	public countNodes = (): number => this.ogmaService.ogma.getNodes().size;
+		// this.searchService
+		// 	.search([ { field: 'OwnerName', query: 'ارژنگ' } ])
+		// 	.subscribe((res) => {
+		// 		this.clickedOnAddNodeButton({ node: res[0] });
+
+		// 		this.searchService
+		// 			.search([ { field: 'OwnerName', query: 'دریا' } ])
+		// 			.subscribe((res) => {
+		// 				this.clickedOnAddNodeButton({ node: res[0] });
+
+		// 				this.searchService
+		// 					.search([ { field: 'OwnerName', query: 'افسر' } ])
+		// 					.subscribe((res) => {
+		// 						this.clickedOnAddNodeButton({ node: res[0] });
+
+		// 						this.searchService
+		// 							.search([
+		// 								{ field: 'OwnerName', query: 'ژیلا' }
+		// 							])
+		// 							.subscribe((res) => {
+		// 								this.clickedOnAddNodeButton({
+		// 									node: res[0]
+		// 								});
+
+		// 								this.searchService
+		// 									.search([
+		// 										{
+		// 											field: 'AccountID',
+		// 											query: '8000000281'
+		// 										}
+		// 									])
+		// 									.subscribe((res) => {
+		// 										this.clickedOnAddNodeButton({
+		// 											node: res[0]
+		// 										});
+
+		// 										this.runLayout();
+		// 									});
+		// 							});
+		// 					});
+		// 			});
+		// 	});
+	}
 
 	public clickedOnSearchNodesButton = () => this.nodesModal.open();
 
@@ -83,9 +144,16 @@ export class GraphComponent implements OnInit {
 		this.nodesModal.open(null, 4, nodeIds);
 
 	public clickedOnFindPathButton() {
-		this.ogmaService.findPath(this.pathMaxLength.nativeElement.value);
+		const error = this.ogmaService.findPath(
+			this.pathMaxLength.nativeElement.value,
+			this.snackbar
+		);
 
-		// TODO: check if path was found
+		if (error) {
+			this.snackbar.show(error, 'danger');
+			return;
+		}
+
 		this.toggleFindPathMenu();
 		this.runLayout();
 	}
@@ -132,10 +200,24 @@ export class GraphComponent implements OnInit {
 	}
 
 	onTabChange(event) {
+		if (event.index === -2) {
+			localStorage.removeItem('token');
+			this.router.navigate([ '/login' ]);
+			return;
+		}
+
+		if (event.index === -1) {
+			this.showingSettings = true;
+			return;
+		}
+		this.showingSettings = false;
+
 		this.ogmaService.tabChange(event.index, this.container.nativeElement);
 	}
 
 	onTabAdd(event) {
+		this.showingSettings = false;
+
 		this.ogmaService.tabAdd(event.index, this.container.nativeElement);
 		this.setOgmaContainer();
 		this.setupOgmaEventHandlers();
@@ -143,6 +225,20 @@ export class GraphComponent implements OnInit {
 
 	onTabDelete(event) {
 		this.ogmaService.tabDelete(event.index, this.container.nativeElement);
+	}
+
+	public toolbarStyle() {
+		return {
+			...this.theme.light,
+			display: this.showingSettings ? 'none' : 'grid'
+		};
+	}
+
+	public settingsStyle() {
+		return {
+			...this.theme.default,
+			display: this.showingSettings ? 'block' : 'none'
+		};
 	}
 
 	public stopPropagation = (e: Event) => e.stopPropagation();
@@ -190,6 +286,101 @@ export class GraphComponent implements OnInit {
 		this.ogmaService.ogma.events.onUnhover(
 			() => (this.hoveredContent = null)
 		);
+
+		this.ogmaService.ogma.events.onDragStart(() => {
+			this.hoveredContent = null;
+			this.setRectangleSelected();
+		});
+
+		this.ogmaService.ogma.events.onKeyPress(46, () =>
+			this.ogmaService.removeNode(
+				this.ogmaService.ogma.getSelectedNodes()
+			)
+		);
+
+		this.ogmaService.ogma.events.onKeyPress('shift c', () =>
+			this.copyNodesAndEdges()
+		);
+
+		this.ogmaService.ogma.events.onKeyPress('shift v', () =>
+			this.pasteNodesAndEdges()
+		);
+
+		this.ogmaService.ogma.events.onKeyPress('shift l', () =>
+			this.ogmaService.lockNodes(this.ogmaService.ogma.getSelectedNodes())
+		);
+
+		this.ogmaService.ogma.events.onKeyPress('shift u', () =>
+			this.ogmaService.unlockNodes(
+				this.ogmaService.ogma.getSelectedNodes()
+			)
+		);
+
+		this.ogmaService.ogma.events.onKeyPress('shift e', () =>
+			this.clickedOnExpandButton({
+				nodeIds: this.ogmaService.ogma.getSelectedNodes().getId()
+			})
+		);
+
+		this.ogmaService.ogma.events.onKeyPress('shift s', () =>
+			this.ogmaService.setSource(this.ogmaService.ogma.getSelectedNodes())
+		);
+
+		this.ogmaService.ogma.events.onKeyPress('shift t', () =>
+			this.ogmaService.setTarget(this.ogmaService.ogma.getSelectedNodes())
+		);
+
+		this.ogmaService.ogma.events.onKeyPress('shift n', () =>
+			this.ogmaService.setNormal(this.ogmaService.ogma.getSelectedNodes())
+		);
+
+		this.ogmaService.ogma.events.onKeyPress('shift f', () =>
+			this.findFlow()
+		);
+
+		this.ogmaService.ogma.events.onKeyPress('shift a', () => {
+			this.ogmaService.ogma.getNodes().setSelected(true);
+		});
+	}
+
+	public findFlow() {
+		const error = this.ogmaService.findFlow(this.snackbar);
+
+		if (error) {
+			this.snackbar.show(error, 'danger');
+			return;
+		}
+	}
+
+	setRectangleSelected() {
+		if (this.ogmaService.ogma.keyboard.isKeyPressed('ctrl')) {
+			if (!this.ogmaService.ogma.keyboard.isKeyPressed('shift')) {
+				this.ogmaService.ogma.getSelectedNodes().setSelected(false);
+				this.ogmaService.ogma.getSelectedEdges().setSelected(false);
+			}
+
+			this.ogmaService.ogma.tools.rectangleSelect.enable({
+				bothExtremities: true,
+				callback({ nodes, edges }) {
+					nodes.setSelected(true);
+					edges.setSelected(true);
+				}
+			});
+		}
+	}
+
+	private copyNodesAndEdges() {
+		this.copiedNodes = this.ogmaService.ogma.getSelectedNodes().dedupe();
+		this.copiedEdges = this.ogmaService.ogma.getSelectedEdges().dedupe();
+	}
+
+	private pasteNodesAndEdges() {
+		this.copiedNodes.forEach((node) =>
+			this.ogmaService.addNode(node.getData())
+		);
+		this.copiedEdges.forEach((edge) =>
+			this.ogmaService.addEdge(edge.getData())
+		);
 	}
 
 	private updateTooltip(target) {
@@ -208,8 +399,14 @@ export class GraphComponent implements OnInit {
 
 		if (target.isNode) {
 			this.hoveredContent = [
-				[ 'شعبه', target.getData('BranchName') ],
-				[ 'شناسه صاحب حساب', target.getData('OwnerID') ],
+				[
+					'مجموع مبالغ ورودی',
+					(+target.getData('totalIncome')).toLocaleString()
+				],
+				[
+					'مجموع مبالغ خروجی',
+					(+target.getData('totalDeposit')).toLocaleString()
+				],
 				[
 					'نام صاحب حساب',
 					target.getData('OwnerName') +

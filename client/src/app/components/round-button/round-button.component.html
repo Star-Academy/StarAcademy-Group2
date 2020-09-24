@@ -1,4 +1,3 @@
-<span [class]="btnClass" [ngStyle]="{'width': iconSize+'rem', 'height': iconSize+'rem'}"
-	(click)="clickedOnButton($event)">
+<span [ngStyle]="style" (mouseover)="hovered = true" (mouseleave)="hovered = false" (click)="clickedOnButton($event)">
 	<svg-icon [key]="icon" [ngStyle]="{'font-size': (iconSize/2)+'rem'}"></svg-icon>
 </span>

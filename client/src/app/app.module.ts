@@ -30,7 +30,6 @@ import { SnackbarComponent } from './components/snackbar/snackbar.component';
 import { SearchEdgesFormComponent } from './components/search-edges-form/search-edges-form.component';
 import { SearchEdgesDetailsComponent } from './components/search-edges-details/search-edges-details.component';
 import { GraphTooltipComponent } from './components/graph-tooltip/graph-tooltip.component';
-import { NavigationComponent } from './components/navigation/navigation.component';
 import { LayoutSelectorComponent } from './components/layout-selector/layout-selector.component';
 import { AdminComponent } from './pages/admin/admin.component';
 import { ThemeSettingsComponent } from './components/theme-settings/theme-settings.component';
@@ -53,7 +52,6 @@ import { TabGroupComponent } from './components/tab-group/tab-group.component';
 		SearchEdgesFormComponent,
 		SearchEdgesDetailsComponent,
 		GraphTooltipComponent,
-		NavigationComponent,
 		FaqComponent,
 		LoginComponent,
 		NotFoundComponent,

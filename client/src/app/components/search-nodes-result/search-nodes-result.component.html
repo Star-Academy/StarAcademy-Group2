@@ -1,11 +1,10 @@
-<div class="result bg-default-95" *ngFor="let node of results" (cdkDragStarted)="dragStart($event)"
+<div class="result" [ngStyle]="theme.light" *ngFor="let node of results" (cdkDragStarted)="dragStart($event)"
 	(cdkDragEnded)="dragEnd($event, node)" (cdkDragMoved)="dragProgress($event, node)" cdkDrag>
-	<span class="title text-default-40">{{node.OwnerName + " " + node.OwnerFamilyName}}</span>
+	<span class="title" [ngStyle]="theme.light">{{node.OwnerName + " " + node.OwnerFamilyName}}</span>
 	<div class="icons">
-		<round-button btnClass="btn-secondary btn-secondary-success" icon="plus" iconSize="3"
-			(callback)="clickedOnAddNodeButton(node)"></round-button>
-		<round-button btnClass="btn-secondary btn-secondary-info" icon="information" iconSize="3"
-			(callback)="clickedOnDetailsButton(node)">
+		<round-button [btnStyle]="theme.success" icon="plus" iconSize="3" (callback)="clickedOnAddNodeButton(node)">
+		</round-button>
+		<round-button [btnStyle]="theme.info" icon="information" iconSize="3" (callback)="clickedOnDetailsButton(node)">
 		</round-button>
 	</div>
 </div>

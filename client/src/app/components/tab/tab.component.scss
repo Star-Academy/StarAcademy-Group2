@@ -1,20 +1,39 @@
-.icons {
-	display: flex;
-	align-items: center;
-}
-
-.tab {
-	display: inline-block;
-
-	lable {
+:host {
+	.tab {
 		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+
+		min-width: 10rem;
+
+		padding: 0.5rem 1rem;
+
+		border-radius: 0.5rem;
+
+		font-size: 1.4rem;
+
+		.icon {
+			display: inline-flex;
+			justify-content: center;
+			align-items: center;
+
+			width: 2rem;
+			height: 2rem;
+
+			margin-right: 1rem;
+
+			border-radius: 100%;
+
+			opacity: 0;
+
+			&.show {
+				opacity: 1;
+			}
+
+			svg-icon {
+				font-size: 0.8rem;
+			}
+		}
 	}
-
-	border: 2px solid black;
-
-
-}
-
-.active {
-	background-color: aqua;
 }

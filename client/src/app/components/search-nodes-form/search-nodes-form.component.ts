@@ -16,8 +16,7 @@ export class SearchNodesFormComponent {
 	@Output() searchCallback = new EventEmitter();
 	@Output() shakeCallback = new EventEmitter();
 
-	public maxLength: number = 100;
-	public fieldSelectOpen: boolean = false;
+	public items: Item[] = [ new Item() ];
 
 	public options: Option[] = [
 		new Option('BranchName', 'نام شعبه'),
@@ -32,7 +31,18 @@ export class SearchNodesFormComponent {
 		new Option('BranchAddress', 'آدرس شعبه')
 	];
 
-	public selectedOption: Option = this.options[0];
+	public selectedOptions: boolean[] = [
+		true,
+		false,
+		false,
+		false,
+		false,
+		false,
+		false,
+		false,
+		false,
+		false
+	];
 
 	private validators = {
 		BranchTelephone: new Validator(PATTERNS.numberPattern, 8),
@@ -44,22 +54,69 @@ export class SearchNodesFormComponent {
 
 	public constructor(public theme: ThemeService) {}
 
-	public updateMaxLength(field: string) {
-		this.maxLength = this.validators[field]
+	public updateSelectedField(itemIndex, optionIndex, field: string) {
+		const item = this.items[itemIndex];
+
+		item.maxLength = this.validators[field]
 			? this.validators[field].length
 			: 256;
+
+		// if (optionIndex > item.selectedOptionIndex) optionIndex++;
+
+		const options = this.getOptions(itemIndex);
+		const option = options[optionIndex];
+
+		this.selectedOptions[item.selectedOptionIndex] = false;
+		for (let i = 0; i < 10; i++) {
+			if (this.options[i].en === option.en) {
+				this.selectedOptions[i] = true;
+				item.selectedOptionIndex = i;
+				break;
+			}
+		}
 	}
 
-	public clickedOnSearchButton({ query }) {
-		const field = this.selectedOption.en;
-		const error = this.validateForm(field, query);
+	public clickedOnSearchButton() {
+		let filters = [];
+		for (let item of this.items) {
+			const query = item.query;
+			const field = item.options[item.selectedOptionIndex].en;
+			const error = this.validateForm(field, query);
 
-		if (!error) {
-			this.searchCallback.emit({ field, query });
-		} else {
-			this.snackbar.show(error, 'danger');
-			this.shakeCallback.emit();
+			if (!error) {
+				filters.push({ field, query });
+			} else {
+				this.snackbar.show(error, 'danger');
+				this.shakeCallback.emit();
+				return;
+			}
 		}
+		this.searchCallback.emit({ filters });
+	}
+
+	public addNewField() {
+		for (let i = 0; i < 10; i++) {
+			if (!this.selectedOptions[i]) {
+				this.items.push(new Item(i));
+				this.selectedOptions[i] = true;
+				return;
+			}
+		}
+	}
+
+	public getOptions(index: number) {
+		const item = this.items[index];
+		let a = item.selectedOptionIndex;
+
+		let result = [];
+		for (let i = 0; i < 10; i++) {
+			if (!this.selectedOptions[i] || i == item.selectedOptionIndex)
+				result.push(item.options[i]);
+			else if (i < a) a--;
+		}
+
+		item.a = a;
+		return result;
 	}
 
 	private validateForm(field: string, query: string): string {
@@ -94,3 +151,26 @@ const PATTERNS = {
 	shebaPattern: /^IR(\d)+$/,
 	nonNumericalPattern: /^\D+$/
 };
+
+class Item {
+	public options: Option[] = [
+		new Option('BranchName', 'نام شعبه'),
+		new Option('BranchTelephone', 'شماره تلفن شعبه'),
+		new Option('OwnerID', 'شناسه صاحب حساب'),
+		new Option('OwnerName', 'نام صاحب حساب'),
+		new Option('OwnerFamilyName', 'نام خانوادگی صاحب حساب'),
+		new Option('AccountType', 'نوع حساب'),
+		new Option('AccountID', 'شماره حساب'),
+		new Option('CardID', 'شماره کارت'),
+		new Option('Sheba', 'شماره شبا'),
+		new Option('BranchAddress', 'آدرس شعبه')
+	];
+
+	public constructor(
+		public selectedOptionIndex: number = 0,
+		public fieldSelectOpen: boolean = false,
+		public query: string = '',
+		public maxLength: number = 256,
+		public a: number = -1
+	) {}
+}

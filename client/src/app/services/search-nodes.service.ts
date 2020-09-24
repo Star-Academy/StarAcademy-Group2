@@ -20,10 +20,19 @@ export class SearchNodesService {
 			.replace(/\s+/g, '');
 	}
 
-	public search(field: string, query: string) {
+	public search(filters) {
+		let body = '{';
+		body += `"${this.camelize(filters[0].field)}" : "${filters[0].query}" `;
+
+		for (let i = 1; i < filters.length; i++) {
+			body += `,"${this.camelize(filters[i].field)}" : "${filters[i]
+				.query}" `;
+		}
+		body += '}';
+
 		return this.httpClient.post(
 			'https://localhost:5001/userQuery/searchNode',
-			`{ "${this.camelize(field)}" : "${query}" }`,
+			body,
 			options
 		);
 	}

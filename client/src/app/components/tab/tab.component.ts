@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
+
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
 	selector: 'graph-tab',
@@ -15,9 +16,29 @@ export class TabComponent implements OnInit {
 	@Output() onClosedCallback = new EventEmitter();
 	@Output() onChangeNameCallback = new EventEmitter();
 
-	constructor() {}
+	public hovered: boolean = false;
+	public closeHovered: boolean = false;
+
+	constructor(public theme: ThemeService) {}
 
 	ngOnInit(): void {}
+
+	public tabStyle() {
+		return this.isActive
+			? this.theme.primary.selected
+			: this.hovered ? this.theme.primary.hovered : this.theme.primary;
+	}
+
+	public closeStyle() {
+		if (this.isActive)
+			return this.closeHovered
+				? this.theme.primary
+				: this.theme.primary.selected;
+
+		return this.closeHovered
+			? this.theme.primary
+			: this.theme.primary.hovered;
+	}
 
 	clickedOnCloseTab(event) {
 		this.onClosedCallback.emit({ index: this.index });

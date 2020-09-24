@@ -4,32 +4,20 @@
 	<graph-modal #nodesModal [snackbar]="snackbar" (addNodeCallback)="clickedOnAddNodeButton($event)"
 		(dragMoveCallback)="dragMove($event)" (dragEndCallback)="dragEnd($event)">
 	</graph-modal>
-
-	<div #findPathMenu *ngIf="ogmaService.getSourceNode() && ogmaService.getTargetNode()"
-		class="find-path btn btn-primary closed" (click)="toggleFindPathMenu($event)">
-		<span class="title">محاسبه مسیر</span>
-		<div class="form-container" (click)="stopPropagation($event)">
-			<div class="form">
-				<span class="label">حداکثر طول:</span>
-				<input #pathMaxLength type="number" min="1" max="5" value="1">
-			</div>
-			<div class="btn btn-primary-reverse" (click)="clickedOnFindPathButton($event)">پردازش</div>
-		</div>
-	</div>
 </div>
 
-<header>
+<!-- <header [ngStyle]="theme.default">
 	<div class="logo">TODO: logo</div>
-</header>
+</header> -->
 
-<nav>
-	<graph-tab-group class="tab" (onTabChange)="onTabChange($event)" (onTabAdd)="onTabAdd($event)"
+<nav [ngStyle]="theme.primary">
+	<graph-tab-group (onTabChange)="onTabChange($event)" (onTabAdd)="onTabAdd($event)"
 		(onTabDelete)="onTabDelete($event)">
 	</graph-tab-group>
 </nav>
 
-<main cdkDropList>
-	<div class="toolbar" [ngStyle]="theme.light">
+<main cdkDropList [ngStyle]="theme.light">
+	<div class="toolbar" [ngStyle]="toolbarStyle()">
 		<div class="right">
 			<div class="btn" [ngStyle]="theme.default" (click)="addSomeNode()">
 				<span class="icon">
@@ -66,6 +54,33 @@
 				<span class="text">بارگذاری گراف</span>
 			</div>
 
+			<div #findPathMenu *ngIf="ogmaService.getSourceNode() && ogmaService.getTargetNode()"
+				[ngClass]="['btn openable find-path', hovered.findPathMenu ? 'open' : '']"
+				[ngStyle]="hovered.findPathMenu ? theme.default.hovered : theme.default"
+				(mouseover)="hovered.findPathMenu = true" (mouseleave)="hovered.findPathMenu = false"
+				(click)="toggleFindPathMenu($event)">
+				<span class="icon">
+					<svg-icon key="findPath"></svg-icon>
+				</span>
+				<span class="text">محاسبه مسیر</span>
+
+				<div class="menu" [ngStyle]="theme.default.hovered" (click)="stopPropagation($event)">
+					<div class="form">
+						<span class="label">حداکثر طول:</span>
+						<input #pathMaxLength [ngStyle]="theme.default" type="number" min="1" max="5" value="1">
+					</div>
+					<div class="action" [ngStyle]="theme.primary" (click)="clickedOnFindPathButton($event)">
+						پردازش</div>
+				</div>
+			</div>
+
+			<div class="btn" [ngStyle]="theme.default" (click)="findFlow()">
+				<span class="icon">
+					<svg-icon key="toolbarFlow"></svg-icon>
+				</span>
+				<span class="text">محاسبۀ بیشینۀ جریان</span>
+			</div>
+
 			<input [style.display]="'none'" id="upload-file" type="file" name="upload-file" accept=".json"
 				ngf-max-size="2MB" (change)="attachGraphFile($event)">
 		</div>
@@ -78,17 +93,13 @@
 				<span class="text">جستجو</span>
 			</div>
 		</div>
-
-		<!-- <div class="nodes-count">
-			<span class="label text-default-10">Nodes Count: </span>
-			<span class="value">{{countNodes()}}</span>
-		</div> -->
 	</div>
 
 	<!-- <div id="draggable"><img src="../../../assets/svg/washing_machine.svg"></div>
 	<div id="trash"><img src="../../../assets/svg/cross.svg"></div> -->
 
-	<div #ogmaContainer id="ogma-container" onclick="event.stopPropagation()">
+	<div #ogmaContainer [ngStyle]="{'display': showingSettings ? 'none' : 'block'}" id="ogma-container"
+		onclick="event.stopPropagation()">
 		<radial-node-menu #radialComponent [snackbar]="snackbar" (expandCallback)="clickedOnExpandButton($event)">
 		</radial-node-menu>
 
@@ -96,5 +107,12 @@
 		</graph-tooltip>
 
 		<layout-selector></layout-selector>
+	</div>
+
+	<div class="card" [ngStyle]="settingsStyle()">
+		<div class="head">تنظیمات قالب سایت</div>
+		<div class="body">
+			<theme-settings [snackbar]="snackbar"></theme-settings>
+		</div>
 	</div>
 </main>

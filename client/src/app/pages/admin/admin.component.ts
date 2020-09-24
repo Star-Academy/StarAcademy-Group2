@@ -85,9 +85,6 @@ export class AdminComponent implements OnInit {
 	}
 
 	public sendCSV(content: string, url: string) {
-		// const headers = new HttpHeaders().set('Content-Type', 'text/plain');
-		console.log(content);
-
 		this.httpClient.post(url, `${content}`, options).subscribe(
 			(_) => {
 				this.snackbar.show(

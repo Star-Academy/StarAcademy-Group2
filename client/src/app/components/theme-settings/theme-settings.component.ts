@@ -61,5 +61,10 @@ export class ThemeSettingsComponent implements OnInit {
 }
 
 class Item {
-	public constructor(public name: string, public title: string) {}
+	public constructor(
+		public name: string,
+		public title: string,
+		public hovered: boolean = false,
+		public selected: boolean = false
+	) {}
 }

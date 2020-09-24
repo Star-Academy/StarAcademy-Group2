@@ -51,7 +51,6 @@ export class AuthService {
 				}),
 				catchError((e) => {
 					this.route.navigate([ '/login' ]);
-					console.log(e);
 					return of(false);
 				})
 			);
